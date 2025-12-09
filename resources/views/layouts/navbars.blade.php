@@ -38,14 +38,14 @@
         </nav>
     </header>
     <nav>
-        <a href="{{ route('dashboard') }}">Dashboard</a>
-        <a href="#">Employees</a>
-        <a href="#">Departments</a>
-        <a href="#">Notices</a>
+        <a href="{{ route('dashboard') }}">Dashboard ✅</a>
+        <a href="{{ route('employees.index') }}">Employees</a>
+        <a href="{{ route('departments.index') }}">Departments ✅</a>
+        <a href="{{ route('notices.index') }}">Notices ✅</a>
         <a href="#">Assets</a>
         <a href="#">Salaries</a>
         <a href="#">Attendances</a>
-        <a href="#">Events</a>
+        <a href="{{ route('events.index') }}">Events ✅</a>
     </nav>
     <main>
         @yield('content')

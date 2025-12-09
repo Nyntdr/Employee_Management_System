@@ -17,11 +17,12 @@ class Event extends Model
         'start_time',
         'end_time',
         'created_by',
-        'visibility'
     ];
 
     protected $casts = [
-        'event_date' => 'date'
+        'event_date' => 'date',
+        'start_time' => 'datetime:H:i',
+        'end_time'   => 'datetime:H:i',
     ];
 
     public function creator(): BelongsTo

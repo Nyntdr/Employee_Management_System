@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\NoticeController;
-use App\Http\Controllers\RoleController;
 use App\Models\Department;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\DepartmentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,10 +33,13 @@ Route::put('/roles/{id}', [RoleController::class, 'update'])->name('roles.update
 Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
 //department
-Route::resource('departments', DepartmentController::class);
+Route::resource('departments', DepartmentController::class)->middleware('auth');
 
 //employee
-Route::resource('employees', EmployeeController::class);
+Route::resource('employees', EmployeeController::class)->middleware('auth');
 
 //notice
-Route::resource('notices', NoticeController::class);
+Route::resource('notices', NoticeController::class)->middleware('auth');
+
+//event
+Route::resource('events', EventController::class)->middleware('auth');

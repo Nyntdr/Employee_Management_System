@@ -19,7 +19,6 @@ return new class extends Migration
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->enum('visibility', ['everyone', 'employees', 'admin'])->default('everyone');
             $table->timestamps();
     
             $table->index(['event_date', 'visibility']);
