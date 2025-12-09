@@ -8,7 +8,7 @@
         <p>Manage the employees from here.</p>
         <a href="{{ route('roles.index') }}">See roles </a> <br>
         <a href="{{ route('departments.index') }}">See departments </a> <br>
-        <a href="{{ route('employees.index') }}">See employees </a>
-
+        <a href="{{ route('employees.index') }}">See employees </a> <br>  
+        <a href="{{ route('notices.index') }}">See notices </a>
        
 @endsection

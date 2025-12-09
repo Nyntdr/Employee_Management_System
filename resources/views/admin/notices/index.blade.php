@@ -20,12 +20,12 @@
                 <td>{{ $notice->notice_id }}</td>
                 <td>{{ $notice->title }}</td>
                 <td>{{ $notice->content }}</td>
-                <td>{{ $notice->posted_by }}</td>
+                <td>{{ $notice->poster->name }}</td>
                 <td>{{ $notice->created_at->diffForHumans()}}</td>
                 <td>
-                    <a href="#">Edit</a>
+                    <a href="{{ route('notices.edit',$notice->notice_id) }}">Edit</a>
                     <br>
-                    <form action="#" method="POST" style="display:inline;">
+                    <form action="{{ route('notices.destroy',$notice->notice_id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" onclick="return confirm('Delete this notice?')">Delete</button>

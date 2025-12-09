@@ -1,6 +1,6 @@
 
 @extends('layouts.navbars')
-@section('title','All Roles')
+@section('title','Edit Role')
 @section('content')
 <h1>Edit Role</h1>
 <form action="{{ route('roles.update', $role->role_id) }}" method="POST">
