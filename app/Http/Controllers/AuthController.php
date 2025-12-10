@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegisterRequest;
+use App\Models\Department;
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
@@ -18,9 +21,17 @@ class AuthController extends Controller
     {
         return view('admin.auth.register');
     }
+    public function show()
+    {
+        return view('admin.dashboards.profile');
+    }
     public function dashboard()
     {
-        return view('admin.dashboards.admin_dashboard');
+        $totalUsers = User::count();
+        $totalDepartments = Department::count();
+        $totalEmployees = Employee::count();
+
+        return view('admin.dashboards.admin_dashboard',compact('totalUsers','totalDepartments','totalEmployees'));
     }
         public function login(LoginRequest $request)
     {
@@ -36,18 +47,14 @@ class AuthController extends Controller
             'password' => 'The provided password is incorrect.',
         ])->withInput($request->except('password'));
     }
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $request->validate([
-            'name'     => 'required|string|max:50|unique:users,name',
-            'email'    => 'required|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-        $user = User::create([
-            'name'       => $request->name,
-            'email'      => $request->email,
-            'password'   => Hash::make($request->password),
-            'role_id'    => $request->role_id ?? 1, 
+       $validated = $request->validated();
+        User::create([
+            'name'       => $validated['name'],
+            'email'      => $validated['email'],
+            'password'   => Hash::make($validated['password']),
+            'role_id'    => 1,
             'is_active'  => true,
         ]);
         return redirect()->route('login')

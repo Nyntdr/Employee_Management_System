@@ -2,7 +2,7 @@
 @section('title','All Employees')
 @section('content')
 <h1>Employees List</h1>
-<a href="#">Add Employee</a>
+<a href="{{ route('employees.create') }}">Add Employee</a> <br><br>
 <table border="1">
     <thead>
         <tr>
@@ -33,9 +33,9 @@
                 <td>{{ $e->date_of_joining->format('F j,Y')}}</td>
                 <td>{{ $e->employment_status }}</td>
                 <td>
-                    <a href="#">Edit</a>
+                    <a href="{{ route('employees.edit',$e->employee_id) }}">Edit</a>
                     <br>
-                    <form action="#" method="POST" style="display:inline;">
+                    <form action="{{ route('employees.destroy',$e->employee_id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" onclick="return confirm('Delete this employee?')">Delete</button>

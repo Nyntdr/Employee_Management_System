@@ -29,7 +29,7 @@ class Employee extends Model
         'date_of_joining',
         'employment_status',
     ];
-
+    
     protected $casts = [
         'date_of_birth' => 'date',
         'date_of_joining' => 'date',

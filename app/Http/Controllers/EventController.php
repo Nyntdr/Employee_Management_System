@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
+use App\Http\Requests\EventRequest;
 use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
@@ -17,52 +18,25 @@ class EventController extends Controller
     {
         return view('admin.events.create'); 
     }
-   public function store(Request $request)
+   public function store(EventRequest $request)
 {
-    $request->validate([
-        'title'       => 'required|string|max:200',
-        'description' => 'nullable|string',
-        'event_date'  => 'required|date',
-        'start_time'  => 'nullable|date_format:H:i',
-        'end_time'    => 'nullable|date_format:H:i|after:start_time',
-    ]);
-
-    Event::create([
-        'title'       => $request->title,
-        'description' => $request->description,
-        'event_date'  => $request->event_date,
-        'start_time'  => $request->start_time,
-        'end_time'    => $request->end_time,
-        'created_by'  => Auth::id(),
-    ]);
-
-    return redirect()->route('events.index')->with('success', 'Event created successfully!');
+        $validated = $request->validated();
+        $validated['created_by'] = Auth::id();
+        Event::create($validated);
+        return redirect()->route('events.index');
 }
     public function edit(string $id)
     {
         $event = Event::findOrFail($id);
         return view('admin.events.edit', compact('event'));
     }
-public function update(Request $request, string $id)
+public function update(EventRequest $request, string $id)
 {
     $event = Event::findOrFail($id);
-    $request->validate([
-        'title'       => 'required|string|max:200',
-        'description' => 'nullable|string',
-        'event_date'  => 'required|date',
-        'start_time'  => 'nullable|date_format:H:i',
-        'end_time'    => 'nullable|date_format:H:i|after:start_time',
-    ]);
-
-    $event->update([
-        'title'       => $request->title,
-        'description' => $request->description,
-        'event_date'  => $request->event_date,
-        'start_time'  => $request->start_time,
-        'end_time'    => $request->end_time,
-    ]);
-
-    return redirect()->route('events.index')->with('success', 'Event updated successfully!');
+    $validated = $request->validated();
+    unset($validated['created_by']);
+    $event->update($validated);
+    return redirect()->route('events.index');
 }
     public function destroy(string $id)
     {
