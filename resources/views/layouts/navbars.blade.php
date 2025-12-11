@@ -54,12 +54,12 @@
             <a href="{{ route('employees.index') }}" class="d-block mb-2">Employees ✅</a>
             <a href="{{ route('departments.index') }}" class="d-block mb-2">Departments ✅</a>
             <a href="{{ route('notices.index') }}" class="d-block mb-2">Notices ✅</a>
-            <a href="#" class="d-block mb-2">Assets</a>
+            <a href="{{ route('assets.index') }}" class="d-block mb-2">Assets ✅</a>
             <a href="#" class="d-block mb-2">Salaries</a>
             <a href="#" class="d-block mb-2">Attendances</a>
             <a href="{{ route('events.index') }}" class="d-block mb-2">Events ✅</a>
         </nav>
-        <main class="flex-grow-1 p-4">
+        <main class="grow p-4">
             @yield('content')
         </main>
     </div>
