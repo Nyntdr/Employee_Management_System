@@ -1,5 +1,4 @@
 <?php
-use App\Models\Department;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
@@ -8,6 +7,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\AssetAssignmentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,3 +40,5 @@ Route::resource('notices', NoticeController::class)->middleware('auth');
 Route::resource('events', EventController::class)->middleware('auth');
 //assets
 Route::resource('assets', AssetController::class)->middleware('auth');
+Route::resource('asset-assignments', AssetAssignmentController::class)->middleware( ['auth','role_verify']);
+

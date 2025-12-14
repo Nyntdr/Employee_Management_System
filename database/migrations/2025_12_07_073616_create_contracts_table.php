@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('contracts', function (Blueprint $table) {
             $table->id('contract_id');
             $table->enum('contract_type',['full_time','part_time','intern']);
-            $table->date('start-date');
+            $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->integer('probation_period')->default(0);
             $table->string('working_hours',100)->nullable();
