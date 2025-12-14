@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\ContractController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
@@ -41,4 +42,5 @@ Route::resource('events', EventController::class)->middleware('auth');
 //assets
 Route::resource('assets', AssetController::class)->middleware('auth');
 Route::resource('asset-assignments', AssetAssignmentController::class)->middleware( ['auth','role_verify']);
-
+//contracts
+Route::resource('contracts', ContractController::class)->middleware( ['auth','role_verify']);
