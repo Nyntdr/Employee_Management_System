@@ -2,7 +2,8 @@
 @section('title','Leave types')
 @section('content')
 <h2>Leave Types</h2>
-<a href="{{ route('leave-types.create') }}">Add a leave type</a>
+<a href="{{ route('leave-types.create') }}">Add a leave type</a> <br> <br>
+<a href="{{ route('leaves.index') }}">Leaves</a>
 <table border="1">
     <thead>
         <tr>
@@ -18,7 +19,6 @@
                 <td>{{ $leave_type->max_days_per_year }}</td>
                 <td>
                     <a href="{{ route('leave-types.edit',$leave_type->id) }}">Edit</a>
-                    <br>
                     <form action="{{ route('leave-types.destroy',$leave_type->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')

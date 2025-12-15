@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\ImageUploadController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
@@ -50,3 +51,5 @@ Route::resource('contracts', ContractController::class)->middleware( ['auth','ro
 Route::resource('leave-types', LeaveTypeController::class)->middleware( ['auth','role_verify']);
 //leave
 Route::resource('leaves', LeaveController::class)->middleware( ['auth','role_verify']);
+//iamge uploading
+Route::post('/image-upload',[ImageUploadController::class,'upload'])->name('image.upload');

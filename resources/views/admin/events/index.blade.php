@@ -6,7 +6,7 @@
     <table border="1">
         <thead>
             <tr>
-                <th>S/N/th>
+                <th>S/N<th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Date</th>

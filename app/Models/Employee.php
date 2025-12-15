@@ -50,6 +50,12 @@ class Employee extends Model
     {
         return $this->hasMany(Contract::class, 'employee_id', 'employee_id');
     }
+    public function latestContract()
+{
+    return $this->hasOne(Contract::class, 'employee_id', 'employee_id')
+                ->latestOfMany('start_date');
+}
+
 
     public function attendances(): HasMany
     {

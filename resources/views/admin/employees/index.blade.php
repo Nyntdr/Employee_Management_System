@@ -3,10 +3,11 @@
 @section('content')
 <h1>Employees List</h1>
 <a href="{{ route('employees.create') }}">Add Employee</a> <br><br>
+<a href="{{ route('roles.index') }}">Roles</a>
 <table border="1">
     <thead>
         <tr>
-            <th>S/N</th>
+            <th>Role</th>
             <th>Name</th>
             <th>Gender</th>
             <th>Contact</th> 
@@ -22,7 +23,7 @@
     <tbody>
         @forelse($employees as $employee)
             <tr>
-                <td>{{ $loop->iteration }}</td>
+                <td>{{ $employee->user->role->role_name}}</td>
                 <td>{{ $employee->first_name.' '.$employee->last_name }}</td>
                 <td>{{ $employee->gender}}</td>
                 <td>{{ $employee->phone }}</td>
