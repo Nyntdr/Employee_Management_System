@@ -146,27 +146,6 @@
                                         <span class="text-danger small">{{ $message }}</span>
                                     @enderror
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="position" class="form-label">Job Title / Position</label>
-                                    <input type="text" name="position" id="position" class="form-control" value="{{ old('position') }}">
-                                    @error('position')
-                                        <span class="text-danger small">{{ $message }}</span>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="status" class="form-label">Employment Status <span class="text-danger">*</span></label>
-                                    <select name="status" id="status" class="form-select" required>
-                                        <option value="">-- Select Status --</option>
-                                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="on_leave" {{ old('status') == 'on_leave' ? 'selected' : '' }}>On Leave</option>
-                                        <option value="terminated" {{ old('status') == 'terminated' ? 'selected' : '' }}>Terminated</option>
-                                    </select>
-                                    @error('status')
-                                        <span class="text-danger small">{{ $message }}</span>
-                                    @enderror
-                                </div>
                             </fieldset>
 
                             <div class="d-flex justify-content-end gap-2">

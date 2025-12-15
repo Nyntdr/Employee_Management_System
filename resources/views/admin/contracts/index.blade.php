@@ -35,7 +35,7 @@
                 <td>{{ $contract->salary }}</td>
                 <td>{{ $contract->contract_status }}</td>
                 <td>
-                    <a href="#">Edit</a>
+                    <a href="{{ route('contracts.edit',$contract->contract_id) }}">Edit</a>
                     <br>
                     <form action="{{ route('contracts.destroy',$contract->contract_id )}}" method="POST" style="display:inline;">
                         @csrf

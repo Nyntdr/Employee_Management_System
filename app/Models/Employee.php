@@ -24,17 +24,14 @@ class Employee extends Model
         'secondary_phone',
         'emergency_contact',
         'department_id',
-        'position',
         'date_of_birth',
-        'date_of_joining',
-        'employment_status',
+        'date_of_joining'
     ];
     
     protected $casts = [
         'date_of_birth' => 'date',
         'date_of_joining' => 'date',
         'gender' => 'string',
-        'employment_status' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

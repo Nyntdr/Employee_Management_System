@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum AssetConditions: string
 {
+    case UNRETURNED = 'unreturned';
     case NEW = 'new';
     case GOOD = 'good';
     case FAIR = 'fair';

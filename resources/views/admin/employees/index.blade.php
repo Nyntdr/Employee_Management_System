@@ -20,22 +20,22 @@
         </tr>
     </thead>
     <tbody>
-        @forelse($employees as $e)
+        @forelse($employees as $employee)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $e->first_name.' '.$e->last_name }}</td>
-                <td>{{ $e->gender}}</td>
-                <td>{{ $e->phone }}</td>
-                <td>{{ $e->secondary_phone}}</td>
-                <td>{{ $e->emergency_contact}}</td>
-                <td>{{ $e->position }}</td>
-                <td>{{ $e->date_of_birth->format('F j,Y') }}</td>
-                <td>{{ $e->date_of_joining->format('F j,Y')}}</td>
-                <td>{{ $e->employment_status }}</td>
+                <td>{{ $employee->first_name.' '.$employee->last_name }}</td>
+                <td>{{ $employee->gender}}</td>
+                <td>{{ $employee->phone }}</td>
+                <td>{{ $employee->secondary_phone}}</td>
+                <td>{{ $employee->emergency_contact}}</td>
+                <td>{{ $employee->contracts()->latest()->first()->job_title ?? 'N/A' }}</td>
+                <td>{{ $employee->date_of_birth->format('F j,Y') }}</td>
+                <td>{{ $employee->date_of_joining->format('F j,Y')}}</td>
+                <td>{{ $employee->contracts()->latest()->first()->contract_status ?? 'N/A' }}</td>
                 <td>
-                    <a href="{{ route('employees.edit',$e->employee_id) }}">Edit</a>
+                    <a href="{{ route('employees.edit',$employee->employee_id) }}">Edit</a>
                     <br>
-                    <form action="{{ route('employees.destroy',$e->employee_id) }}" method="POST" style="display:inline;">
+                    <form action="{{ route('employees.destroy',$employee->employee_id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" onclick="return confirm('Delete this employee?')">Delete</button>

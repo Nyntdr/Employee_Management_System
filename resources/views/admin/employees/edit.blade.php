@@ -152,17 +152,6 @@
                                     <span class="text-danger small">{{ $message }}</span>
                                 @enderror
                             </div>
-
-                            <div class="mb-3">
-                                <label for="position" class="form-label">Position</label>
-                                <input type="text" name="position" id="position"
-                                    value="{{ old('position', $employee->position) }}"
-                                    class="form-control">
-                                @error('position')
-                                    <span class="text-danger small">{{ $message }}</span>
-                                @enderror
-                            </div>
-
                             <div class="mb-3">
                                 <label for="dob" class="form-label">Date of Birth</label>
                                 <input type="date" name="dob" id="dob"
@@ -182,20 +171,6 @@
                                     <span class="text-danger small">{{ $message }}</span>
                                 @enderror
                             </div>
-
-                            <div class="mb-3">
-                                <label for="status" class="form-label">Employment Status</label>
-                                <select name="status" id="status"
-                                    class="form-control">
-                                    <option value="active" {{ old('status', $employee->employment_status) == 'active' ? 'selected' : '' }}>Active</option>
-                                    <option value="inactive" {{ old('status', $employee->employment_status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                    <option value="terminated" {{ old('status', $employee->employment_status) == 'terminated' ? 'selected' : '' }}>Terminated</option>
-                                </select>
-                                @error('status')
-                                    <span class="text-danger small">{{ $message }}</span>
-                                @enderror
-                            </div>
-
                             <div class="mt-4">
                                 <button type="submit" class="btn btn-primary">Update Employee</button>
                                 <a href="{{ route('employees.index') }}" class="btn btn-secondary ms-2">Cancel</a>

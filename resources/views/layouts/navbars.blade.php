@@ -11,7 +11,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    {{-- @vite('resources/css/app.css') --}}
     <style>
         body {
             font-family: "Poppins", sans-serif;
@@ -57,6 +56,7 @@
             <a href="{{ route('notices.index') }}" class="d-block mb-2">Notices ✅</a>
             <a href="{{ route('assets.index') }}" class="d-block mb-2">Assets ✅</a>
             <a href="#" class="d-block mb-2">Salaries</a>
+            <a href="{{ route('leave-types.index') }}" class="d-block mb-2">Leaves ✅</a>
             <a href="#" class="d-block mb-2">Attendances</a>
             <a href="{{ route('events.index') }}" class="d-block mb-2">Events ✅</a>
         </nav>

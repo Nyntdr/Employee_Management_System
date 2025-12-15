@@ -1,12 +1,14 @@
 <?php
-use App\Http\Controllers\ContractController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AssetAssignmentController;
 
@@ -44,3 +46,7 @@ Route::resource('assets', AssetController::class)->middleware('auth');
 Route::resource('asset-assignments', AssetAssignmentController::class)->middleware( ['auth','role_verify']);
 //contracts
 Route::resource('contracts', ContractController::class)->middleware( ['auth','role_verify']);
+//leavetypes
+Route::resource('leave-types', LeaveTypeController::class)->middleware( ['auth','role_verify']);
+//leave
+Route::resource('leaves', LeaveController::class)->middleware( ['auth','role_verify']);

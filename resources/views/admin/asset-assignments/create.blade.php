@@ -55,6 +55,16 @@
         </div>
         
         <div class="form-group">
+            <label for="returned_date">Returned Date (Optional)</label>
+            <input type="date" name="returned_date" id="returned_date" 
+                   class="form-control" value="{{ old('returned_date') }}">
+            <small class="form-text text-muted">Leave empty if not returned yet</small>
+            @error('returned_date')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+        
+        <div class="form-group">
             <label for="status">Status *</label>
             <select name="status" id="status" class="form-control" required>
                 @foreach($statuses as $status)
@@ -81,6 +91,22 @@
                 @endforeach
             </select>
             @error('condition_at_assignment')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+        
+        <div class="form-group">
+            <label for="condition_at_return">Condition at Return (Optional)</label>
+            <select name="condition_at_return" id="condition_at_return" class="form-control">
+                <option value="">-- Select Condition if Returned --</option>
+                @foreach($conditions as $condition)
+                    <option value="{{ $condition->value }}" 
+                        {{ old('condition_at_return') == $condition->value ? 'selected' : '' }}>
+                        {{ ucfirst($condition->value) }}
+                    </option>
+                @endforeach
+            </select>
+            @error('condition_at_return')
                 <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
@@ -150,6 +176,14 @@
         background-color: #f8d7da;
         color: #721c24;
         border: 1px solid #f5c6cb;
+    }
+    .form-text {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+    }
+    .text-muted {
+        color: #6c757d !important;
     }
 </style>
 @endsection

@@ -1,4 +1,3 @@
-create
 @extends('layouts.navbars')
 @section('title', 'Create Contract')
 @section('content')
@@ -15,7 +14,7 @@ create
                 <option value="">Select Employee</option>
                 @foreach($employees as $employee)
                     <option value="{{ $employee->employee_id }}" {{ old('employee_id') == $employee->employee_id ? 'selected' : '' }}>
-                        {{ $employee->first_name }} {{ $employee->last_name }}
+                        {{ $employee->first_name }} {{ $employee->last_name }} 
                     </option>
                 @endforeach
             </select>
