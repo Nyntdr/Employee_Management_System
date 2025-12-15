@@ -6,7 +6,7 @@
 <table border="1">
     <thead>
         <tr>
-            <th>Department ID</th>
+            <th>S/N</th>
             <th>Department Name</th>
             <th>Manager Id</th>
             <th>Actions</th>
@@ -15,7 +15,7 @@
     <tbody>
         @forelse($departments as $d)
             <tr>
-                <td>{{ $d->department_id }}</td>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $d->name }}</td>
                 <td>{{ $d->manager_id}}</td>
                 <td>

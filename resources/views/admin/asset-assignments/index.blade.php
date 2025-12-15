@@ -6,7 +6,7 @@
 <table border="1">
     <thead>
         <tr>
-            <th>Assign ID</th>
+            <th>S/N</th>
             <th>Asset Name</th>
             <th>Assigned To</th>
             <th>Assigner</th> 
@@ -21,7 +21,7 @@
     <tbody>
         @forelse($asset_assigns as $asset_assign)
             <tr>
-                <td>{{ $asset_assign->assignment_id }}</td>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $asset_assign->asset->asset_code. ' ' .$asset_assign->asset->name }}</td>
                 <td>{{ $asset_assign->employee->first_name. ' '. $asset_assign->employee->last_name}}</td>
                 <td>{{ $asset_assign->assigner->name}}</td>

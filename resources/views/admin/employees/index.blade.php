@@ -6,7 +6,7 @@
 <table border="1">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>S/N</th>
             <th>Name</th>
             <th>Gender</th>
             <th>Contact</th> 
@@ -22,7 +22,7 @@
     <tbody>
         @forelse($employees as $e)
             <tr>
-                <td>{{ $e->employee_id }}</td>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $e->first_name.' '.$e->last_name }}</td>
                 <td>{{ $e->gender}}</td>
                 <td>{{ $e->phone }}</td>

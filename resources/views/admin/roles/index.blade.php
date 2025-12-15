@@ -6,7 +6,7 @@
 <table border="1">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>S/N</th>
             <th>Role Name</th>
             <th>Created At</th>
             <th>Actions</th>
@@ -15,7 +15,7 @@
     <tbody>
         @forelse($roles as $role)
             <tr>
-                <td>{{ $role->role_id }}</td>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $role->role_name }}</td>
                 <td>{{ $role->created_at->diffForHumans()}}</td>
                 <td>

@@ -106,7 +106,7 @@ create
                     <label for="salary">Salary *</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">Rs</span>
                         </div>
                         <input type="number" step="0.01" name="salary" id="salary" class="form-control" 
                                value="{{ old('salary') }}" required min="0">

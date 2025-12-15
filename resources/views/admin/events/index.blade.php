@@ -6,7 +6,7 @@
     <table border="1">
         <thead>
             <tr>
-                <th>Event ID</th>
+                <th>S/N/th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Date</th>
@@ -19,7 +19,7 @@
         <tbody>
             @forelse($events as $e)
                 <tr>
-                    <td>{{ $e->event_id }}</td>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $e->title }}</td>
                     <td>{{ $e->description }}</td>
                     <td>{{ $e->event_date->format('M d,Y') }}</td>

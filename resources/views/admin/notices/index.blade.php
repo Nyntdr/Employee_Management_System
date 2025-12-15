@@ -6,7 +6,7 @@
 <table border="1">
     <thead>
         <tr>
-            <th>Nootice ID</th>
+            <th>S/N</th>
             <th>Title</th>
             <th>Content</th>
             <th>Poster</th>
@@ -17,7 +17,7 @@
     <tbody>
         @forelse($notices as $notice)
             <tr>
-                <td>{{ $notice->notice_id }}</td>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $notice->title }}</td>
                 <td>{{ $notice->content }}</td>
                 <td>{{ $notice->poster->name }}</td>

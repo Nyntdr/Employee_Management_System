@@ -7,7 +7,7 @@
 <table border="1" style="text-align: center;">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>S/N</th>
             <th>Asset Code</th>
             <th>Asset Name</th>
             <th>Type</th> 
@@ -25,7 +25,7 @@
     <tbody>
         @forelse($assets as $asset)
             <tr>
-                <td>{{ $asset->asset_id }}</td>
+                <td>{{ $loop->iteration }}</td>
                 <td>{{ $asset->asset_code }}</td>
                 <td>{{ $asset->name }}</td>
                 <td>{{ ucfirst($asset->type->value) }}</td>
