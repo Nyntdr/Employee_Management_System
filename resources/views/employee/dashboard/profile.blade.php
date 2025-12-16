@@ -1,6 +1,6 @@
-@extends('layouts.navbars')
+@extends('layouts.employee_navbar')
 
-@section('title', 'Profile')
+@section('title', 'My Profile')
 
 @section('content')
     @php
@@ -17,7 +17,8 @@
             @csrf
             <input type="file" id="fileInput" name="image" accept="image/*">
             <br><br>
-            <img id="imagePreview" alt="Preview">
+            <img id="imagePreview" alt="Preview"  width="200" height="200"
+            style="border:2px none black; border-radius: 50%;">
             <button type="submit">Upload Image</button>
         </form>
         <p>Username: {{ $u->name }}</p>

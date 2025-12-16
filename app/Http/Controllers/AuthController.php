@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RegisterRequest;
-use App\Models\Department;
-use App\Models\Employee;
 use App\Models\User;
+use App\Models\Asset;
+use App\Models\Event;
+use App\Models\Notice;
+use App\Models\Employee;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
@@ -25,13 +28,23 @@ class AuthController extends Controller
     {
         return view('admin.dashboards.profile');
     }
+        public function showEmployee()
+    {
+        return view('employee.dashboard.profile');
+    }
     public function dashboard()
     {
         $totalUsers = User::count();
         $totalDepartments = Department::count();
         $totalEmployees = Employee::count();
-
-        return view('admin.dashboards.admin_dashboard',compact('totalUsers','totalDepartments','totalEmployees'));
+        $totalNotices = Notice::count();
+        $totalAssets = Asset::count();
+        $totalEvents = Event::count();
+        return view('admin.dashboards.admin_dashboard',compact('totalUsers','totalDepartments','totalEmployees','totalEvents','totalNotices','totalAssets'));
+    }
+    public function employeeDashboard()
+    {
+        return view('employee.dashboard.dashboard');
     }
         public function login(LoginRequest $request)
     {
@@ -40,7 +53,13 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             Auth::user()->update(['last_login' => now()]);
+            $adminRoles = [1, 2];
+
+            if (in_array(Auth::user()->role_id, $adminRoles)) {
             return redirect()->route('dashboard');
+            } else {
+            return redirect()->route('employee.dashboard');
+            }
         }
 
         return back()->withErrors([

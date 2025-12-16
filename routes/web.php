@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\EmployeeDashboardController;
 use App\Http\Controllers\ImageUploadController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -22,10 +23,15 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/login', [AuthController::class, 'login'])->name('login.store');
 Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-//admin profile
+
+//profile of admin and employees both 
 Route::get('/admin-profile', [AuthController::class, 'show'])->name('admin.profile');
+Route::get('/employee-profile', [AuthController::class, 'showEmployee'])->name('employee.profile');
+
 //dashboard
 Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+Route::get('/employee-dashboard', [AuthController::class, 'employeeDashboard'])->name('employee.dashboard')->middleware('auth');
+
 // Route::resource('roles', RoleController::class)
 //role
 Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
@@ -53,3 +59,9 @@ Route::resource('leave-types', LeaveTypeController::class)->middleware( ['auth',
 Route::resource('leaves', LeaveController::class)->middleware( ['auth','role_verify']);
 //iamge uploading
 Route::post('/image-upload',[ImageUploadController::class,'upload'])->name('image.upload');
+
+//employee dashboard
+Route::get('/employee-asset',[EmployeeDashboardController::class,'assetIndex'])->name('employee.assets.index');
+Route::get('/employee-event',[EmployeeDashboardController::class,'eventIndex'])->name('employee.events.index');
+Route::get('/employee-notice',[EmployeeDashboardController::class,'noticeIndex'])->name('employee.notices.index');
+Route::get('/employee-leaves',[EmployeeDashboardController::class,'leaveIndex'])->name('employee.leaves.index');

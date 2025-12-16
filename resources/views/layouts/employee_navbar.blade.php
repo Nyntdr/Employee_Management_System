@@ -17,7 +17,7 @@
         <h1 class="navbar-brand h4 m-0">N:Company EMS</h1>
         
         <div class="d-flex align-items-center gap-3">>
-            <a href="{{ route('admin.profile') }}" class="nav-link" title="Profile">
+            <a href="{{ route('employee.profile') }}" class="nav-link" title="Profile">
                 <img src="{{ asset('images/icon.png') }}" class="navbar-icon" style="width: 24px; height: 24px;">
             </a>
             <a href="#" class="nav-link position-relative" title="Notifications">
@@ -35,16 +35,13 @@
 
     <div class="d-flex">
         <nav class="admin-sidebar">
-            <a href="{{ route('dashboard') }}" class="d-block">Dashboard</a>
-            <a href="{{ route('employees.index') }}" class="d-block">Employees</a>
-            <a href="{{ route('contracts.index') }}" class="d-block">Contracts</a>
-            <a href="{{ route('departments.index') }}" class="d-block">Departments</a>
-            <a href="{{ route('notices.index') }}" class="d-block">Notices</a>
-            <a href="{{ route('assets.index') }}" class="d-block">Assets</a>
-            <a href="#" class="d-block">Salaries</a>
-            <a href="{{ route('leave-types.index') }}" class="d-block">Leaves</a>
-            <a href="#" class="d-block">Attendances</a>
-            <a href="{{ route('events.index') }}" class="d-block">Events</a>
+            <a href="{{ route('employee.dashboard') }}" class="d-block">Dashboard</a>
+            <a href="{{ route('employee.assets.index') }}" class="d-block">My Assets</a>
+            <a href="#" class="d-block">My Attendances</a>
+            <a href="#" class="d-block">My Salaries</a>
+            <a href="{{ route('employee.leaves.index') }}" class="d-block">My Leaves</a>
+            <a href="{{ route('employee.events.index') }}" class="d-block">Events</a>
+            <a href="{{ route('employee.notices.index') }}" class="d-block">Notices</a>
         </nav>
 
         <main class="admin-main">
