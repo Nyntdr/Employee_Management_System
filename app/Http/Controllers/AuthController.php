@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Asset;
 use App\Models\Event;
+use App\Models\Leave;
 use App\Models\Notice;
 use App\Models\Employee;
 use App\Models\Department;
+// use Illuminate\Support\Facades\Request;
 use Illuminate\Http\Request;
+use App\Models\AssetAssignment;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -44,7 +47,11 @@ class AuthController extends Controller
     }
     public function employeeDashboard()
     {
-        return view('employee.dashboard.dashboard');
+        $ip = Request::ip();
+
+        $totalAssets = AssetAssignment::where('employee_id',Auth::user()->employee->employee_id)->count();
+        $totalLeaves = Leave::where('employee_id',Auth::user()->employee->employee_id)->count();
+        return view('employee.dashboard.dashboard',compact('totalAssets','totalLeaves','ip'));
     }
         public function login(LoginRequest $request)
     {

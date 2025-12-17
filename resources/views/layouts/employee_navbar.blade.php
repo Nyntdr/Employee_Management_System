@@ -14,19 +14,23 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light admin-navbar">
     <div class="container-fluid">
-        <h1 class="navbar-brand h4 m-0">N:Company EMS</h1>
+        <h1 class="navbar-brand h4 m-0">N:Company</h1>
         
-        <div class="d-flex align-items-center gap-3">>
+        <div class="d-flex align-items-center gap-3">
             <a href="{{ route('employee.profile') }}" class="nav-link" title="Profile">
-                <img src="{{ asset('images/icon.png') }}" class="navbar-icon" style="width: 24px; height: 24px;">
+                @if(!Auth::user()->profile_picture)
+        <img src="{{ asset('images/icon.jpg')}}" class="navbar-icon" style="width: 32px; height: 32px; border-radius: 50%;">   
+                @else
+                <img src="{{ asset('storage/'.Auth::user()->profile_picture) }}" class="navbar-icon" style="width: 32px; height: 32px; border-radius: 50%;">
+                @endif
             </a>
             <a href="#" class="nav-link position-relative" title="Notifications">
-                <img src="{{ asset('images/notification.png') }}"class="navbar-icon" style="width: 24px; height: 24px;">
+                <img src="{{ asset('images/notification.png') }}"class="navbar-icon" style="width: 32px; height: 32px;">
             </a>
             <form action="{{ route('logout') }}" method="post" class="m-0 d-inline">
                 @csrf
                 <button type="submit" class="btn btn-link p-0 border-0" title="Logout" style="background: none;">
-                    <img src="{{ asset('images/logout.png') }}"  class="navbar-icon" style="width: 24px; height: 24px;">
+                    <img src="{{ asset('images/logout.png') }}"  class="navbar-icon" style="width: 32px; height: 32px;">
                 </button>
             </form>
         </div>
@@ -37,7 +41,7 @@
         <nav class="admin-sidebar">
             <a href="{{ route('employee.dashboard') }}" class="d-block">Dashboard</a>
             <a href="{{ route('employee.assets.index') }}" class="d-block">My Assets</a>
-            <a href="#" class="d-block">My Attendances</a>
+            <a href="{{ route('employee.attendances.index') }}" class="d-block">My Attendances</a>
             <a href="#" class="d-block">My Salaries</a>
             <a href="{{ route('employee.leaves.index') }}" class="d-block">My Leaves</a>
             <a href="{{ route('employee.events.index') }}" class="d-block">Events</a>

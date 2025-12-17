@@ -10,7 +10,7 @@ class DepartmentController extends Controller
 {
     public function index()
     {
-        $departments=Department::all();
+        $departments=Department::paginate(5);
         return view('admin.departments.index',compact('departments'));
     }
     public function create()
@@ -34,7 +34,7 @@ class DepartmentController extends Controller
         $validated=$request->validated();
         $department->update($validated);
 
-        return redirect()->route('admin.departments.index');
+        return redirect()->route('departments.index');
     }
     public function destroy(string $id)
     {

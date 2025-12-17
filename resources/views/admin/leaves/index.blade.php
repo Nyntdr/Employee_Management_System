@@ -13,6 +13,7 @@
             <th>Reason</th>
             <th>Approver</th>
             <th>Status</th>
+            <th>Total Days</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -26,6 +27,7 @@
                 <td>{{ $leave->reason }}</td>
                 <td>{{ $leave->approver->name }}</td>
                 <td>{{ ucwords(str_replace('_', ' ', $leave->status->value)) }}</td>
+                <td>{{ $leave->start_date->diffInDays($leave->end_date) + 1 }} </td>
                 <td>
                     <a href="{{ route('leaves.edit',$leave->leave_id) }}">Edit</a>
                     <br>

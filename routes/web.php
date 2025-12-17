@@ -1,6 +1,4 @@
 <?php
-use App\Http\Controllers\EmployeeDashboardController;
-use App\Http\Controllers\ImageUploadController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
@@ -11,8 +9,11 @@ use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeaveTypeController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\AssetAssignmentController;
+use App\Http\Controllers\EmployeeDashboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -53,15 +54,19 @@ Route::resource('assets', AssetController::class)->middleware('auth');
 Route::resource('asset-assignments', AssetAssignmentController::class)->middleware( ['auth','role_verify']);
 //contracts
 Route::resource('contracts', ContractController::class)->middleware( ['auth','role_verify']);
+//attendance
+Route::resource('attendances', AttendanceController::class)->middleware( ['auth','role_verify']);
 //leavetypes
 Route::resource('leave-types', LeaveTypeController::class)->middleware( ['auth','role_verify']);
 //leave
 Route::resource('leaves', LeaveController::class)->middleware( ['auth','role_verify']);
 //iamge uploading
 Route::post('/image-upload',[ImageUploadController::class,'upload'])->name('image.upload');
+Route::post('/image-delete',[ImageUploadController::class,'destroy'])->name('image.destroy');
 
 //employee dashboard
 Route::get('/employee-asset',[EmployeeDashboardController::class,'assetIndex'])->name('employee.assets.index');
 Route::get('/employee-event',[EmployeeDashboardController::class,'eventIndex'])->name('employee.events.index');
 Route::get('/employee-notice',[EmployeeDashboardController::class,'noticeIndex'])->name('employee.notices.index');
 Route::get('/employee-leaves',[EmployeeDashboardController::class,'leaveIndex'])->name('employee.leaves.index');
+Route::get('/employee-attendances',[EmployeeDashboardController::class,'attendanceIndex'])->name('employee.attendances.index');

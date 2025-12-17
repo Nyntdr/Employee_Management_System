@@ -14,19 +14,19 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light admin-navbar">
     <div class="container-fluid">
-        <h1 class="navbar-brand h4 m-0">N:Company EMS</h1>
+        <h1 class="navbar-brand h4 m-0">N:Company Admin</h1>
         
-        <div class="d-flex align-items-center gap-3">>
+        <div class="d-flex align-items-center gap-3">
             <a href="{{ route('admin.profile') }}" class="nav-link" title="Profile">
-                <img src="{{ asset('images/icon.png') }}" class="navbar-icon" style="width: 24px; height: 24px;">
+                <img src="{{ asset('storage/'.Auth::user()->profile_picture) }}" class="navbar-icon" style="width: 32px; height: 32px; border-radius: 50%;">
             </a>
             <a href="#" class="nav-link position-relative" title="Notifications">
-                <img src="{{ asset('images/notification.png') }}"class="navbar-icon" style="width: 24px; height: 24px;">
+                <img src="{{ asset('images/notification.png') }}"class="navbar-icon" style="width: 32px; height: 32px;">
             </a>
             <form action="{{ route('logout') }}" method="post" class="m-0 d-inline">
                 @csrf
                 <button type="submit" class="btn btn-link p-0 border-0" title="Logout" style="background: none;">
-                    <img src="{{ asset('images/logout.png') }}"  class="navbar-icon" style="width: 24px; height: 24px;">
+                    <img src="{{ asset('images/logout.png') }}"  class="navbar-icon" style="width: 32px; height: 32px;">
                 </button>
             </form>
         </div>
@@ -43,7 +43,7 @@
             <a href="{{ route('assets.index') }}" class="d-block">Assets</a>
             <a href="#" class="d-block">Salaries</a>
             <a href="{{ route('leave-types.index') }}" class="d-block">Leaves</a>
-            <a href="#" class="d-block">Attendances</a>
+            <a href="{{ route('attendances.index') }}" class="d-block">Attendances</a>
             <a href="{{ route('events.index') }}" class="d-block">Events</a>
         </nav>
 

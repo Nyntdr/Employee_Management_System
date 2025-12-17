@@ -6,15 +6,17 @@ use App\Models\Asset;
 use App\Models\Event;
 use App\Models\Leave;
 use App\Models\Notice;
+use App\Models\Attendance;
 use Illuminate\Http\Request;
+use App\Models\AssetAssignment;
 use Illuminate\Support\Facades\Auth;
 
 class EmployeeDashboardController extends Controller
 {
     public function assetIndex()
     {
-        $assets = Asset::where('asset_id', Auth::id())->get();
-        return view('employee.assets.index', compact('assets'));
+        $asset_assigns = AssetAssignment::where('employee_id',Auth::user()->employee->employee_id)->get();
+        return view('employee.assets.index', compact('asset_assigns'));
     }
         public function eventIndex()
     {
@@ -26,10 +28,14 @@ class EmployeeDashboardController extends Controller
         $notices=Notice::all();
         return view('employee.notices.index', compact('notices'));
     }
-            public function leaveIndex()
+        public function leaveIndex()
     {
-        $leaves=Leave::all();
+        $leaves=Leave::where('employee_id',Auth::user()->employee->employee_id)->get();
         return view('employee.leaves.index', compact('leaves'));
     }
-    
+        public function attendanceIndex()
+    {
+        $attendances=Attendance::where('employee_id',Auth::user()->employee->employee_id)->get();
+        return view('employee.attendances.index', compact('attendances'));
+    }   
 }
