@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PayStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class Payroll extends Model
@@ -19,6 +20,10 @@ class Payroll extends Model
         'payment_status',
         'paid_date',
         'generated_by'
+    ];
+    protected $casts = [
+        'payment_status' => PayStatus::class,
+        'paid_date' => 'date',
     ];
 
     public function employee()

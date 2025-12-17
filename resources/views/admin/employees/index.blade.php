@@ -24,7 +24,7 @@
                                         <img src="{{ asset('images/icon.jpg') }}" class="rounded-circle border" width="60" height="60" alt="{{ $employee->first_name }}">
                                     @endif
                                 </div>
-                                <div class="flex-grow-1">
+                                <div class="flex">
                                     <h5 class="card-title mb-1">{{ $employee->first_name.' '.$employee->last_name }}</h5>
                                     <span class="badge bg-info">{{ $employee->user->role->role_name }}</span>
                                     <span class="badge bg-secondary ms-1">{{ $employee->gender }}</span>

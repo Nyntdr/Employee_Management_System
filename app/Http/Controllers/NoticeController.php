@@ -21,11 +21,8 @@ class NoticeController extends Controller
 
     public function store(NoticeRequest $request)
     {
-        Notice::create(array_merge(
-            $request->validated(),
-            ['posted_by' => Auth::id()]
-        ));
-
+        // dd($request->all(),$request->ip());
+        Notice::create(array_merge($request->validated(),['posted_by' => Auth::id()]));
         return redirect()->route('notices.index')->with('success', 'Notice published successfully!');
     }
 

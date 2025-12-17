@@ -1,4 +1,6 @@
 <?php
+use App\Http\Controllers\ClockInClockOutController;
+use App\Http\Controllers\PayrollController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
@@ -56,6 +58,11 @@ Route::resource('asset-assignments', AssetAssignmentController::class)->middlewa
 Route::resource('contracts', ContractController::class)->middleware( ['auth','role_verify']);
 //attendance
 Route::resource('attendances', AttendanceController::class)->middleware( ['auth','role_verify']);
+//for clocking and clocking out
+Route::post('/attendance/clock-in', [ClockInClockOutController::class, 'clockIn'])->name('clockin');
+Route::post('/attendance/clock-out', [ClockInClockOutController::class, 'clockOut'])->name('clockout');
+//salary
+Route::resource('payrolls', PayrollController::class)->middleware( ['auth','role_verify']);
 //leavetypes
 Route::resource('leave-types', LeaveTypeController::class)->middleware( ['auth','role_verify']);
 //leave

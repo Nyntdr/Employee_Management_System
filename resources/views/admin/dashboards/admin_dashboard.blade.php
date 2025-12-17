@@ -8,7 +8,30 @@
         <div class="col-12">
             <h1 class="h3 mb-2">Admin Dashbaord</h1>
             <p class="text-muted">Welcome back, <strong>{{ Auth::user()->name }}</strong>!</p>
-            <p>Here's a quick stats on some employee related stuff.</p>
+            <p>Your clock in clock out.</p>
+             @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
+                <div style="display: flex;">
+                    <form action="{{ route('clockin') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-success">Clock in</button>
+                    </form>
+
+                    <form action="{{ route('clockout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-warning">Clock Out</button>
+                    </form>
+                </div>
+                <p>Here's a quick stats on some employee related stuff.</p>
         </div>
     </div>
 

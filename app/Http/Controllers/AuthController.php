@@ -16,6 +16,7 @@ use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;
+use Symfony\Component\HttpFoundation\IpUtils;
 
 class AuthController extends Controller
 {
@@ -45,14 +46,20 @@ class AuthController extends Controller
         $totalEvents = Event::count();
         return view('admin.dashboards.admin_dashboard',compact('totalUsers','totalDepartments','totalEmployees','totalEvents','totalNotices','totalAssets'));
     }
-    public function employeeDashboard()
+    private $officeIp = ['110.34.27.186','127.0.0.1'];
+    public function employeeDashboard(Request $request)
     {
-        $ip = Request::ip();
-
-        $totalAssets = AssetAssignment::where('employee_id',Auth::user()->employee->employee_id)->count();
-        $totalLeaves = Leave::where('employee_id',Auth::user()->employee->employee_id)->count();
-        return view('employee.dashboard.dashboard',compact('totalAssets','totalLeaves','ip'));
-    }
+    $ip = $request->getClientIp();
+//     if (app()->environment('local')) {
+//     $ip = '110.34.27.186'; 
+// }
+    $isAllowed = IpUtils::checkIp($ip, $this->officeIp);
+    
+    $totalAssets = AssetAssignment::where('employee_id', Auth::user()->employee->employee_id)->count();
+    $totalLeaves = Leave::where('employee_id', Auth::user()->employee->employee_id)->count();
+    
+    return view('employee.dashboard.dashboard', compact('totalAssets', 'totalLeaves', 'ip', 'isAllowed'));
+}
         public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
