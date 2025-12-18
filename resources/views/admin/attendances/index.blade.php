@@ -9,9 +9,9 @@
             <th>S/N</th>
             <th>Employee Name</th>
             <th>Date</th>
-            <th>Clock In</th> 
-            <th>Clock Out</th>  
-            <th>Total Hours</th> 
+            <th>Clock In</th>
+            <th>Clock Out</th>
+            <th>Total Hours</th>
             <th>Status</th>
             <th>Actions</th>
         </tr>
@@ -24,9 +24,9 @@
                 <td>{{ $attendance->date->format('Y-m-d') }}</td>
                 <td>{{ $attendance->clock_in ? $attendance->clock_in->format('H:i') : 'N/A' }}</td>
                 <td>{{ $attendance->clock_out ? $attendance->clock_out->format('H:i') : 'N/A' }}</td>
-                <td>{{ $attendance->total_hours ?? 'N/A' }}</td>
-                <td>{{ ucwords(str_replace('_', ' ', $attendance->status->value)) }}</td> 
-                
+                <td>{{ $attendance->total_hours->format('H:i') ?? 'N/A' }}</td>
+                <td>{{ ucwords(str_replace('_', ' ', $attendance->status->value)) }}</td>
+
                 <td>
                     <a href="{{ route('attendances.edit', $attendance->attendance_id) }}">Edit</a>
                     <br>

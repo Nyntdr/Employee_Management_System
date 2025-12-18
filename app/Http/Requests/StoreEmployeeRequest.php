@@ -8,7 +8,7 @@ class StoreEmployeeRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; 
+        return true;
     }
 
     public function rules(): array
@@ -26,10 +26,8 @@ class StoreEmployeeRequest extends FormRequest
     'secondary_phone'=> 'nullable|string|max:20',
     'emergency_contact' =>'string|max:150',
     'department_id'  => 'required|exists:departments,department_id',
-    'position'       => 'nullable|string|max:100',
     'dob'            => 'nullable|date',
-    'doj'            => 'required|date',                   
-    'status'         => 'required|in:active,terminated,on_leave',
+    'doj'            => 'required|date',
 ];
     }
 }

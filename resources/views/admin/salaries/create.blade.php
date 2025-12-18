@@ -13,7 +13,7 @@
             <select name="employee_id" id="employee_id" class="form-control" required>
                 <option value="">-- Select Employee --</option>
                 @foreach($employees as $employee)
-                    <option value="{{ $employee->id }}">{{ $employee->first_name }} {{ $employee->last_name }}</option>
+                    <option value="{{ $employee->employee_id }}">{{ $employee->first_name }} {{ $employee->last_name }}</option>
                 @endforeach
             </select>
             @error('employee_id')
@@ -63,7 +63,7 @@
 
         <div class="form-group">
             <label for="status">Status</label>
-                <select name="status" id="status" class="form-control" required>
+                <select name="payment_status" id="status" class="form-control" required>
                 @foreach($statuses as $status)
                     <option value="{{ $status->value }}" 
                         {{ old('status') == $status->value || $status->value == 'active' ? 'selected' : '' }}>
@@ -71,7 +71,7 @@
                     </option>
                 @endforeach
             </select>
-            @error('status')
+            @error('payment_status')
                 <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>

@@ -21,11 +21,19 @@ class Attendance extends Model
   protected $casts = [
         'status' => AttendanceStatus::class,
         'date'=>'date',
+        'total_hours'=>'datetime:H:i',
         'clock_in'=> 'datetime:H:i',
         'clock_out'=>'datetime:H:i',
     ];
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
+    }
+
+    public function calculateTotalHours(){
+        if ($this->clock_in && $this->clock_out) {
+            return $this->clock_out->diff($this->clock_in)->format('%H:%I:%S');
+        }
+        return null;
     }
 }

@@ -34,7 +34,11 @@
                 <p>Here's a quick stats on some employee related stuff.</p>
         </div>
     </div>
-
+    <form action="{{ route('users.import') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <input type="file" name="file" class="form-control" required>
+        <button type="submit" class="btn btn-primary">Import File</button>
+    </form>
     <div class="row">
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm">
@@ -44,7 +48,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
@@ -53,7 +57,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
@@ -110,7 +114,7 @@
     .card {
         border-radius: 24px;
     }
-    
+
     .card-body {
         padding: 1.5rem;
     }

@@ -14,7 +14,7 @@ class UpdateEmployeeRequest extends FormRequest
 
     public function rules(): array
     {
-        $employee = $this->route('employee'); 
+        $employee = $this->route('employee');
         $userId = $employee?->user?->id;
 
         return [
@@ -26,19 +26,17 @@ class UpdateEmployeeRequest extends FormRequest
                 'max:255',
                 Rule::unique('users', 'email')->ignore($userId),
             ],
-            'password' => 'nullable|min:6|confirmed', 
+            'password' => 'nullable|min:6|confirmed',
 
             'first_name'      => 'required|string|max:100',
             'last_name'       => 'required|string|max:100',
-            'gender'          => 'required|in:male,female', 
-            'phone'           => 'required|string|max:20', 
+            'gender'          => 'required|in:male,female',
+            'phone'           => 'required|string|max:20',
             'secondary_phone' => 'nullable|string|max:20',
-            'emergency_contact' => 'nullable|string|max:150', 
-            'department_id'   => 'required|exists:departments,department_id', 
-            'position'        => 'nullable|string|max:100',
+            'emergency_contact' => 'nullable|string|max:150',
+            'department_id'   => 'required|exists:departments,department_id',
             'dob'             => 'nullable|date|before:today',
             'doj'             => 'required|date',
-            'status'          => 'required|in:active,terminated,on_leave',
         ];
     }
 

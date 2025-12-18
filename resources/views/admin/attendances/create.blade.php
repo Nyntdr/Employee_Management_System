@@ -6,7 +6,7 @@
     <br><br>
     <form action="{{ route('attendances.store') }}" method="POST">
         @csrf
-        
+
         <label for="employee_id">Employee *</label><br>
         <select name="employee_id" id="employee_id" required>
             <option value="">Select Employee</option>
@@ -42,17 +42,10 @@
         @enderror
         <br><br>
 
-        <label for="total_hours">Total Hours</label><br>
-        <input type="number" name="total_hours" id="total_hours" step="0.01" value="{{ old('total_hours') }}">
-        @error('total_hours')
-            <br><span style="color: red;">{{ $message }}</span>
-        @enderror
-        <br><br>
-
         <label for="status">Status *</label><br>
         <select name="status" id="status" required>
             @foreach($statuses as $status)
-                <option value="{{ $status->value }}" 
+                <option value="{{ $status->value }}"
                     {{ old('status', 'present') == $status->value ? 'selected' : '' }}>
                     {{ ucfirst($status->value) }}
                 </option>

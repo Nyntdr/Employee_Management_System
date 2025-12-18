@@ -47,10 +47,8 @@ class EmployeeController extends Controller
             'secondary_phone'   => $validated['secondary_phone'] ?? null,
             'emergency_contact' => $validated['emergency_contact'] ?? null,
             'department_id'     => $validated['department_id'],
-            'position'          => $validated['position'],
             'date_of_birth'     => $validated['dob'],
             'date_of_joining'   => $validated['doj'],
-            'employment_status' => $validated['status'],
         ]);
 
         return redirect()
@@ -66,7 +64,7 @@ class EmployeeController extends Controller
         return view('admin.employees.edit', compact('employee', 'roles', 'deps'));
     }
 
-    public function update(UpdateEmployeeRequest $request, Employee $employee) 
+    public function update(UpdateEmployeeRequest $request, Employee $employee)
     {
         $validated = $request->validated();
         $user = $employee->user;
@@ -87,10 +85,8 @@ class EmployeeController extends Controller
             'secondary_phone'   => $validated['secondary_phone'] ?? null,
             'emergency_contact' => $validated['emergency_contact'] ?? null,
             'department_id'     => $validated['department_id'],
-            'position'          => $validated['position'],
             'date_of_birth'     => $validated['dob'],
             'date_of_joining'   => $validated['doj'],
-            'employment_status' => $validated['status'],
         ]);
 
         return redirect()

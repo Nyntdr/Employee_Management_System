@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class Contract extends Model
 {
     protected $primaryKey = 'contract_id';
-    protected $fillable=[
+    protected $fillable = [
         'employee_id',
         'contract_type',
         'job_title',
@@ -27,10 +27,11 @@ class Contract extends Model
     {
         return $this->belongsTo(Employee::class, 'employee_id', 'employee_id');
     }
-        protected $casts = [
-            'start_date'=>'date',
-            'end_date'=>'date',
-       'contract_type' => ContractType::class,
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'contract_type' => ContractType::class,
         'contract_status' => ContractStatus::class,
         'job_title' => JobTitle::class,
     ];

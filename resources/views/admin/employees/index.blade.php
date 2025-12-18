@@ -27,7 +27,7 @@
                                 <div class="flex">
                                     <h5 class="card-title mb-1">{{ $employee->first_name.' '.$employee->last_name }}</h5>
                                     <span class="badge bg-info">{{ $employee->user->role->role_name }}</span>
-                                    <span class="badge bg-secondary ms-1">{{ $employee->gender }}</span>
+                                    <span class="badge bg-secondary ms-1">{{ ucwords($employee->gender) }}</span>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -38,8 +38,8 @@
                             </div>
                             <div class="mb-3">
                                 <h6 class="text-muted mb-2">Employment Details</h6>
-                                <p class="mb-1"><strong>Position:</strong> {{ $employee->contracts()->latest()->first()->job_title ?? 'N/A' }}</p>
-                                <p class="mb-1"><strong>Status:</strong> {{ $employee->contracts()->latest()->first()->contract_status ?? 'N/A' }}</p>
+                                <p class="mb-1"><strong>Position:</strong> {{ ucfirst($employee->contracts()->latest()->first()?->job_title->value) ?? 'N/A' }}</p>
+                                <p class="mb-1"><strong>Status:</strong> {{ $employee->contracts()->latest()->first()?->contract_status ?? 'N/A' }}</p>
                             </div>
                             <div class="mb-3">
                                 <h6 class="text-muted mb-2">Personal Details</h6>

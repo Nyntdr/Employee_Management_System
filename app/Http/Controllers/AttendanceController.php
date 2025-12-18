@@ -7,21 +7,16 @@ use App\Models\Employee;
 use App\Enums\AttendanceStatus;
 use App\Http\Requests\AttendanceRequest;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $attendances = Attendance::with('employee')->latest()->get();
         return view('admin.attendances.index', compact('attendances'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $employees = Employee::all();
@@ -29,18 +24,21 @@ class AttendanceController extends Controller
         return view('admin.attendances.create', compact('employees', 'statuses'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(AttendanceRequest $request)
     {
-        Attendance::create($request->validated());
+        $data = $request->validated();
+
+        // Calculate total hours before creating
+        if (!empty($data['clock_in']) && !empty($data['clock_out'])) {
+            $attendance = new Attendance($data);
+            $data['total_hours'] = $attendance->calculateTotalHours();
+        }
+
+        Attendance::create($data);
+
         return redirect()->route('attendances.index')->with('success', 'Attendance created successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Attendance $attendance)
     {
         $employees = Employee::all();
@@ -48,18 +46,23 @@ class AttendanceController extends Controller
         return view('admin.attendances.edit', compact('attendance', 'employees', 'statuses'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(AttendanceRequest $request, Attendance $attendance)
     {
-        $attendance->update($request->validated());
+        $data = $request->validated();
+
+        // Calculate total hours before updating
+        if (!empty($data['clock_in']) && !empty($data['clock_out'])) {
+            // Temporarily set attributes to calculate
+            $attendance->fill($data);
+            $data['total_hours'] = $attendance->calculateTotalHours();
+        } else {
+            $data['total_hours'] = null;
+        }
+        $attendance->update($data);
+
         return redirect()->route('attendances.index')->with('success', 'Attendance updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Attendance $attendance)
     {
         $attendance->delete();
