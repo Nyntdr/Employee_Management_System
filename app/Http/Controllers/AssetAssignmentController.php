@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AssetAssignmentsExport;
 use App\Models\Asset;
 use App\Models\Employee;
 use App\Models\AssetAssignment;
@@ -9,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\AssetAssignmentRequest;
 use App\Enums\AssignmentStatus;
 use App\Enums\AssetConditions;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AssetAssignmentController extends Controller
 {
@@ -31,6 +33,10 @@ class AssetAssignmentController extends Controller
             'conditions'
         ));
     }
+    public function export()
+    {
+        return Excel::download(new AssetAssignmentsExport(), 'asset_assigns_export.xlsx');
+    }
 
     public function store(AssetAssignmentRequest $request): RedirectResponse
     {
@@ -46,7 +52,7 @@ class AssetAssignmentController extends Controller
     public function edit(string $id)
     {
         $asset_assign = AssetAssignment::findOrFail($id);
-        $assets = Asset::all(); 
+        $assets = Asset::all();
         $employees = Employee::all();
         $statuses = AssignmentStatus::cases();
         $conditions = AssetConditions::cases();

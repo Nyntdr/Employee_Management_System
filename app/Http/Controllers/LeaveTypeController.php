@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LeaveTypesExport;
 use App\Models\LeaveType;
 use App\Http\Requests\LeaveTypeRequest;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LeaveTypeController extends Controller
 {
@@ -15,9 +17,12 @@ class LeaveTypeController extends Controller
 
     public function create()
     {
-        return view('admin.leave-types.create'); 
+        return view('admin.leave-types.create');
     }
-
+    public function export()
+    {
+        return Excel::download(new LeaveTypesExport(), 'leave_types_export.xlsx');
+    }
     public function store(LeaveTypeRequest $request)
     {
         LeaveType::create($request->validated(),);

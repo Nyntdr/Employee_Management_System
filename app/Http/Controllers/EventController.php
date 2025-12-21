@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\EventsExport;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Http\Requests\EventRequest;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EventController extends Controller
 {
@@ -16,7 +18,11 @@ class EventController extends Controller
     }
     public function create()
     {
-        return view('admin.events.create'); 
+        return view('admin.events.create');
+    }
+    public function export()
+    {
+        return Excel::download(new EventsExport(), 'event_export.xlsx');
     }
    public function store(EventRequest $request)
 {
@@ -42,6 +48,6 @@ public function update(EventRequest $request, string $id)
     {
         $event = Event::findOrFail($id);
         $event->delete();
-        return redirect()->route('events.index');   
+        return redirect()->route('events.index');
     }
 }

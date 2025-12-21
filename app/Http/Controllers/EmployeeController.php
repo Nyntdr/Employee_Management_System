@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\EmployeesExport;
 use App\Models\Contract;
 use App\Models\Role;
 use App\Models\User;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class EmployeeController extends Controller
 {
@@ -26,6 +29,10 @@ class EmployeeController extends Controller
         $roles = Role::all();
         $deps = Department::all();
         return view('admin.employees.create', compact('roles', 'deps'));
+    }
+    public function export()
+    {
+        return Excel::download(new EmployeesExport, 'employees.xlsx');
     }
 
     public function store(StoreEmployeeRequest $request)

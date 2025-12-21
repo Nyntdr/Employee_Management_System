@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AssetsExport;
 use App\Http\Requests\AssetRequest;
 use App\Models\Asset;
 use Illuminate\Http\Request;
 use App\Enums\AssetStatuses;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AssetController extends Controller
 {
@@ -14,12 +16,15 @@ class AssetController extends Controller
         $assets = Asset::all();
         return view('admin.assets.index', compact('assets'));
     }
-    
+
     public function create()
     {
         return view('admin.assets.create');
     }
-    
+    public function export()
+    {
+        return Excel::download(new AssetsExport(), 'assets_export.xlsx');
+    }
     public function store(AssetRequest $request)
     {
         $validated = $request->validated();
@@ -29,13 +34,13 @@ class AssetController extends Controller
         Asset::create($validated);
         return redirect()->route('assets.index')->with('success', 'Asset created successfully!');
     }
-    
+
     public function edit(string $id)
     {
-        $asset = Asset::findOrFail($id); 
+        $asset = Asset::findOrFail($id);
         return view('admin.assets.edit', compact('asset'));
     }
-    
+
     public function update(AssetRequest $request, string $id)
     {
         $asset = Asset::findOrFail($id);
@@ -46,7 +51,7 @@ class AssetController extends Controller
             $hasActiveAssignments = $asset->assignments()
                 ->where('status', 'active')
                 ->exists();
-                
+
             if ($hasActiveAssignments) {
                 return redirect()->back()
                     ->withErrors(['status' => 'Cannot change status while asset has active assignments. Return the asset first.'])
@@ -56,7 +61,7 @@ class AssetController extends Controller
         $asset->update($data);
         return redirect()->route('assets.index')->with('success', 'Asset updated successfully!');
     }
-    
+
     public function destroy(string $id)
     {
         $asset = Asset::findOrFail($id);

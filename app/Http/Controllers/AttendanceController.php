@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AttendancesExport;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Enums\AttendanceStatus;
 use App\Http\Requests\AttendanceRequest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceController extends Controller
 {
@@ -22,6 +24,10 @@ class AttendanceController extends Controller
         $employees = Employee::all();
         $statuses = AttendanceStatus::cases();
         return view('admin.attendances.create', compact('employees', 'statuses'));
+    }
+    public function export()
+    {
+        return Excel::download(new AttendancesExport(), 'attendances_export.xlsx');
     }
 
     public function store(AttendanceRequest $request)

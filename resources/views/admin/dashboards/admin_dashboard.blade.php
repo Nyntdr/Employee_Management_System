@@ -6,7 +6,7 @@
 <div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="h3 mb-2">Admin Dashbaord</h1>
+            <h1 class="h3 mb-2">Admin Dashboard</h1>
             <p class="text-muted">Welcome back, <strong>{{ Auth::user()->name }}</strong>!</p>
             <p>Your clock in clock out.</p>
              @if (session('success'))
@@ -34,11 +34,6 @@
                 <p>Here's a quick stats on some employee related stuff.</p>
         </div>
     </div>
-    <form action="{{ route('users.import') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <input type="file" name="file" class="form-control" required>
-        <button type="submit" class="btn btn-primary">Import File</button>
-    </form>
     <div class="row">
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm">
@@ -114,7 +109,6 @@
     .card {
         border-radius: 24px;
     }
-
     .card-body {
         padding: 1.5rem;
     }

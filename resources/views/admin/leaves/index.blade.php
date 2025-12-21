@@ -1,48 +1,137 @@
 @extends('layouts.navbars')
 @section('title','Leaves')
 @section('content')
-<h2>Leave Types</h2>
-<a href="{{ route('leaves.create') }}">Add a leave</a>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Employee Name</th>
-            <th>Leave Type</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Reason</th>
-            <th>Approver</th>
-            <th>Status</th>
-            <th>Total Days</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @forelse($leaves as $leave)
-            <tr>
-                <td>{{ $leave->employee->first_name }} {{ $leave->employee->last_name }}</td>
-                <td>{{ $leave->leaveType->name }}</td>
-                <td>{{ $leave->start_date->format('M d, Y') }}</td>
-                <td>{{ $leave->end_date->format('M d, Y')}}</td>
-                <td>{{ $leave->reason }}</td>
-                <td>{{ $leave->approver->name }}</td>
-                <td>{{ ucwords(str_replace('_', ' ', $leave->status->value)) }}</td>
-                <td>{{ $leave->start_date->diffInDays($leave->end_date) + 1 }} </td>
-                <td>
-                    <a href="{{ route('leaves.edit',$leave->leave_id) }}">Edit</a>
-                    <br>
-                    <form action="{{ route('leaves.destroy',$leave->leave_id) }}" method="POST" style="display:inline;">
+
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
+            <div>
+                <h1 class="h3 mb-0">Leave Records</h1>
+                <p class="text-muted mb-0">Manage employee leave requests</p>
+            </div>
+            <a href="{{ route('leaves.create') }}" class="btn btn-primary">Add Leave</a>
+        </div>
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show alert-custom" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show alert-custom" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        <div class="row mb-3 import-export-row">
+            <div class="col-md-6">
+                <div class="d-flex gap-2 btn-gap">
+                    <a href="{{ route('leave-types.index') }}" class="btn btn-outline-secondary">Leave Types</a>
+                    <form action="{{ route('departments.import') }}" method="POST" enctype="multipart/form-data" class="d-inline">
                         @csrf
-                        @method('DELETE')
-                        <button type="submit" onclick="return confirm('Delete this leave?')">Delete</button>
+                        <input type="file" name="file" id="importFile" class="d-none" accept=".csv,.xlsx,.xls" required onchange="this.form.submit()">
+                        <button type="button" onclick="document.getElementById('importFile').click()" class="btn btn-outline-primary">Import</button>
                     </form>
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td>No leave type found. Create a new one.</td>
-            </tr>
-        @endforelse
-    </tbody>
-</table>
+                    <a href="{{ route('leaves.export') }}" class="btn btn-outline-secondary">Export</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card table-card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col">Employee & ID</th>
+                            <th scope="col">Leave Type</th>
+                            <th scope="col">Start Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Reason</th>
+                            <th scope="col">Approver</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Days</th>
+                            <th scope="col" width="120" class="text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @forelse($leaves as $leave)
+                            @php
+                                $daysCount = $leave->start_date->diffInDays($leave->end_date) + 1;
+                            @endphp
+                            <tr>
+                                <td>
+                                    <div class="fw-medium">{{ $leave->employee->first_name }} {{ $leave->employee->last_name }}</div>
+                                    <div class="text-muted small">EMP-{{ $leave->employee->employee_id }}</div>
+                                </td>
+                                <td>
+                                    <span class="table-badge badge-opacity-info">
+                                        {{ $leave->leaveType->name }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="fw-medium">{{ $leave->start_date->format('M d, Y') }}</span>
+                                </td>
+                                <td>
+                                    <span class="fw-medium">{{ $leave->end_date->format('M d, Y') }}</span>
+                                </td>
+                                <td>
+                                    <div class="text-muted" style="max-width: 200px; line-height: 1.4;">
+                                        {{ Str::limit($leave->reason, 80) }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="table-badge badge-opacity-primary">
+                                        {{ $leave->approver->name }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @php
+                                        $status = $leave->status->value ?? (string) $leave->status;
+                                        $badgeClass = match(strtolower($status)) {
+                                            'approved' => 'badge-opacity-success',
+                                            'pending' => 'badge-opacity-warning',
+                                            'rejected' => 'badge-opacity-danger',
+                                            'cancelled' => 'badge-opacity-secondary',
+                                            default => 'badge-opacity-secondary'
+                                        };
+                                    @endphp
+                                    <span class="table-badge {{ $badgeClass }}">
+                                        {{ ucwords(str_replace('_', ' ', $status)) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold">{{ $daysCount }} day{{ $daysCount > 1 ? 's' : '' }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{{ route('leaves.edit', $leave->leave_id) }}" class="btn table-btn-sm btn-outline-primary" title="Edit Leave">Edit</a>
+                                        <form action="{{ route('leaves.destroy', $leave->leave_id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn table-btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this leave record?')" title="Delete Leave">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="text-center py-5">
+                                    <div class="py-4">
+                                        <h5 class="text-muted">No leave records found</h5>
+                                        <p class="text-muted mb-4">Get started by adding a leave record</p>
+                                        <a href="{{ route('leaves.create') }}" class="btn btn-primary">Add First Leave</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection

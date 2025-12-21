@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DepartmentsExport;
+use App\Exports\EmployeesExport;
 use App\Http\Requests\DepartmentRequest;
+use App\Imports\DepartmentImport;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DepartmentController extends Controller
 {
@@ -16,6 +20,18 @@ class DepartmentController extends Controller
     public function create()
     {
         return view('admin.departments.create');
+    }
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        Excel::import(new DepartmentImport, $request->file('file'));
+        return back()->with('success', 'All good!');
+    }
+    public function export()
+    {
+        return Excel::download(new DepartmentsExport(), 'departments.xlsx');
     }
     public function store(DepartmentRequest $request)
     {

@@ -20,7 +20,7 @@ class UsersImport implements ToModel, WithHeadingRow
             'name'            => $row['name'],
             'email'           => $row['email'],
             'password'        => Hash::make($row['password']),
-            'role_id'         => $row['role_id'],   // Note: underscore because of space in "Role ID"
+            'role_id'         => $row['role_id'],
             'is_active'       => $row['active'],
             'profile_picture' => $row['profile'],
         ]);

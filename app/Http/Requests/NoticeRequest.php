@@ -24,6 +24,7 @@ class NoticeRequest extends FormRequest
         return [
             'title'   => 'required|string|max:200',
             'content' => 'required|string',
+            'published at' => 'required|date',
         ];
     }
 }

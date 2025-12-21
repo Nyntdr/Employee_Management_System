@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LeavesExport;
 use App\Models\Leave;
 use App\Models\Employee;
 use App\Models\LeaveType;
 use App\Http\Requests\LeaveRequest;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LeaveController extends Controller
 {
@@ -20,10 +22,14 @@ class LeaveController extends Controller
         $leaveTypes = LeaveType::all();
         return view('admin.leaves.create', compact('employees', 'leaveTypes'));
     }
+    public function export()
+    {
+        return Excel::download(new LeavesExport(), 'leaves_export.xlsx');
+    }
     public function store(LeaveRequest $request)
     {
         $data = $request->validated();
-        $data['status'] = 'pending'; 
+        $data['status'] = 'pending';
         $data['approved_by'] = auth()->id();
         Leave::create($data);
         return redirect()->route('leaves.index')->with('success', 'Leave added successfully.');
@@ -43,7 +49,7 @@ class LeaveController extends Controller
     {
         $leave=Leave::findOrFail($id);
         $leave->update($request->validated());
-        
+
         return redirect()->route('leaves.index')->with('success', 'Leave updated successfully.');
     }
     public function destroy(string $id)

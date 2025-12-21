@@ -2,23 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\NoticesExport;
 use App\Models\Notice;
 use App\Http\Requests\NoticeRequest;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class NoticeController extends Controller
 {
     public function index()
     {
-        $notices = Notice::all();
+        $notices = Notice::paginate(5);
         return view('admin.notices.index', compact('notices'));
     }
 
     public function create()
     {
-        return view('admin.notices.create'); 
+        return view('admin.notices.create');
     }
-
+    public function export()
+    {
+        return Excel::download(new NoticesExport(), 'notices_export.xlsx');
+    }
     public function store(NoticeRequest $request)
     {
         // dd($request->all(),$request->ip());

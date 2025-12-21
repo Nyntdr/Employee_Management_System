@@ -1,34 +1,103 @@
 @extends('layouts.employee_navbar')
-@section('title','My Attendance')
+@section('title','Attendance')
 @section('content')
-<h2>Attendance List</h2>
-<a href="#">Raise an Issue</a> <br><br>
-<table border="1" style="text-align: center;">
-    <thead>
-        <tr>
-            <th>S/N</th>
-            <th>Date</th>
-            <th>Clock In</th> 
-            <th>Clock Out</th>  
-            <th>Total Hours</th> 
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        @forelse($attendances as $attendance)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $attendance->date }}</td>
-                <td>{{ $attendance->clock_in }}</td>
-                <td>{{ $attendance->clock_out ?? 'N/A' }}</td>
-                <td>{{ $attendance->total_hours }}</td>
-                <td>{{ ucwords(str_replace('_', ' ', $attendance->status->value)) }}</td> 
-            </tr>
-        @empty
-            <tr>
-                <td colspan="6" style="text-align: center;">No attendance record found.</td>
-            </tr>
-        @endforelse
-    </tbody>
-</table>
+
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
+            <div>
+                <h1 class="h3 mb-0">My Attendance Record</h1>
+                <p class="text-muted mb-0">View your attendance records</p>
+            </div>
+        </div>
+        <div class="card table-card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col" width="60">S/N</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Clock In</th>
+                            <th scope="col">Clock Out</th>
+                            <th scope="col">Total Hours</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @forelse($attendances as $attendance)
+                            @php
+                                $totalHours = 'N/A';
+                                if ($attendance->clock_in && $attendance->clock_out) {
+                                    $start = Carbon\Carbon::parse($attendance->clock_in);
+                                    $end = Carbon\Carbon::parse($attendance->clock_out);
+                                    $diff = $start->diff($end);
+                                    if ($diff->h > 0 || $diff->i > 0) {
+                                        $totalHours = sprintf('%dh %02dm', $diff->h, $diff->i);
+                                    } else {
+                                        $totalHours = '0h 00m';
+                                    }
+                                }
+                            @endphp
+                            <tr>
+                                <td class="text-muted fw-semibold">{{ $loop->iteration }}</td>
+                                <td>
+                                    <span class="fw-medium">{{ $attendance->date->format('Y-m-d') }}</span>
+                                    <div class="text-muted small">{{ $attendance->date->format('D') }}</div>
+                                </td>
+                                <td>
+                                    @if($attendance->clock_in)
+                                        <span class="table-badge badge-opacity-success">
+                                            {{ $attendance->clock_in->format('H:i') }}
+                                        </span>
+                                    @else
+                                        <span class="table-badge badge-opacity-secondary">N/A</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($attendance->clock_out)
+                                        <span class="table-badge badge-opacity-info">
+                                            {{ $attendance->clock_out->format('H:i') }}
+                                        </span>
+                                    @else
+                                        <span class="table-badge badge-opacity-secondary">N/A</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($attendance->clock_in && $attendance->clock_out)
+                                        <span class="fw-bold text-primary">{{$totalHours }}</span>
+                                    @else
+                                        <span class="table-badge badge-opacity-secondary">N/A</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @php
+                                        $status = $attendance->status->value ?? (string) $attendance->status;
+                                        $badgeClass = match(strtolower($status)) {
+                                            'present' => 'badge-opacity-success',
+                                            'absent' => 'badge-opacity-danger',
+                                            'late' => 'badge-opacity-warning',
+                                            'half_day' => 'badge-opacity-info',
+                                            'on_leave' => 'badge-opacity-secondary',
+                                            default => 'badge-opacity-secondary'
+                                        };
+                                    @endphp
+                                    <span class="table-badge {{ $badgeClass }}">{{ ucwords(str_replace('_', ' ', $status)) }}</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <div class="py-4">
+                                        <h5 class="text-muted">No attendance records found</h5>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection

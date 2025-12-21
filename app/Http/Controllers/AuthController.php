@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\UsersEmployeesImport;
 use App\Imports\UsersImport;
 use App\Models\User;
 use App\Models\Asset;
@@ -33,7 +34,7 @@ class AuthController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new UsersImport, $request->file('file'));
+        Excel::import(new UsersEmployeesImport, $request->file('file'));
         return back()->with('success', 'All good!');
     }
 
@@ -121,6 +122,5 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login');
     }
-
 }
 

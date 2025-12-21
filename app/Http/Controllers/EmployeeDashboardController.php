@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\Leave;
 use App\Models\Notice;
 use App\Models\Attendance;
+use App\Models\Payroll;
 use Illuminate\Http\Request;
 use App\Models\AssetAssignment;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +36,12 @@ class EmployeeDashboardController extends Controller
     }
         public function attendanceIndex()
     {
-        $attendances=Attendance::where('employee_id',Auth::user()->employee->employee_id)->get();
+        $attendances=Attendance::where('employee_id',Auth::user()->employee->employee_id)->orderBy('date', 'desc')->get();
         return view('employee.attendances.index', compact('attendances'));
-    }   
+    }
+    public function salaryIndex()
+    {
+        $payrolls=Payroll::where('employee_id',Auth::user()->employee->employee_id)->orderBy('month_year', 'desc')->get();
+        return view('employee.salaries.index', compact('payrolls'));
+    }
 }

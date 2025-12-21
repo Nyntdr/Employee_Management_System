@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/table.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/employee.css') }}" rel="stylesheet">
 </head>
 
 <body>
@@ -55,7 +57,7 @@
             <a href="{{ route('notices.index') }}" class="d-block">Notices</a>
             <a href="{{ route('assets.index') }}" class="d-block">Assets</a>
             <a href="{{ route('payrolls.index') }}" class="d-block">Salaries</a>
-            <a href="{{ route('leave-types.index') }}" class="d-block">Leaves</a>
+            <a href="{{ route('leaves.index') }}" class="d-block">Leaves</a>
             <a href="{{ route('attendances.index') }}" class="d-block">Attendances</a>
             <a href="{{ route('events.index') }}" class="d-block">Events</a>
         </nav>
