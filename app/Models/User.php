@@ -65,8 +65,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Employee::class, 'user_id', 'id');
     }
-
-    public function approvedLeaves(): HasMany
+    public function leaves(): HasMany
     {
         return $this->hasMany(Leave::class, 'approved_by', 'id');
     }

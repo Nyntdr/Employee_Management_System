@@ -19,7 +19,7 @@ class LeaveRequest extends FormRequest
             'leave_type_id' => 'required|exists:leave_types,id',
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'reason' => 'required|string|min:10|max:500',
+            'reason' => 'required|string|max:500',
         ];
 
         if ($this->isMethod('put') || $this->isMethod('patch')) {
@@ -42,8 +42,7 @@ class LeaveRequest extends FormRequest
             'end_date.required' => 'End date is required.',
             'end_date.after_or_equal' => 'End date must be after or equal to start date.',
             'reason.required' => 'Please provide a reason for the leave.',
-            'reason.min' => 'Reason must be at least 10 characters.',
-            'reason.max' => 'Reason must not exceed 500 characters.',
+            'reason.max' => 'Reason must not exceed 200 characters.',
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AssetsExport;
+use App\Imports\AssetsImport;
 use App\Http\Requests\AssetRequest;
 use App\Models\Asset;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class AssetController extends Controller
 {
     public function index()
     {
-        $assets = Asset::all();
+        $assets = Asset::paginate(5);
         return view('admin.assets.index', compact('assets'));
     }
 
@@ -24,6 +25,14 @@ class AssetController extends Controller
     public function export()
     {
         return Excel::download(new AssetsExport(), 'assets_export.xlsx');
+    }
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        Excel::import(new AssetsImport(), $request->file('file'));
+        return back()->with('success', 'All good!');
     }
     public function store(AssetRequest $request)
     {

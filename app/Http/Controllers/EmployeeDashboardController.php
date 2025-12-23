@@ -21,12 +21,12 @@ class EmployeeDashboardController extends Controller
     }
         public function eventIndex()
     {
-        $events=Event::all();
+        $events=Event::latest()->get();
         return view('employee.events.index', compact('events'));
     }
         public function noticeIndex()
     {
-        $notices=Notice::all();
+        $notices=Notice::latest()->paginate(5);
         return view('employee.notices.index', compact('notices'));
     }
         public function leaveIndex()

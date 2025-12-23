@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ClockInClockOutController;
+use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayrollController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -81,6 +83,8 @@ Route::resource('leave-types', LeaveTypeController::class)->middleware(['auth', 
 //leave
 Route::get('/leaves/export', [LeaveController::class, 'export'])->name('leaves.export');
 Route::resource('leaves', LeaveController::class)->middleware(['auth', 'role_verify']);
+//leave request
+Route::resource('leave-requests', LeaveRequestController::class)->middleware('auth');
 //image uploading
 Route::post('/image-upload', [ImageUploadController::class, 'upload'])->name('image.upload');
 //employee dashboard
@@ -93,7 +97,14 @@ Route::get('/employee-salaries', [EmployeeDashboardController::class, 'salaryInd
 
 //import try
 Route::post('/users/import', [AuthController::class, 'import'])->name('users.import');
+Route::post('contracts/import', [ContractController::class, 'import'])->name('contracts.import');
 Route::post('/departments/import', [DepartmentController::class, 'import'])->name('departments.import');
+Route::post('/notices/import', [NoticeController::class, 'import'])->name('notices.import');
+Route::post('/assets/import', [AssetController::class, 'import'])->name('assets.import');
+Route::post('/payrolls/import', [PayrollController::class, 'import'])->name('payrolls.import');
+
+//notification
+Route::get('/notification/{id}', [NotificationController::class, 'handle'])->middleware('auth')->name('notifications.handle');
 
 // Forgot password request form
 Route::get('/forgot-password', function () {

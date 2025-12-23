@@ -29,7 +29,7 @@
         <div class="row mb-3 import-export-row">
             <div class="col-md-6">
                 <div class="d-flex gap-2 btn-gap">
-                    <form action="{{ route('departments.import') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                    <form action="{{ route('notices.import') }}" method="POST" enctype="multipart/form-data" class="d-inline">
                         @csrf
                         <input type="file" name="file" id="importFile" class="d-none" accept=".csv,.xlsx,.xls" required onchange="this.form.submit()">
                         <button type="button" onclick="document.getElementById('importFile').click()" class="btn btn-outline-primary">
@@ -73,7 +73,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="text-muted">{{ $notice->created_at->diffForHumans() }}</span>
+                                    <span class="text-muted">{{ $notice->updated_at->diffForHumans() }}</span>
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">

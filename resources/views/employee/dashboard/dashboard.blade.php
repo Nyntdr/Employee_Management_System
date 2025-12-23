@@ -99,7 +99,7 @@
                             <a href="{{ route('employee.events.index') }}" class="btn btn-primary">View Events</a>
                             <a href="{{ route('employee.notices.index') }}" class="btn btn-primary">View Notices</a>
                             <a href="#" class="btn btn-primary">Request Asset</a>
-                            <a href="#" class="btn btn-primary">Request Leave</a>
+                            <a href="{{route('leave-requests.create')}}" class="btn btn-primary">Request Leave</a>
                         </div>
                     </div>
                 </div>

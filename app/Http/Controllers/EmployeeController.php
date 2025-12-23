@@ -32,7 +32,7 @@ class EmployeeController extends Controller
     }
     public function export()
     {
-        return Excel::download(new EmployeesExport, 'employees.xlsx');
+        return Excel::download(new EmployeesExport, 'employees_export.xlsx');
     }
 
     public function store(StoreEmployeeRequest $request)

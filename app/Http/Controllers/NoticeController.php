@@ -3,22 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Exports\NoticesExport;
+use App\Imports\NoticesImport;
 use App\Models\Notice;
 use App\Http\Requests\NoticeRequest;
+use App\Models\User;
+use App\Notifications\NoticeCreatedNotification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Maatwebsite\Excel\Facades\Excel;
 
 class NoticeController extends Controller
 {
     public function index()
     {
-        $notices = Notice::paginate(5);
+        $notices = Notice::latest()->paginate(5);
         return view('admin.notices.index', compact('notices'));
     }
 
     public function create()
     {
         return view('admin.notices.create');
+    }
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        Excel::import(new NoticesImport(), $request->file('file'));
+        return back()->with('success', 'All good!');
     }
     public function export()
     {
@@ -27,7 +40,9 @@ class NoticeController extends Controller
     public function store(NoticeRequest $request)
     {
         // dd($request->all(),$request->ip());
-        Notice::create(array_merge($request->validated(),['posted_by' => Auth::id()]));
+        $notice=Notice::create(array_merge($request->validated(),['posted_by' => Auth::id()]));
+        $users = User::whereNot('id', auth()->id())->get();
+        Notification::send($users, new NoticeCreatedNotification($notice));
         return redirect()->route('notices.index')->with('success', 'Notice published successfully!');
     }
 

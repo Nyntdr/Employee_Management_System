@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exports\PayrollsExport;
+use App\Imports\PayrollsImport;
 use App\Models\Payroll;
 use App\Enums\PayStatus;
 use App\Models\Employee;
 use App\Http\Requests\PayrollRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PayrollController extends Controller
@@ -18,7 +20,7 @@ class PayrollController extends Controller
         $payrolls = Payroll::with('employee', 'generator')
             ->orderBy('month_year', 'desc')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(8);
 
         return view('admin.salaries.index', compact('payrolls'));
     }
@@ -29,6 +31,17 @@ class PayrollController extends Controller
         $statuses = PayStatus::cases();
 
         return view('admin.salaries.create', compact('statuses', 'employees'));
+    }
+    public function import(Request $request)
+    {
+
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        Log::info("Importing file from controller");
+        Excel::import(new PayrollsImport(), $request->file('file'));
+        Log::info("File imported successfully");
+        return back()->with('success', 'All good!');
     }
     public function export()
     {

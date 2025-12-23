@@ -53,6 +53,7 @@
                             <th scope="col">Approver</th>
                             <th scope="col">Status</th>
                             <th scope="col">Days</th>
+                            <th>Requested Date</th>
                             <th scope="col" width="120" class="text-center">Actions</th>
                         </tr>
                         </thead>
@@ -84,7 +85,7 @@
                                 </td>
                                 <td>
                                     <span class="table-badge badge-opacity-primary">
-                                        {{ $leave->approver->name }}
+                                        {{ $leave->approver->name ?? 'N/A' }}
                                     </span>
                                 </td>
                                 <td>
@@ -104,6 +105,9 @@
                                 </td>
                                 <td>
                                     <span class="fw-bold">{{ $daysCount }} day{{ $daysCount > 1 ? 's' : '' }}</span>
+                                </td>
+                                <td>
+                                    {{$leave->created_at->diffForHumans()}}
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">

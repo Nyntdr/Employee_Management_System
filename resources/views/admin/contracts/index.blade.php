@@ -28,7 +28,7 @@
         <div class="row mb-3 import-export-row">
             <div class="col-md-6">
                 <div class="d-flex gap-2 btn-gap">
-                    <form action="{{ route('users.import') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                    <form action="{{ route('contracts.import') }}" method="POST" enctype="multipart/form-data" class="d-inline">
                         @csrf
                         <input type="file" name="file" id="importFile" class="d-none" accept=".csv,.xlsx,.xls" required onchange="this.form.submit()">
                         <button type="button" onclick="document.getElementById('importFile').click()" class="btn btn-outline-primary">Import</button>

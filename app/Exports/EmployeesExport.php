@@ -3,31 +3,48 @@
 namespace App\Exports;
 
 use App\Models\Employee;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class EmployeesExport implements FromCollection, WithHeadings
+class EmployeesExport implements FromQuery, WithHeadings, WithMapping
 {
-    public function collection()
+    public function query()
     {
-        return Employee::all();
+        return Employee::query()->with(['user', 'department']);
     }
+
+    public function map($employee): array
+    {
+        return [
+            $employee->user->name ?? 'N/A',
+            $employee->department->name ?? 'N/A',
+            $employee->first_name,
+            $employee->last_name,
+            ucfirst($employee->gender),
+            $employee->phone,
+            $employee->secondary_phone,
+            $employee->emergency_contact,
+            Date::dateTimeToExcel($employee->date_of_birth),
+            Date::dateTimeToExcel($employee->date_of_joining),
+            ];
+    }
+
     public function headings(): array
     {
         return [
-            'ID',
-            'User ID',
-            'Department ID',
-            'FirstName',
-            'LastName',
+            'Username',
+            'Department',
+            'First Name',
+            'Last Name',
             'Gender',
             'Phone',
-            'SecondaryPhone',
+            'Secondary Phone',
             'Emergency Contact',
             'Birth Date',
             'Hire Date',
-            'Created At',
-            'Updated At',
         ];
     }
 }

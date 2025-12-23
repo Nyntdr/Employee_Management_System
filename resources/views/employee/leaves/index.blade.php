@@ -8,8 +8,22 @@
                 <h1 class="h3 mb-0">My Leaves</h1>
                 <p class="text-muted mb-0">View your leave requests</p>
             </div>
-            <a href="#" class="btn btn-primary">Request Leave</a>
+            <a href="{{route('leave-requests.create')}}" class="btn btn-primary">Request Leave</a>
         </div>
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show alert-custom" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show alert-custom" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         <div class="card table-card">
             <div class="card-body p-0">
@@ -23,7 +37,8 @@
                             <th scope="col">Reason</th>
                             <th scope="col">Approver</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Days</th>
+                            <th scope="col">Total Days</th>
+                            <th scope="col">Created on</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -58,7 +73,7 @@
                                 </td>
                                 <td>
                                 <span class="table-badge badge-opacity-primary">
-                                    {{ $leave->approver->name }}
+                                    {{ $leave->approver->name ?? 'N/A' }}
                                 </span>
                                 </td>
                                 <td>
@@ -68,6 +83,9 @@
                                 </td>
                                 <td>
                                     <span class="fw-bold">{{ $daysCount }} day{{ $daysCount > 1 ? 's' : '' }}</span>
+                                </td>
+                                <td>
+                                    {{$leave->created_at->format('Y-m-d')}}
                                 </td>
                             </tr>
                         @empty

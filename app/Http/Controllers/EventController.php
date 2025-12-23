@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Exports\EventsExport;
 use App\Models\Event;
+use App\Models\User;
+use App\Notifications\EventCreatedNotification;
 use Illuminate\Http\Request;
 use App\Http\Requests\EventRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EventController extends Controller
@@ -28,8 +31,10 @@ class EventController extends Controller
 {
         $validated = $request->validated();
         $validated['created_by'] = Auth::id();
-        Event::create($validated);
-        return redirect()->route('events.index');
+        $event=Event::create($validated);
+        $users = User::whereNot('id', auth()->id())->get();
+        Notification::send($users, new EventCreatedNotification($event));
+        return redirect()->route('events.index')->with('success', 'Event created successfully!');
 }
     public function edit(string $id)
     {
@@ -42,12 +47,12 @@ public function update(EventRequest $request, string $id)
     $validated = $request->validated();
     unset($validated['created_by']);
     $event->update($validated);
-    return redirect()->route('events.index');
+    return redirect()->route('events.index')->with('success', 'Event updated successfully!');
 }
     public function destroy(string $id)
     {
         $event = Event::findOrFail($id);
         $event->delete();
-        return redirect()->route('events.index');
+        return redirect()->route('events.index')->with('success', 'Event deleted successfully!');
     }
 }

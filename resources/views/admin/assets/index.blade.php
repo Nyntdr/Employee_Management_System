@@ -31,7 +31,7 @@
         <div class="row mb-3 import-export-row">
             <div class="col-md-6">
                 <div class="d-flex gap-2 btn-gap">
-                    <form action="{{ route('departments.import') }}" method="POST" enctype="multipart/form-data" class="d-inline">
+                    <form action="{{ route('assets.import') }}" method="POST" enctype="multipart/form-data" class="d-inline">
                         @csrf
                         <input type="file" name="file" id="importFile" class="d-none" accept=".csv,.xlsx,.xls" required onchange="this.form.submit()">
                         <button type="button" onclick="document.getElementById('importFile').click()" class="btn btn-outline-primary">
@@ -152,6 +152,14 @@
                         </tbody>
                     </table>
                 </div>
+
+                @if($assets->hasPages())
+                    <div class="pagination-wrapper">
+                        <div class="d-flex justify-content-center">
+                            {{ $assets->links('pagination::bootstrap-5') }}
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

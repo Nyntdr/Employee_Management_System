@@ -7,13 +7,14 @@ use App\Models\Leave;
 use App\Models\Employee;
 use App\Models\LeaveType;
 use App\Http\Requests\LeaveRequest;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LeaveController extends Controller
 {
     public function index()
     {
-        $leaves = Leave::all();
+        $leaves = Leave::orderBy('created_at', 'DESC')->get();
         return view('admin.leaves.index', compact('leaves'));
     }
     public function create()
@@ -34,10 +35,6 @@ class LeaveController extends Controller
         Leave::create($data);
         return redirect()->route('leaves.index')->with('success', 'Leave added successfully.');
     }
-    public function show(Leave $leave)
-    {
-        return view('admin.leaves.show', compact('leave'));
-    }
     public function edit(string $id)
     {
         $leave=Leave::findOrFail($id);
@@ -48,7 +45,7 @@ class LeaveController extends Controller
     public function update(LeaveRequest $request, string $id)
     {
         $leave=Leave::findOrFail($id);
-        $leave->update($request->validated());
+        $leave->update(array_merge($request->validated(),['approved_by' => Auth::id()]));
 
         return redirect()->route('leaves.index')->with('success', 'Leave updated successfully.');
     }
