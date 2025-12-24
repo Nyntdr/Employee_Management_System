@@ -3,31 +3,44 @@
 namespace App\Exports;
 
 use App\Models\Leave;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class LeavesExport implements FromCollection, WithHeadings
+class LeavesExport implements FromQuery, WithHeadings, WithMapping
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
+     * @return \Illuminate\Support\Collection
+     */
+    public function query()
     {
-        return Leave::all();
+        return Leave::query()->with(['employee', 'leaveType', 'approver']);
     }
+
+    public function map($leave): array
+    {
+        return [
+            $leave->employee->first_name . ' ' . $leave->employee->last_name,
+            $leave->leaveType->name,
+            Date::dateTimeToExcel($leave->start_date),
+            Date::dateTimeToExcel($leave->end_date),
+            $leave->reason,
+            $leave->status->value,
+            $leave->approver->name ?? 'N/A',
+        ];
+    }
+
     public function headings(): array
     {
         return [
-            'Leave ID',
-            'Employee ID',
-            'Leave Type ID',
+            'Employee',
+            'Leave Type',
             'Start Date',
             'End Date',
             'Reason',
             'Status',
             'Approver',
-            'Created at',
-            'Updated at',
         ];
     }
 }

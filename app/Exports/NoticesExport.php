@@ -3,28 +3,35 @@
 namespace App\Exports;
 
 use App\Models\Notice;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class NoticesExport implements FromCollection, WithHeadings
+class NoticesExport implements FromQuery, WithHeadings, WithMapping
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
+    public function query()
     {
-        return Notice::all();
+        return Notice::query()->with(['poster']);
     }
+
+    public function map($notice): array
+    {
+        return [
+            $notice->title,
+            $notice->content,
+            $notice->poster->name,
+            Date::dateTimeToExcel($notice->created_at),
+        ];
+    }
+
     public function headings(): array
     {
         return [
-            'Notice ID',
             'Title',
             'Content',
             'Posted By',
-            'Published On',
             'Created At',
-            'Updated At',
         ];
     }
 }

@@ -4,22 +4,39 @@ namespace App\Exports;
 
 use App\Models\Contract;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class ContractsExport implements FromCollection, WithHeadings
+class ContractsExport implements FromQuery, WithHeadings , WithMapping
 {
     /**
     * @return \Illuminate\Support\Collection
     */
-    public function collection()
+    public function query()
     {
-        return Contract::all();
+        return Contract::query()->with('employee');
     }
+    public function map($contract): array
+    {
+      return[
+          $contract->employee->first_name . ' ' . $contract->employee->last_name,
+          $contract->contract_type->value,
+          $contract->job_title->value,
+          Date::dateTimeToExcel($contract->start_date),
+          Date::dateTimeToExcel($contract->end_date),
+          $contract->probation_period ,
+          $contract->working_hours,
+          $contract->salary,
+          $contract->contract_status->value,
+      ];
+    }
+
     public function headings(): array
     {
         return [
-            'Contract ID',
-            'Employee ID',
+            'Employee',
             'Contract Type',
             'Job Title',
             'Start Date',
@@ -28,8 +45,6 @@ class ContractsExport implements FromCollection, WithHeadings
             'Working Hours',
             'Salary',
             'Status',
-            'Created At',
-            'Updated At',
         ];
     }
 

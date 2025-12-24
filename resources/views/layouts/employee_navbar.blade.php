@@ -20,7 +20,7 @@
     <div class="container-fluid">
         <h1 class="navbar-brand h4 m-0">N:Company</h1>
         <div id="current-date-time" class="small fw-semibold">
-            {{ \Carbon\Carbon::now()->format('j F, Y') }}
+            {{ \Carbon\Carbon::now()->format('j F, Y H:i') }}
         </div>
         <div class="d-flex align-items-center gap-3">
             <a href="{{ route('employee.profile') }}" class="nav-link" title="Profile">
