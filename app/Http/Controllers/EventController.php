@@ -14,9 +14,21 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class EventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::all();
+        $search = $request->get('search', '');
+        $events = Event::query()->with('creator')
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['title',], 'like', "%{$search}%")
+                    ->orWhereHas('creator', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereDate('event_date', 'like', "%{$search}%");
+            })->paginate(5);
+        if ($request->ajax()) {
+            return view('admin.events.table', compact('events'))->render();
+        }
+
         return view('admin.events.index', compact('events'));
     }
     public function create()

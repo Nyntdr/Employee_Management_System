@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\ClockInClockOutController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\NotificationController;
@@ -21,7 +20,6 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\AssetAssignmentController;
 use App\Http\Controllers\EmployeeDashboardController;
-
 Route::get('/', function () {
     return view('admin.auth.login');
 });
@@ -102,6 +100,11 @@ Route::post('/departments/import', [DepartmentController::class, 'import'])->nam
 Route::post('/notices/import', [NoticeController::class, 'import'])->name('notices.import');
 Route::post('/assets/import', [AssetController::class, 'import'])->name('assets.import');
 Route::post('/payrolls/import', [PayrollController::class, 'import'])->name('payrolls.import');
+Route::post('/asset-assignments/import', [AssetAssignmentController::class, 'import'])->name('asset-assignments.import');
+Route::post('/leaves/import', [LeaveController::class, 'import'])->name('leaves.import');
+Route::post('/attendances/import', [AttendanceController::class, 'import'])->name('attendances.import');
+Route::post('/events/import', [EventController::class, 'import'])->name('events.import');
+Route::post('/leave-types/import', [LeaveTypeController::class, 'import'])->name('leave-types.import');
 
 //notification
 Route::get('/notification/{id}', [NotificationController::class, 'handle'])->middleware('auth')->name('notifications.handle');

@@ -13,9 +13,25 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $attendances = Attendance::with('employee')->latest()->get();
+        $search = $request->get('search', '');
+
+        $attendances = Attendance::query()->with('employee')
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['status'], 'like', "%{$search}%")
+                    ->orWhereHas('employee', function ($q) use ($search) {
+                        $q->whereAny(['first_name','last_name'], 'like', "%{$search}%");
+                    })
+                    ->orWhereDate('date', 'like', "%{$search}%")
+                    ->orWhere('clock_in', 'like', "%{$search}%")
+                    ->orWhere('clock_out', 'like', "%{$search}%");
+            })
+            ->latest()->paginate(8);
+        if ($request->ajax()) {
+            return view('admin.attendances.table', compact('attendances'))->render();
+        }
+
         return view('admin.attendances.index', compact('attendances'));
     }
 

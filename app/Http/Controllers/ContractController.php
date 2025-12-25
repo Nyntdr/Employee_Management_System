@@ -15,9 +15,22 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ContractController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $contracts = Contract::with('employee')->latest()->paginate(6);
+        $search = $request->get('search', '');
+
+        $contracts = Contract::query()->with('employee')
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['contract_type','job_title','contract_status'], 'like', "%{$search}%")
+                    ->orWhereHas('employee', function ($q) use ($search) {
+                        $q->whereAny(['first_name', 'last_name'], 'like', "%{$search}%");
+                    });
+            })
+            ->latest()->paginate(6)->withQueryString();
+        if ($request->ajax()) {
+            return view('admin.contracts.table', compact('contracts'))->render();
+        }
+//        $contracts = Contract::with('employee')->latest()->paginate(6);
         return view('admin.contracts.index', compact('contracts'));
     }
 

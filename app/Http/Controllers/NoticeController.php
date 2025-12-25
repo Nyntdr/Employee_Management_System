@@ -15,9 +15,22 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class NoticeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $notices = Notice::latest()->paginate(5);
+//      $notices = Notice::latest()->paginate(5);
+        $search = $request->get('search', '');
+
+        $notices = Notice::query()->with('poster')
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['title', 'content'], 'like', "%{$search}%")
+                    ->orWhereHas('poster', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            })
+            ->latest()->paginate(5);
+        if ($request->ajax()) {
+            return view('admin.notices.table', compact('notices'))->render();
+        }
         return view('admin.notices.index', compact('notices'));
     }
 

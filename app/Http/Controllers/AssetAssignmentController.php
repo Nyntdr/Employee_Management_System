@@ -10,13 +10,33 @@ use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\AssetAssignmentRequest;
 use App\Enums\AssignmentStatus;
 use App\Enums\AssetConditions;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AssetAssignmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $asset_assigns = AssetAssignment::with(['asset', 'employee', 'assigner'])->latest()->paginate(6);
+        $search = $request->get('search', '');
+
+        $asset_assigns = AssetAssignment::query()->with(['asset', 'employee', 'assigner'])
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['purpose','status','condition_at_assignment','condition_at_return'], 'like', "%{$search}%")
+                    ->orWhereHas('asset', function ($q) use ($search) {
+                        $q->whereAny(['asset_code', 'name',], 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('employee', function ($q) use ($search) {
+                        $q->whereAny(['first_name', 'last_name',], 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('assigner', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            })
+            ->latest()->paginate(6);
+        if ($request->ajax()) {
+            return view('admin.asset-assignments.table', compact('asset_assigns'))->render();
+        }
         return view('admin.asset-assignments.index', compact('asset_assigns'));
     }
 

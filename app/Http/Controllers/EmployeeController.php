@@ -18,9 +18,24 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::with('user')->paginate(6);
+        $search = $request->get('search', '');
+
+        $employees = Employee::query()->with(['user', 'department', 'contracts'])
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['first_name', 'last_name', 'phone', 'secondary_phone', 'emergency_contact',], 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->whereAny(['name', 'email'], 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('department', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            })
+            ->paginate(8);
+        if ($request->ajax()) {
+            return view('admin.employees.employee_data', compact('employees'))->render();
+        }
         return view('admin.employees.index', compact('employees'));
     }
 

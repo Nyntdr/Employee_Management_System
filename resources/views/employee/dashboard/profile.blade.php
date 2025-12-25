@@ -5,7 +5,7 @@
         $u = Auth::user();
         $e = $u->employee;
     @endphp
-    
+
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-md-4">
@@ -21,7 +21,7 @@
                                 <img src="{{ asset('storage/'.$u->profile_picture) }}" class="rounded-circle border border-primary" width="200" height="200">
                             @endif
                         </div>
-                        
+
                         <form action="{{ route('image.upload') }}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
@@ -62,7 +62,7 @@
                     </div>
                 </div>
             </div>
-            
+
             @if ($u && $u->employee)
                 <div class="col-md-4">
                     <div class="card mb-4">
@@ -135,7 +135,7 @@
             const file = event.target.files[0];
             const imagePreview = document.getElementById('imagePreview');
             const uploadButton = document.getElementById('uploadButton');
-            
+
             if (file && file.type.match('image.*')) {
                 const reader = new FileReader();
                 reader.onload = function(e) {

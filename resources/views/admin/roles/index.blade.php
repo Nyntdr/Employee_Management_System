@@ -25,6 +25,7 @@
                         <tr>
                             <th scope="col" width="60">S/N</th>
                             <th scope="col">Role Name</th>
+                            <th scope="col">Total Employees/Users </th>
                             <th scope="col">Created on</th>
                             <th scope="col" width="150">Actions</th>
                         </tr>
@@ -36,6 +37,7 @@
                                 <td>
                                     <strong>{{ $role->role_name }}</strong>
                                 </td>
+                                <td>{{$role->users_count}}</td>
                                 <td class="text-muted">
                                     <small>{{ $role->created_at->diffForHumans() }}</small>
                                 </td>

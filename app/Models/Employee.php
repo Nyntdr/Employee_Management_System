@@ -27,7 +27,7 @@ class Employee extends Model
         'date_of_birth',
         'date_of_joining'
     ];
-    
+
     protected $casts = [
         'date_of_birth' => 'date',
         'date_of_joining' => 'date',
@@ -55,8 +55,6 @@ class Employee extends Model
     return $this->hasOne(Contract::class, 'employee_id', 'employee_id')
                 ->latestOfMany('start_date');
 }
-
-
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class, 'employee_id', 'employee_id');

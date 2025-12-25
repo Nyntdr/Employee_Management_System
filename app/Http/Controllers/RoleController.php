@@ -10,7 +10,7 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::withCount('users')->get();
         return view('admin.roles.index', compact('roles'));
     }
     public function create()

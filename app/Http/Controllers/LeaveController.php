@@ -7,15 +7,35 @@ use App\Models\Leave;
 use App\Models\Employee;
 use App\Models\LeaveType;
 use App\Http\Requests\LeaveRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LeaveController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $leaves = Leave::orderBy('created_at', 'DESC')->get();
-        return view('admin.leaves.index', compact('leaves'));
+//        $leaves = Leave::orderBy('created_at', 'DESC')->get();
+        $search = $request->get('search', '');
+
+        $leaves = Leave::query()->with(['employee', 'leaveType', 'approver'])
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['status','reason'], 'like', "%{$search}%")
+                    ->orWhereHas('employee', function ($q) use ($search) {
+                        $q->whereAny(['first_name', 'last_name'], 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('leaveType', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('approver', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            })
+            ->orderBy('created_at', 'DESC')->paginate(8);
+        if ($request->ajax()) {
+            return view('admin.leaves.table', compact('leaves'))->render();
+        }
+            return view('admin.leaves.index', compact('leaves'));
     }
     public function create()
     {

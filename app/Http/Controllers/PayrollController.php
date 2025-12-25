@@ -15,12 +15,26 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PayrollController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payrolls = Payroll::with('employee', 'generator')
+        $search = $request->get('search', '');
+
+        $payrolls = Payroll::query()->with(['employee', 'generator'])
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['payment_status','net_salary','month_year'], 'like', "%{$search}%")
+                    ->orWhereHas('employee', function ($q) use ($search) {
+                        $q->whereAny(['first_name', 'last_name',], 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('generator', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            })
             ->orderBy('month_year', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->paginate(8);
+            ->orderBy('created_at', 'desc')->paginate(8);
+
+        if ($request->ajax()) {
+            return view('admin.salaries.table', compact('payrolls'))->render();
+        }
 
         return view('admin.salaries.index', compact('payrolls'));
     }

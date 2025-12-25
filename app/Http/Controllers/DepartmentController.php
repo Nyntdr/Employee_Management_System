@@ -7,19 +7,35 @@ use App\Exports\EmployeesExport;
 use App\Http\Requests\DepartmentRequest;
 use App\Imports\DepartmentImport;
 use App\Models\Department;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DepartmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $departments=Department::paginate(5);
-        return view('admin.departments.index',compact('departments'));
+//        $departmentCount = Department::withCount('employees')->paginate(5);
+        $search = $request->get('search', '');
+
+        $departments = Department::query()->with(['manager'])
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['name'], 'like', "%{$search}%")
+                    ->orWhereHas('manager', function ($q) use ($search) {
+                        $q->whereAny(['first_name', 'last_name'], 'like', "%{$search}%");
+                    });
+            })
+            ->withCount('employees')->paginate(5);
+        if ($request->ajax()) {
+            return view('admin.departments.table', compact('departments'))->render();
+        }
+
+        return view('admin.departments.index', compact('departments'));
     }
     public function create()
     {
-        return view('admin.departments.create');
+        $employees = Employee::with('department')->get();
+        return view('admin.departments.create',compact('employees'));
     }
     public function import(Request $request)
     {
@@ -42,7 +58,8 @@ class DepartmentController extends Controller
     public function edit(string $id)
     {
         $department = Department::findOrFail($id);
-        return view('admin.departments.edit', compact('department'));
+        $employees = Employee::where('department_id', $department->department_id)->with('department')->get();
+        return view('admin.departments.edit', compact('department', 'employees'));
     }
     public function update(DepartmentRequest $request, string $id)
     {

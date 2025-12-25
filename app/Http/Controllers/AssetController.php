@@ -12,9 +12,17 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class AssetController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $assets = Asset::paginate(5);
+//        $assets = Asset::paginate(5);
+        $search = $request->get('search', '');
+
+        $assets = Asset::query()->when($search, function ($query) use ($search) {
+            $query->whereAny(['asset_code', 'name', 'category', 'brand', 'model','serial_number','type','status','current_condition'], 'like', "%{$search}%");
+        })->paginate(8);
+        if ($request->ajax()) {
+            return view('admin.assets.table', compact('assets'))->render();
+        }
         return view('admin.assets.index', compact('assets'));
     }
 
@@ -22,10 +30,12 @@ class AssetController extends Controller
     {
         return view('admin.assets.create');
     }
+
     public function export()
     {
         return Excel::download(new AssetsExport(), 'assets_export.xlsx');
     }
+
     public function import(Request $request)
     {
         $request->validate([
@@ -34,6 +44,7 @@ class AssetController extends Controller
         Excel::import(new AssetsImport(), $request->file('file'));
         return back()->with('success', 'All good!');
     }
+
     public function store(AssetRequest $request)
     {
         $validated = $request->validated();
