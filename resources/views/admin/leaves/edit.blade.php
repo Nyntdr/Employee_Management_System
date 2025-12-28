@@ -9,7 +9,6 @@
                 <div class="form-card">
                     <div class="form-card-header">
                         <h1>Edit Leave</h1>
-                        <p class="mb-0 form-text-muted">Leave ID: LV-{{ str_pad($leave->leave_id, 6, '0', STR_PAD_LEFT) }}</p>
                     </div>
                     <div class="form-card-body">
                         <form action="{{ route('leaves.update', $leave->leave_id) }}" method="POST">

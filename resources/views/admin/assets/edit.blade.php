@@ -9,19 +9,8 @@
                 <div class="form-card">
                     <div class="form-card-header">
                         <h1>Update Asset</h1>
-                        <p class="mb-0 form-text-muted">Asset ID: {{ $asset->asset_code }}</p>
                     </div>
                     <div class="form-card-body">
-                        @if($errors->any())
-                            <div class="form-alert form-alert-danger">
-                                <ul class="mb-0">
-                                    @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
                         <form method="POST" action="{{ route('assets.update', $asset->asset_id) }}">
                             @csrf
                             @method('PUT')
@@ -57,7 +46,7 @@
                                             <option value="">-- Select Type --</option>
                                             @foreach(App\Enums\AssetTypes::cases() as $type)
                                                 <option value="{{ $type->value }}"
-                                                    {{ old('type', $asset->type) == $type->value ? 'selected' : '' }}>
+                                                    {{ old('type', $asset->type->value) == $type->value ? 'selected' : '' }}>
                                                     {{ ucfirst($type->value) }}
                                                 </option>
                                             @endforeach
@@ -163,7 +152,7 @@
                                             <option value="">-- Select Status --</option>
                                             @foreach(App\Enums\AssetStatuses::cases() as $status)
                                                 <option value="{{ $status->value }}"
-                                                    {{ old('status', $asset->status) == $status->value ? 'selected' : '' }}>
+                                                    {{ old('status', $asset->status->value) == $status->value ? 'selected' : '' }}>
                                                     {{ ucwords(str_replace('_', ' ', $status->value)) }}
                                                 </option>
                                             @endforeach
@@ -184,7 +173,7 @@
                                             <option value="">-- Select Condition --</option>
                                             @foreach(App\Enums\AssetConditions::cases() as $condition)
                                                 <option value="{{ $condition->value }}"
-                                                    {{ old('current_condition', $asset->current_condition) == $condition->value ? 'selected' : '' }}>
+                                                    {{ old('current_condition', $asset->current_condition->value) == $condition->value ? 'selected' : '' }}>
                                                     {{ ucfirst($condition->value) }}
                                                 </option>
                                             @endforeach

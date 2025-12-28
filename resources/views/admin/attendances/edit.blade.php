@@ -9,7 +9,6 @@
                 <div class="form-card">
                     <div class="form-card-header">
                         <h1>Edit Attendance</h1>
-                        <p class="mb-0 form-text-muted">Attendance ID: ATD-{{ str_pad($attendance->attendance_id, 6, '0', STR_PAD_LEFT) }}</p>
                     </div>
                     <div class="form-card-body">
                         <form action="{{ route('attendances.update', $attendance->attendance_id) }}" method="POST">

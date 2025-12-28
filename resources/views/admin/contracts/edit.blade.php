@@ -9,7 +9,6 @@
                 <div class="form-card">
                     <div class="form-card-header">
                         <h1>Edit Contract</h1>
-                        <p class="mb-0 form-text-muted">Contract ID: CON-{{ str_pad($contract->contract_id, 6, '0', STR_PAD_LEFT) }}</p>
                     </div>
                     <div class="form-card-body">
                         <form action="{{ route('contracts.update', $contract->contract_id) }}" method="POST">
@@ -54,7 +53,7 @@
                                             @foreach($contractTypes as $type)
                                                 @php
                                                     // Get the current value for comparison
-                                                    $currentContractType = old('contract_type', $contract->contract_type);
+                                                    $currentContractType = old('contract_type', $contract->contract_type->value);
                                                 @endphp
                                                 <option value="{{ $type->value }}"
                                                     {{ $currentContractType == $type->value ? 'selected' : '' }}>
@@ -74,7 +73,7 @@
                                             @foreach($jobTitles as $title)
                                                 @php
                                                     // Get the current value for comparison
-                                                    $currentJobTitle = old('job_title', $contract->job_title);
+                                                    $currentJobTitle = old('job_title', $contract->job_title->value);
                                                 @endphp
                                                 <option value="{{ $title->value }}"
                                                     {{ $currentJobTitle == $title->value ? 'selected' : '' }}>
@@ -148,7 +147,7 @@
                                             @foreach($contractStatuses as $status)
                                                 @php
                                                     // Get the current value for comparison
-                                                    $currentContractStatus = old('contract_status', $contract->contract_status);
+                                                    $currentContractStatus = old('contract_status', $contract->contract_status->value);
                                                 @endphp
                                                 <option value="{{ $status->value }}"
                                                     {{ $currentContractStatus == $status->value ? 'selected' : '' }}>
@@ -178,104 +177,3 @@
         </div>
     </div>
 @endsection
-
-@push('styles')
-    <style>
-        /* Style for input groups */
-        .input-group {
-            display: flex;
-            align-items: stretch;
-        }
-
-        .input-group-text {
-            background-color: var(--form-bg-light);
-            border: 1px solid var(--form-border-color);
-            border-right: none;
-            border-radius: var(--form-radius-md) 0 0 var(--form-radius-md);
-            padding: 0.75rem 0.75rem;
-            color: var(--form-text-secondary);
-        }
-
-        .input-group .form-control {
-            border-left: none;
-            border-radius: 0 var(--form-radius-md) var(--form-radius-md) 0;
-        }
-    </style>
-@endpush
-
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Date validation
-            const startDateInput = document.getElementById('start_date');
-            const endDateInput = document.getElementById('end_date');
-
-            if (startDateInput && endDateInput) {
-                // Set min date for start date (today)
-                const today = new Date().toISOString().split('T')[0];
-                startDateInput.min = today;
-
-                // Update end date min based on start date
-                startDateInput.addEventListener('change', function() {
-                    if (this.value) {
-                        endDateInput.min = this.value;
-                    }
-                });
-
-                // Trigger initial min for end date
-                if (startDateInput.value) {
-                    endDateInput.min = startDateInput.value;
-                }
-
-                // Validate that end date is not before start date
-                endDateInput.addEventListener('change', function() {
-                    if (startDateInput.value && this.value) {
-                        if (new Date(this.value) < new Date(startDateInput.value)) {
-                            this.setCustomValidity('End date cannot be before start date');
-                        } else {
-                            this.setCustomValidity('');
-                        }
-                    }
-                });
-            }
-
-            // Format salary input
-            const salaryInput = document.getElementById('salary');
-            if (salaryInput) {
-                salaryInput.addEventListener('blur', function() {
-                    if (this.value) {
-                        // Format with commas for thousands
-                        let value = parseFloat(this.value).toFixed(2);
-                        this.value = value;
-                    }
-                });
-            }
-
-            // Form validation
-            const form = document.querySelector('form');
-            form?.addEventListener('submit', function(event) {
-                let isValid = true;
-
-                // Check required fields
-                const requiredFields = form.querySelectorAll('[required]');
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        field.classList.add('is-invalid');
-                        isValid = false;
-                    } else {
-                        field.classList.remove('is-invalid');
-                    }
-                });
-
-                if (!isValid) {
-                    event.preventDefault();
-                    // Scroll to first error
-                    const firstError = form.querySelector('.is-invalid');
-                    if (firstError) {
-                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }
-            });
-        });
-    </script>
-@endpush

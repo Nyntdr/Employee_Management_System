@@ -9,7 +9,6 @@
                 <div class="form-card">
                     <div class="form-card-header">
                         <h1>Update Event</h1>
-                        <p class="mb-0 form-text-muted">Event ID: EVT-{{ str_pad($event->event_id, 6, '0', STR_PAD_LEFT) }}</p>
                     </div>
                     <div class="form-card-body">
                         <form action="{{ route('events.update', $event->event_id) }}" method="POST">

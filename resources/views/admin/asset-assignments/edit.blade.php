@@ -9,7 +9,6 @@
                 <div class="form-card">
                     <div class="form-card-header">
                         <h1>Edit Asset Assignment</h1>
-                        <p class="mb-0 form-text-muted">Assignment ID: ASG-{{ str_pad($asset_assign->assignment_id, 6, '0', STR_PAD_LEFT) }}</p>
                     </div>
                     <div class="form-card-body">
                         @if (session('error'))
@@ -21,17 +20,6 @@
                         <form action="{{ route('asset-assignments.update', $asset_assign->assignment_id) }}" method="POST">
                             @csrf
                             @method('PUT')
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <fieldset class="form-fieldset">
                                 <legend>Assignment Details</legend>
 
@@ -120,7 +108,7 @@
                                         <select name="status" id="status" class="form-select" required>
                                             @foreach ($statuses as $status)
                                                 <option value="{{ $status->value }}"
-                                                    {{ old('status', $asset_assign->status) == $status->value ? 'selected' : '' }}>
+                                                    {{ old('status', $asset_assign->status->value) == $status->value ? 'selected' : '' }}>
                                                     {{ ucfirst($status->value) }}
                                                 </option>
                                             @endforeach
@@ -136,7 +124,7 @@
                                             <option value="">-- Select Condition --</option>
                                             @foreach ($conditions as $condition)
                                                 <option value="{{ $condition->value }}"
-                                                    {{ old('condition_at_assignment', $asset_assign->condition_at_assignment) == $condition->value ? 'selected' : '' }}>
+                                                    {{ old('condition_at_assignment', $asset_assign->condition_at_assignment->value) == $condition->value ? 'selected' : '' }}>
                                                     {{ ucfirst($condition->value) }}
                                                 </option>
                                             @endforeach
@@ -154,7 +142,7 @@
                                             <option value="">-- Select Condition (if returned) --</option>
                                             @foreach ($conditions as $condition)
                                                 <option value="{{ $condition->value }}"
-                                                    {{ old('condition_at_return', $asset_assign->condition_at_return) == $condition->value ? 'selected' : '' }}>
+                                                    {{ old('condition_at_return', $asset_assign->condition_at_return->value) == $condition->value ? 'selected' : '' }}>
                                                     {{ ucfirst($condition->value) }}
                                                 </option>
                                             @endforeach
