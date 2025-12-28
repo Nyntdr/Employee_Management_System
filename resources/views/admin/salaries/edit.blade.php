@@ -35,21 +35,13 @@
 
                             <div class="form-row">
                                 <div class="form-col-12">
+                                    @php
+                                        $monthYear = substr(old('month_year', $payroll->month_year), 0, 7);
+                                    @endphp
                                     <label for="month_year" class="form-label form-label-required">Month Year (YYYY-MM)</label>
                                     <input type="month" name="month_year" id="month_year" class="form-control"
-                                           value="{{ old('month_year', $payroll->month_year) }}" required>
+                                           value="{{ $monthYear }}" required>
                                     @error('month_year')
-                                    <span class="form-error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-col-12">
-                                    <label for="basic_salary" class="form-label form-label-required">Basic Salary</label>
-                                    <input type="number" step="0.01" name="basic_salary" id="basic_salary" class="form-control"
-                                           value="{{ old('basic_salary', $payroll->basic_salary) }}" required>
-                                    @error('basic_salary')
                                     <span class="form-error">{{ $message }}</span>
                                     @enderror
                                 </div>

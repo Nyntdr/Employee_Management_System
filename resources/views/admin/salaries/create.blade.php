@@ -54,17 +54,6 @@
 
                             <div class="form-row">
                                 <div class="form-col-12">
-                                    <label for="basic_salary" class="form-label form-label-required">Basic Salary</label>
-                                    <input type="number" step="0.01" name="basic_salary" id="basic_salary" class="form-control"
-                                           value="{{ old('basic_salary') }}" required>
-                                    @error('basic_salary')
-                                    <span class="form-error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-col-12">
                                     <label for="overtime_pay" class="form-label">Overtime Pay</label>
                                     <input type="number" step="0.01" name="overtime_pay" id="overtime_pay" class="form-control"
                                            value="{{ old('overtime_pay', 0) }}">
@@ -99,10 +88,10 @@
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="status" class="form-label form-label-required">Status</label>
-                                    <select name="payment_status" id="status" class="form-select" required>
+                                    <select name="payment_status" id="payment_status" class="form-select" required>
                                         @foreach($statuses as $status)
                                             <option value="{{ $status->value }}"
-                                                {{ old('status') == $status->value || $status->value == 'active' ? 'selected' : '' }}>
+                                                {{ old('payment_status') == $status->value || $status->value == 'active' ? 'selected' : '' }}>
                                                 {{ ucfirst($status->value) }}
                                             </option>
                                         @endforeach

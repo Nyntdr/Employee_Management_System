@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\PayrollsExport;
 use App\Imports\PayrollsImport;
+use App\Mail\PayslipMail;
 use App\Models\Payroll;
 use App\Enums\PayStatus;
 use App\Models\Employee;
@@ -11,7 +12,9 @@ use App\Http\Requests\PayrollRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PayrollController extends Controller
 {
@@ -65,24 +68,38 @@ class PayrollController extends Controller
     {
         try {
             DB::beginTransaction();
-            $existingPayroll = Payroll::where('employee_id', $request->employee_id)
-                ->where('month_year', $request->month_year)
-                ->first();
 
-            if ($existingPayroll) {
-                return redirect()->back()
-                    ->withInput()
-                    ->withErrors(['month_year' => 'Payroll already exists for this employee and month.']);
+            $employee = Employee::with(['contracts' => function($query) {
+                $query->where('contract_status', 'active')
+                    ->orderBy('start_date', 'desc');
+            }])->findOrFail($request->employee_id);
+            if ($employee->contracts->isEmpty()) {
+                return redirect()->back()->withInput()
+                    ->withErrors(['employee_id' => 'Employee does not have an active contract.']);
+            }
+            $activeContract = $employee->contracts->first();
+
+            if (!$activeContract || empty($activeContract->salary) || $activeContract->salary < 0) {
+                return redirect()->back()->withInput()
+                    ->withErrors(['employee_id' => 'Employee contract has invalid or less than zero salary.']);
             }
 
             $payroll = new Payroll();
             $payroll->fill($request->validated());
+            $payroll->basic_salary = $activeContract->salary;
             $payroll->generated_by = auth()->id();
-            $payroll->net_salary =$payroll->calculateNetSalary();
-            if ($payroll->payment_status !== PayStatus::PAID) {
+
+            $payroll->overtime_pay = $request->overtime_pay ?? 0;
+            $payroll->bonus = $request->bonus ?? 0;
+            $payroll->deductions = $request->deductions ?? 0;
+
+            $payroll->net_salary = $payroll->calculateNetSalary();
+
+            if ($payroll->payment_status->value === PayStatus::PAID->value) {
+                $payroll->paid_date = $request->paid_date ?? now()->format('Y-m-d');
+            } else {
                 $payroll->paid_date = null;
             }
-
             $payroll->save();
 
             DB::commit();
@@ -92,15 +109,17 @@ class PayrollController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Payroll Store Error: ' . $e->getMessage());
+            Log::error('Stack Trace: ' . $e->getTraceAsString());
 
-            return redirect()->back()
-                ->withInput()
+            return redirect()->back()->withInput()
                 ->with('error', 'Failed to create payroll record. Error: ' . $e->getMessage());
         }
     }
 
     public function edit(string $id)
     {
+
         $payroll = Payroll::with('employee', 'generator')->findOrFail($id);
         $statuses = PayStatus::cases();
         $employees = Employee::all();
@@ -112,29 +131,42 @@ class PayrollController extends Controller
     {
         try {
             DB::beginTransaction();
+            $payroll = Payroll::with('employee')->findOrFail($id);
+            $employee = Employee::with(['contracts' => function($query) {
+                $query->where('contract_status', 'active')
+                    ->orderBy('start_date', 'desc');
+            }])->findOrFail($request->employee_id ?? $payroll->employee_id);
 
-            $payroll = Payroll::findOrFail($id);
-            $existingPayroll = Payroll::where('employee_id', $request->employee_id)
-                ->where('month_year', $request->month_year)
-                ->where('payroll_id', '!=', $id)
-                ->first();
-
-            if ($existingPayroll) {
-                return redirect()->back()
-                    ->withInput()
-                    ->withErrors(['month_year' => 'Payroll already exists for this employee and month.']);
+            if ($employee->contracts->isEmpty()) {
+                return redirect()->back()->withInput()
+                    ->withErrors(['employee_id' => 'Employee does not have an active contract.']);
             }
+            $activeContract = $employee->contracts->first();
 
-            $oldNetSalary = $payroll->net_salary;
+            if (!$activeContract || empty($activeContract->salary) || $activeContract->salary < 0) {
+                return redirect()->back()->withInput()
+                    ->withErrors(['employee_id' => 'Employee contract has invalid or less than zero salary.']);
+            }
 
             $payroll->fill($request->validated());
+            $payroll->basic_salary = $activeContract->salary;
+
+            $payroll->overtime_pay = $request->overtime_pay ?? 0;
+            $payroll->bonus = $request->bonus ?? 0;
+            $payroll->deductions = $request->deductions ?? 0;
+
             $payroll->net_salary = $payroll->calculateNetSalary();
-            if ($payroll->payment_status !== PayStatus::PAID) {
+
+            if ($payroll->payment_status->value === PayStatus::PAID->value) {
+                if ($request->filled('paid_date')) {
+                    $payroll->paid_date = $request->paid_date;
+                } elseif (!$payroll->paid_date) {
+                    $payroll->paid_date = now()->format('Y-m-d');
+                }
+            } else {
                 $payroll->paid_date = null;
             }
-
             $payroll->save();
-
             DB::commit();
 
             return redirect()->route('payrolls.index')
@@ -142,13 +174,11 @@ class PayrollController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-
-            return redirect()->back()
-                ->withInput()
+            Log::error('Payroll Update Error: ' . $e->getMessage());
+            return redirect()->back()->withInput()
                 ->with('error', 'Failed to update payroll record. Error: ' . $e->getMessage());
         }
     }
-
     public function destroy(string $id)
     {
         try {
@@ -163,4 +193,32 @@ class PayrollController extends Controller
                 ->with('error', 'Failed to delete payroll record. Error: ' . $e->getMessage());
         }
     }
+    public function generatePayslip($payrollId)
+    {
+        $payroll = Payroll::with(['employee.user', 'employee.latestContract', 'generator'])->findOrFail($payrollId);
+
+        $pdf = Pdf::loadView('admin.salaries.payslip', compact('payroll'));
+
+        return $pdf->download(
+            'Payslip_'.$payroll->employee->first_name.'_'.$payroll->employee->last_name.'_'.$payroll->month_year.'.pdf'
+        );
+    }
+
+    public function sendPayslipEmail($payrollId)
+    {
+        try {
+            $payroll = Payroll::with(['employee.user', 'employee.latestContract', 'generator'])->findOrFail($payrollId);
+            $downloadLink = route('payrolls.payslip', $payroll);
+            Mail::to($payroll->employee->user->email)->send(new PayslipMail($payroll, $downloadLink));
+            return redirect()->route('payrolls.index')
+                ->with('success', 'Payslip download link sent to ' . $payroll->employee->user->email . '!');
+
+        }
+        catch (\Exception $e) {
+            Log::error('Email sending failed: ' . $e->getMessage());
+            return redirect()->route('payrolls.index')
+                ->with('error', 'Failed to send email: ' . $e->getMessage());
+        }
+    }
+
 }

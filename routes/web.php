@@ -74,7 +74,9 @@ Route::post('/attendance/clock-in', [ClockInClockOutController::class, 'clockIn'
 Route::post('/attendance/clock-out', [ClockInClockOutController::class, 'clockOut'])->name('clockout');
 //salary
 Route::get('/payrolls/export', [PayrollController::class, 'export'])->name('payrolls.export');
+Route::get('/payslip/{payroll}', [PayrollController::class, 'generatePayslip'])->name('payrolls.payslip');
 Route::resource('payrolls', PayrollController::class)->middleware(['auth', 'role_verify']);
+Route::post('/payrolls/{payroll}/send-email', [PayrollController::class, 'sendPayslipEmail'])->name('payrolls.email')->middleware('auth');
 //leave types
 Route::get('/leave-types/export', [LeaveTypeController::class, 'export'])->name('leave-types.export');
 Route::resource('leave-types', LeaveTypeController::class)->middleware(['auth', 'role_verify']);
