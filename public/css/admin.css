@@ -1,4 +1,4 @@
-
+/* Admin Dashboard Styles */
 body {
     font-family: "Poppins", sans-serif;
     margin: 0;
@@ -54,27 +54,128 @@ body {
     min-height: calc(100vh - 56px);
 }
 
+/* Dashboard Specific Styles */
+.dashboard-card {
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 16px !important;
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.dashboard-card .card-body {
+    padding: 1.75rem 2rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(25, 25, 112, 0.1);
+    border-radius: 16px;
+}
+
+.stat-card:hover {
+    border-color: rgba(25, 25, 112, 0.3);
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--midnight-blue);
+    line-height: 1;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
 .text-midnight {
     color: var(--midnight-blue);
     font-weight: 700;
 }
 
 .btn-midnight {
-    background-color: var(--midnight-blue);
+    background: linear-gradient(135deg, var(--midnight-blue) 0%, var(--midnight-dark) 100%);
     color: white;
     border: none;
     font-weight: 500;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
 }
 
 .btn-midnight:hover {
-    background-color: #151564;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(25, 25, 112, 0.4);
+    background: linear-gradient(135deg, var(--midnight-dark) 0%, var(--midnight-blue) 100%);
     color: white;
 }
 
-.form-control:focus {
-    border-color: var(--midnight-blue);
-    box-shadow: 0 0 0 0.25rem rgba(25, 25, 112, 0.25);
+.btn-success, .btn-warning {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 12px;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
 }
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
+}
+
+.alert {
+    border-radius: 12px;
+    border: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+}
+
+.rounded {
+    border-radius: 12px !important;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.quick-stat-item {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(25, 25, 112, 0.1);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.quick-stat-item:hover {
+    border-color: rgba(25, 25, 112, 0.3);
+}
+
+.chart-card {
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.chart-card .card-body {
+    padding: 1.75rem;
+}
+
+.clock-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid rgba(25, 25, 112, 0.1);
+    border-radius: 16px;
+}
+
 #current-date-time {
     color: white;
     font-size: 0.875rem;
@@ -86,9 +187,23 @@ body {
     gap: 1rem !important;
 }
 
+.form-control:focus {
+    border-color: var(--midnight-blue);
+    box-shadow: 0 0 0 0.25rem rgba(25, 25, 112, 0.25);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .admin-sidebar {
         width: 180px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .dashboard-card .card-body {
+        padding: 1.5rem;
     }
 }
 
@@ -97,12 +212,22 @@ body {
         width: 100%;
         min-height: auto;
     }
-    
+
     .d-flex {
         flex-direction: column;
     }
-    
+
     .admin-main {
         min-height: auto;
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+    }
+
+    .btn-midnight {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.9rem;
+        min-width: auto;
     }
 }
