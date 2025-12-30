@@ -5,7 +5,7 @@
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
             <div>
-                <h1 class="h3 mb-0">My Leaves</h1>
+                <h1 class="text-midnight mb-2">My Leaves</h1>
                 <p class="text-muted mb-0">View your leave requests</p>
             </div>
             <a href="{{route('leave-requests.create')}}" class="btn btn-primary">Request Leave</a>

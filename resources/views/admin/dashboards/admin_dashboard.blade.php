@@ -161,7 +161,7 @@
             <div class="col-12">
                 <div class="card chart-card">
                     <div class="card-body">
-                        <h5 class="card-title mb-4 text-midnight">Data Distribution</h5>
+                        <h5 class="card-title mb-4 text-midnight">Employee Department Distribution</h5>
                         <div class="chart-container" style="position: relative; height: 300px;">
                             <canvas id="distributionChart"></canvas>
                         </div>
@@ -179,7 +179,9 @@
             totalDepartments: {{ $totalDepartments }},
             totalNotices: {{ $totalNotices }},
             totalAssets: {{ $totalAssets }},
-            totalEvents: {{ $totalEvents }}
+            totalEvents: {{ $totalEvents }},
+            totalLeaves:{{$totalLeaves}},
+            employeesByDepartment: {!! json_encode($employeesByDepartment) !!}
         };
     </script>
 @endsection

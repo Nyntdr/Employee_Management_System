@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AssetStatuses;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -75,6 +76,15 @@ class Employee extends Model
 
     public function assetAssignments(): HasMany
     {
-        return $this->hasMany(AssetAssignment::class, 'employee_id','employee-id');
+        return $this->hasMany(AssetAssignment::class, 'employee_id','employee_id');
+    }
+    public function requestedAssets()
+    {
+        return $this->hasMany(Asset::class, 'requested_by')
+            ->where('status', AssetStatuses::REQUESTED->value);
+    }
+    public function getFullNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->last_name}");
     }
 }

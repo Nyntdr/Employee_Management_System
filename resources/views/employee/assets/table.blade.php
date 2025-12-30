@@ -15,7 +15,6 @@
                 <tbody>
                 @forelse($asset_assigns as $asset_assign)
                     @php
-                        // Handle Enum objects by getting their value
                         $status = is_object($asset_assign->status) ? $asset_assign->status->value : $asset_assign->status;
                         $condition = is_object($asset_assign->condition_at_assignment)
                             ? $asset_assign->condition_at_assignment->value

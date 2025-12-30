@@ -9,8 +9,6 @@
                     <th scope="col">Asset Name</th>
                     <th scope="col">Type</th>
                     <th scope="col">Category</th>
-                    <th scope="col">Purchase Date</th>
-                    <th scope="col">Warranty Until</th>
                     <th scope="col">Status</th>
                     <th scope="col">Condition</th>
                     <th scope="col" width="120" class="text-center">Actions</th>
@@ -38,28 +36,6 @@
                             <span class="fw-medium">{{ $asset->category ?? 'N/A' }}</span>
                         </td>
                         <td>
-                            @if($asset->purchase_date)
-                                <span
-                                    class="fw-medium">{{ \Carbon\Carbon::parse($asset->purchase_date)->format('M d, Y') }}</span>
-                                <br>
-                                <small class="text-muted-small">NPR {{ $asset->purchase_cost ?? 'N/A'}}</small>
-                            @else
-                                <span class="table-badge badge-opacity-secondary">N/A</span>
-                                <br>
-                                <small class="text-muted-small">NPR {{ $asset->purchase_cost ?? 'N/A'}}</small>
-                            @endif
-                        </td>
-                        <td>
-                            @if($asset->warranty_until)
-                                <span
-                                    class="fw-medium">{{ \Carbon\Carbon::parse($asset->warranty_until)->format('M d, Y') }}</span>
-                                <br><small
-                                    class="text-muted-small"> {{  \Carbon\Carbon::parse($asset->warranty_until)->diffForHumans()}}</small>
-                            @else
-                                <span class="table-badge badge-opacity-secondary">No Warranty</span>
-                            @endif
-                        </td>
-                        <td>
                             @php
                                 $status = is_object($asset->status) ? $asset->status->value : $asset->status;
                                 $badgeClass = match(strtolower((string) $status)) {
@@ -77,9 +53,6 @@
                                 <div class="mt-1 small text-muted">
                                     <strong>By:</strong>
                                     {{ $asset->requestedBy ? $asset->requestedBy->full_name : 'Unknown' }}
-                                    <br>
-                                    <strong>Reason:</strong>
-                                    {{ $asset->request_reason ?? 'Not provided' }}
                                 </div>
                             @endif
                         </td>
@@ -100,28 +73,16 @@
                         </td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="{{ route('assets.edit', $asset->asset_id) }}"
-                                   class="btn table-btn-sm btn-outline-primary" title="Edit Asset">Edit</a>
-                                <form action="{{ route('assets.destroy', $asset->asset_id) }}" method="POST"
-                                      class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn table-btn-sm btn-outline-danger"
-                                            onclick="return confirm('Are you sure you want to delete this asset?')"
-                                            title="Delete Asset">Delete
-                                    </button>
-                                </form>
+                                <a href="{{ route('asset-requests.edit', $asset->asset_id) }}" class="btn table-btn btn-success" title="Request Asset">Request</a>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="10" class="text-center py-5">
+                        <td colspan="8" class="text-center py-5">
                             <div class="py-4">
-                                <h5 class="text-muted">No assets found</h5>
-                                <p class="text-muted mb-4">Get started by adding your first asset</p>
-                                <a href="{{ route('assets.create') }}" class="btn btn-primary">Add First
-                                    Asset</a>
+                                <h5 class="text-muted">No available assets currently.</h5>
+                                <p class="text-muted mb-4">Please wait until new assets are added to the system.</p>
                             </div>
                         </td>
                     </tr>
@@ -139,3 +100,4 @@
         @endif
     </div>
 </div>
+

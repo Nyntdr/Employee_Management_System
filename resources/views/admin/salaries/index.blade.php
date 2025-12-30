@@ -5,7 +5,7 @@
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
             <div>
-                <h1 class="h3 mb-0">Salary Records</h1>
+                <h1 class="text-midnight mb-2">Salary Records</h1>
                 <p class="text-muted mb-0">Manage employee salary and payroll</p>
             </div>
             <a href="{{ route('payrolls.create') }}" class="btn btn-primary">Add Salary Record</a>

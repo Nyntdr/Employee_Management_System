@@ -8,7 +8,7 @@
                 <h1 class="h3 mb-0">My Assigned Assets</h1>
                 <p class="text-muted mb-0">View assets assigned to you</p>
             </div>
-            <a href="#" class="btn btn-primary">Request Asset</a>
+            <a href="{{route('asset-requests.index')}}" class="btn btn-primary">Request Asset</a>
         </div>
         @include('layouts.components.alert')
 {{--        @include('layouts.components.search', ['route' => route('employee.assets.index'),'placeholder' => 'Search assets assigned by name, code, status, condition or assigner...'])--}}

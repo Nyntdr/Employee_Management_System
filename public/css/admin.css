@@ -13,14 +13,10 @@ body {
     --midnight-white: #e0e0ff;
 }
 
+/* Layout Components */
 .admin-navbar {
     background-color: var(--midnight-blue) !important;
     padding: 10px 0;
-}
-
-.admin-navbar .navbar-brand {
-    color: white !important;
-    font-weight: 600;
 }
 
 .admin-sidebar {
@@ -28,6 +24,19 @@ body {
     min-height: calc(100vh - 56px);
     background-color: var(--midnight-dark);
     padding: 20px 0;
+}
+
+.admin-main {
+    flex: 1;
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 56px);
+}
+
+/* Navigation */
+.admin-navbar .navbar-brand {
+    color: white !important;
+    font-weight: 600;
 }
 
 .admin-sidebar a {
@@ -47,15 +56,8 @@ body {
     border-left: 3px solid var(--midnight-light);
 }
 
-.admin-main {
-    flex: 1;
-    padding: 20px;
-    background-color: #f8f9fa;
-    min-height: calc(100vh - 56px);
-}
-
-/* Dashboard Specific Styles */
-.dashboard-card {
+/* Cards & Containers */
+.dashboard-card, .chart-card {
     border: 1px solid rgba(0,0,0,0.05);
     border-radius: 16px !important;
     transition: all 0.3s ease;
@@ -65,19 +67,30 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
 }
 
-.dashboard-card .card-body {
+.dashboard-card .card-body, .chart-card .card-body {
     padding: 1.75rem 2rem;
 }
 
-.stat-card {
+.stat-card, .quick-stat-item, .clock-section {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border: 1px solid rgba(25, 25, 112, 0.1);
     border-radius: 16px;
+    transition: all 0.3s ease;
 }
 
-.stat-card:hover {
+.stat-card:hover, .quick-stat-item:hover {
     border-color: rgba(25, 25, 112, 0.3);
     transform: translateY(-2px);
+}
+
+/* Typography & Colors */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+}
+
+.text-midnight {
+    color: var(--midnight-blue);
+    font-weight: 700;
 }
 
 .stat-number {
@@ -93,13 +106,16 @@ body {
     font-size: 0.95rem;
 }
 
-.text-midnight {
-    color: var(--midnight-blue);
-    font-weight: 700;
+#current-date-time {
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
+/* Buttons */
 .btn-midnight {
-    background: linear-gradient(135deg, var(--midnight-blue) 0%, var(--midnight-dark) 100%);
+    background: var(--midnight-blue);
     color: white;
     border: none;
     font-weight: 500;
@@ -111,7 +127,7 @@ body {
 .btn-midnight:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(25, 25, 112, 0.4);
-    background: linear-gradient(135deg, var(--midnight-dark) 0%, var(--midnight-blue) 100%);
+    background: var(--midnight-dark);
     color: white;
 }
 
@@ -133,15 +149,13 @@ body {
     box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
 }
 
-.alert {
-    border-radius: 12px;
-    border: none;
+/* Form Elements */
+.form-control:focus {
+    border-color: var(--midnight-blue);
+    box-shadow: 0 0 0 0.25rem rgba(25, 25, 112, 0.25);
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
-}
-
+/* Utilities */
 .rounded {
     border-radius: 12px !important;
 }
@@ -150,46 +164,18 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #f8f9fa !important;
 }
 
-.quick-stat-item {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border: 1px solid rgba(25, 25, 112, 0.1);
+.alert {
     border-radius: 12px;
-    padding: 1.25rem;
-}
-
-.quick-stat-item:hover {
-    border-color: rgba(25, 25, 112, 0.3);
-}
-
-.chart-card {
-    border-radius: 16px;
-    border: 1px solid rgba(0,0,0,0.05);
-}
-
-.chart-card .card-body {
-    padding: 1.75rem;
-}
-
-.clock-section {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border: 1px solid rgba(25, 25, 112, 0.1);
-    border-radius: 16px;
-}
-
-#current-date-time {
-    color: white;
-    font-size: 0.875rem;
-    font-weight: 500;
-    white-space: nowrap;
+    border: none;
 }
 
 .navbar .d-flex.align-items-center.gap-3 {
     gap: 1rem !important;
 }
 
-.form-control:focus {
-    border-color: var(--midnight-blue);
-    box-shadow: 0 0 0 0.25rem rgba(25, 25, 112, 0.25);
+.quick-stat-item {
+    padding: 1.25rem;
+    border-radius: 12px;
 }
 
 /* Responsive Design */
@@ -202,7 +188,7 @@ h1, h2, h3, h4, h5, h6 {
         font-size: 2rem;
     }
 
-    .dashboard-card .card-body {
+    .dashboard-card .card-body, .chart-card .card-body {
         padding: 1.5rem;
     }
 }

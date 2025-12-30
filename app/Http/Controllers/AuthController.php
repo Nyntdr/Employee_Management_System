@@ -62,8 +62,9 @@ class AuthController extends Controller
         $totalAssets = Asset::count();
         $totalEvents = Event::count();
         $totalLeaves = Leave::count();
+        $employeesByDepartment = Department::withCount('employees')->get();
         return view('admin.dashboards.admin_dashboard', compact('totalUsers', 'totalDepartments',
-            'totalEmployees', 'totalEvents', 'totalNotices', 'totalAssets', 'totalLeaves'));
+            'totalEmployees', 'totalEvents', 'totalNotices', 'totalAssets', 'totalLeaves','employeesByDepartment'));
     }
 
     private $officeIp = ['110.34.27.186', '127.0.0.1'];
@@ -71,15 +72,33 @@ class AuthController extends Controller
     public function employeeDashboard(Request $request)
     {
         $ip = $request->getClientIp();
-//     if (app()->environment('local')) {
-//     $ip = '110.34.27.186';
-// }
+        // if (app()->environment('local')) {
+        //     $ip = '110.34.27.186';
+        // }
         $isAllowed = IpUtils::checkIp($ip, $this->officeIp);
 
         $totalAssets = AssetAssignment::where('employee_id', Auth::user()->employee->employee_id)->count();
         $totalLeaves = Leave::where('employee_id', Auth::user()->employee->employee_id)->count();
+        $totalNotices = Notice::count();
+        $latestNotice = Notice::latest()->first();
+        $totalEvents = Event::count();
+        $latestEvent = Event::where(function($query) {
+            $query->where('start_time', '>=', now())
+                ->orWhere('end_time', '>=', now());
+        })
+            ->orderBy('start_time')
+            ->first();
 
-        return view('employee.dashboard.dashboard', compact('totalAssets', 'totalLeaves', 'ip', 'isAllowed'));
+        return view('employee.dashboard.dashboard', compact(
+            'totalAssets',
+            'totalLeaves',
+            'ip',
+            'isAllowed',
+            'totalNotices',
+            'latestNotice',
+            'totalEvents',
+            'latestEvent'
+        ));
     }
 
     public function login(LoginRequest $request)
@@ -97,7 +116,6 @@ class AuthController extends Controller
                 return redirect()->route('employee.dashboard');
             }
         }
-
         return back()->withErrors([
             'password' => 'The provided password is incorrect.',
         ])->withInput($request->except('password'));

@@ -34,12 +34,15 @@
                          style="width: 32px; height: 32px; border-radius: 50%;">
                 @endif
             </a>
-            <a href="#" class="nav-link position-relative" title="Notifications" data-bs-toggle="dropdown">>
-                <img src="{{ asset('images/notification.png') }}" class="navbar-icon"
-                     style="width: 32px; height: 32px;">
-                <span
-                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{auth()->user()->unreadNotifications->count() }}</span>
+            <a href="#" class="nav-link position-relative" title="Notifications" data-bs-toggle="dropdown">
+                <img src="{{ asset('images/notification.png') }}" class="navbar-icon" style="width: 32px; height: 32px;">
+                @if(auth()->user()->unreadNotifications->count() > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ auth()->user()->unreadNotifications->count() }}
+        </span>
+                @endif
             </a>
+
             <ul class="dropdown-menu dropdown-menu-end">
                 @forelse(auth()->user()->notifications as $notification)
                     <li>
@@ -52,6 +55,9 @@
                                 <strong>{{ $notification->data['message'] }}</strong> <small
                                     class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                             @elseif($notification->type === 'App\Notifications\EventCreatedNotification')
+                                <strong>{{ $notification->data['message'] }}</strong> <small
+                                    class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                            @elseif($notification->type === 'App\Notifications\AssetRequestNotification')
                                 <strong>{{ $notification->data['message'] }}</strong> <small
                                     class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                             @else

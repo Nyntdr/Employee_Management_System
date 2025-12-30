@@ -5,7 +5,7 @@
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
             <div>
-                <h1 class="h3 mb-0">Leave Types</h1>
+                <h1 class="text-midnight mb-2">Leave Types</h1>
                 <p class="text-muted mb-0">Manage different types of leave</p>
             </div>
 

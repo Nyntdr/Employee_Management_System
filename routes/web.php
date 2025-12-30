@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\AssetRequestController;
 use App\Http\Controllers\ClockInClockOutController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\NotificationController;
@@ -83,8 +84,9 @@ Route::resource('leave-types', LeaveTypeController::class)->middleware(['auth', 
 //leave
 Route::get('/leaves/export', [LeaveController::class, 'export'])->name('leaves.export');
 Route::resource('leaves', LeaveController::class)->middleware(['auth', 'role_verify']);
-//leave request
+//leave request and asset request for employee
 Route::resource('leave-requests', LeaveRequestController::class)->middleware('auth');
+Route::resource('asset-requests', AssetRequestController::class)->middleware('auth');
 //image uploading
 Route::post('/image-upload', [ImageUploadController::class, 'upload'])->name('image.upload');
 //employee dashboard

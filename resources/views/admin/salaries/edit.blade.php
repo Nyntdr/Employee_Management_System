@@ -51,7 +51,7 @@
                                 <div class="form-col-12">
                                     <label for="overtime_pay" class="form-label">Overtime Pay</label>
                                     <input type="number" step="0.01" name="overtime_pay" id="overtime_pay" class="form-control"
-                                           value="{{ old('overtime_pay', $payroll->overtime_pay) }}">
+                                           value="{{ old('overtime_pay', $payroll->overtime_pay) }}" min="0" oninput="this.value = Math.max(0, this.value)">
                                     @error('overtime_pay')
                                     <span class="form-error">{{ $message }}</span>
                                     @enderror
@@ -62,7 +62,7 @@
                                 <div class="form-col-12">
                                     <label for="bonus" class="form-label">Bonus</label>
                                     <input type="number" step="0.01" name="bonus" id="bonus" class="form-control"
-                                           value="{{ old('bonus', $payroll->bonus) }}">
+                                           value="{{ old('bonus', $payroll->bonus) }}" min="0" oninput="this.value = Math.max(0, this.value)">
                                     @error('bonus')
                                     <span class="form-error">{{ $message }}</span>
                                     @enderror
@@ -73,7 +73,7 @@
                                 <div class="form-col-12">
                                     <label for="deductions" class="form-label">Deductions</label>
                                     <input type="number" step="0.01" name="deductions" id="deductions" class="form-control"
-                                           value="{{ old('deductions', $payroll->deductions) }}">
+                                           value="{{ old('deductions', $payroll->deductions) }}" min="0" oninput="this.value = Math.max(0, this.value)">
                                     @error('deductions')
                                     <span class="form-error">{{ $message }}</span>
                                     @enderror

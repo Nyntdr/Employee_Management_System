@@ -5,7 +5,7 @@
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
             <div>
-                <h1 class="h3 mb-0">Contract List</h1>
+                <h1 class="text-midnight mb-2">Contract List</h1>
                 <p class="text-muted mb-0">Manage employee contracts</p>
             </div>
             <a href="{{ route('contracts.create') }}" class="btn btn-primary">Add Contract</a>
