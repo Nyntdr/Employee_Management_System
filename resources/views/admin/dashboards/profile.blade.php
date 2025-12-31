@@ -164,7 +164,6 @@
                         </div>
                     </div>
 
-                    <!-- Job Details Card -->
                     <div class="profile-clean-card">
                         <div class="profile-clean-header">
                             <h3>JOB DETAILS</h3>
@@ -228,7 +227,6 @@
                         </div>
                     </div>
                 @else
-                    <!-- No Employee Data -->
                     <div class="profile-clean-card">
                         <div class="profile-clean-body text-center py-4">
                             <div class="mb-3">
