@@ -5,7 +5,7 @@
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
             <div>
-                <h1 class="h3 mb-0">My Salary Records</h1>
+                <h1 class="text-midnight mb-2">My Salary Records</h1>
                 <p class="text-muted mb-0">Your salary records in the company</p>
             </div>
         </div>

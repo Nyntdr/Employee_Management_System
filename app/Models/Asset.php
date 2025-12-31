@@ -46,6 +46,6 @@ class Asset extends Model
     }
     public function requestedBy(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, 'requested_by');
+        return $this->belongsTo(Employee::class, 'requested_by', 'employee_id');
     }
 }

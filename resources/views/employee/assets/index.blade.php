@@ -5,7 +5,7 @@
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
             <div>
-                <h1 class="h3 mb-0">My Assigned Assets</h1>
+                <h1 class="text-midnight mb-2">My Assigned Assets</h1>
                 <p class="text-muted mb-0">View assets assigned to you</p>
             </div>
             <a href="{{route('asset-requests.index')}}" class="btn btn-primary">Request Asset</a>

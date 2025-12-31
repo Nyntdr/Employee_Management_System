@@ -11,13 +11,13 @@ class AssetRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; 
+        return true;
     }
 
     public function rules(): array
     {
         $assetId = $this->route('asset') ?? null;
-        
+
         $rules = [
             'asset_code' => 'required|string|max:50',
             'name' => 'required|string|max:100',
@@ -31,7 +31,11 @@ class AssetRequest extends FormRequest
             'warranty_until' => 'nullable|date',
             'status' => 'required|string|in:' . implode(',', array_column(AssetStatuses::cases(), 'value')),
             'current_condition' => 'required|string|in:' . implode(',', array_column(AssetConditions::cases(), 'value')),
+            'requested_by' => 'nullable|exists:employees,employee_id',
+            'requested_at' => 'nullable|date',
+            'request_reason' => 'nullable|string|max:500',
         ];
+
         if ($this->isMethod('POST')) {
             $rules['asset_code'] .= '|unique:assets,asset_code';
             $rules['serial_number'] .= '|unique:assets,serial_number';

@@ -69,7 +69,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No assets assigned</h5>
                                 <p class="text-muted mb-4">You don't have any assets assigned to you</p>
-                                <a href="#" class="btn btn-primary">
+                                <a href="{{route('asset-requests.index')}}" class="btn btn-primary">
                                     Request Asset
                                 </a>
                             </div>

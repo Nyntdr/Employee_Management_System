@@ -8,147 +8,260 @@
 
     <div class="container-fluid py-4">
         <div class="row">
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h3 class="mb-0">Profile Image</h3>
+            <div class="col-lg-4">
+                <div class="profile-clean-card mb-4">
+                    <div class="profile-clean-header">
+                        <h3>PROFILE PICTURE</h3>
                     </div>
-                    <div class="card-body text-center">
-                        <div class="mb-4">
-                            @if(!$u->profile_picture)
-                                <img src="{{ asset('images/icon.jpg')}}" class="rounded-circle border border-primary" width="200" height="200">
+                    <div class="profile-clean-body text-center">
+                        <div class="profile-pic-wrapper">
+                            @if($u->profile_picture)
+                                <img src="{{ asset('storage/'.$u->profile_picture) }}" alt="Profile">
                             @else
-                                <img src="{{ asset('storage/'.$u->profile_picture) }}" class="rounded-circle border border-primary" width="200" height="200">
+                                <img src="{{ asset('images/icon.jpg') }}" alt="Default">
                             @endif
                         </div>
 
+                        <h4 class="mb-1">{{ $u->name }}</h4>
+                        <p class="text-muted mb-3">{{ $u->role->role_name }}</p>
+
                         <form action="{{ route('image.upload') }}" method="post" enctype="multipart/form-data">
                             @csrf
-                            <div class="mb-3">
-                                <label for="fileInput" class="btn btn-primary btn-sm">Choose New Image</label>
-                                <input type="file" id="fileInput" name="image" accept="image/*" class="d-none">
+                            <input type="file" id="profileImage" name="image" accept="image/*" class="d-none">
+                            <button type="button" onclick="document.getElementById('profileImage').click()"
+                                    class="btn-pic-change mb-2">Change Picture</button>
+
+                            <div id="imagePreviewSection" class="mt-3" style="display: none;">
+                                <img id="previewImage" class="rounded-circle mb-2" width="80" height="80">
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Save
+                                    </button>
+                                    <button type="button" onclick="cancelUpload()" class="btn btn-danger btn-sm">
+                                        Cancel
+                                    </button>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <img id="imagePreview" alt="Preview" class="rounded-circle d-none" width="200" height="200">
-                            </div>
-                            <button type="submit" class="btn btn-success btn-sm" id="uploadButton" disabled>Upload Image</button>
                         </form>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h3 class="mb-0">User Details</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <p class="form-control-static">{{ $u->name }}</p>
+                @if($e)
+                    <div class="profile-clean-card">
+                        <div class="profile-clean-header">
+                            <h3>QUICK INFO</h3>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <p class="form-control-static">{{ $u->email }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Role</label>
-                            <p class="form-control-static">{{ $u->role->role_name }}</p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Last Login</label>
-                            <p class="form-control-static">{{ $u->last_login->diffForHumans() }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        <div class="profile-clean-body">
+                            <div class="info-row">
+                                <div class="info-label">Employee ID</div>
+                                <div class="info-value">EMP-{{ $e->employee_id }}</div>
+                            </div>
 
-            @if ($u && $u->employee)
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h3 class="mb-0">Employee Details</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">Name</label>
-                                <p class="form-control-static">{{ $e->first_name }} {{ $e->last_name }}</p>
+                            <div class="info-row">
+                                <div class="info-label">Joined Date</div>
+                                <div class="info-value">
+                                    {{ $e->date_of_joining->format('M d, Y') }}
+                                    <small class="text-muted d-block">{{ $e->date_of_joining->diffForHumans() }}</small>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Gender</label>
-                                <p class="form-control-static">{{ $e->gender }}</p>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Date of Birth</label>
-                                <p class="form-control-static">{{ $e->date_of_birth->format('M d, Y') }}</p>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Join Date</label>
-                                <p class="form-control-static">
-                                    {{ $e->date_of_joining->format('M d, Y') }}<br>
-                                    <small class="text-muted">({{ $e->date_of_joining->diffForHumans() }})</small>
-                                </p>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Current Status</label>
-                                <p class="form-control-static">
-                                    @if ($e->employment_status == 'active')
-                                        <span class="badge bg-success">{{ $e->employment_status }}</span>s
+
+                            <div class="info-row">
+                                <div class="info-label">Status</div>
+                                <div class="info-value">
+                                    @if($e->latestContract->contract_status->value == 'active')
+                                        <span class="status-badge status-active">Active</span>
                                     @else
-                                        <span class="badge bg-secondary">{{ $e->employment_status}}</span>
+                                        <span class="status-badge status-inactive">{{ ucfirst($e->latestContract->contract_status->value) }}</span>
                                     @endif
-                                </p>
+                                </div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="info-label">Age</div>
+                                <div class="info-value">{{ $e->date_of_birth->age }} years</div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <div class="col-lg-8">
+                <div class="profile-clean-card mb-4">
+                    <div class="profile-clean-header">
+                        <h3>USER INFORMATION</h3>
+                    </div>
+                    <div class="profile-clean-body">
+                        <div class="simple-grid">
+                            <div class="info-row">
+                                <div class="info-label">Username</div>
+                                <div class="info-value">{{ $u->name }}</div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="info-label">Email Address</div>
+                                <div class="info-value">{{ $u->email }}</div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="info-label">User Role</div>
+                                <div class="info-value">{{ $u->role->role_name }}</div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="info-label">Last Login</div>
+                                <div class="info-value">{{ $u->last_login->diffForHumans() }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="mb-0">Contacts</h3>
+                @if($e)
+                    <div class="profile-clean-card mb-4">
+                        <div class="profile-clean-header">
+                            <h3>PERSONAL DETAILS</h3>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Main Phone</label>
-                                    <p class="form-control-static">{{ $e->phone }}</p>
+                        <div class="profile-clean-body">
+                            <div class="simple-grid">
+                                <div class="info-row">
+                                    <div class="info-label">Full Name</div>
+                                    <div class="info-value">{{ $e->first_name }} {{ $e->last_name }}</div>
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Secondary Phone</label>
-                                    <p class="form-control-static">{{ $e->secondary_phone }}</p>
+
+                                <div class="info-row">
+                                    <div class="info-label">Gender</div>
+                                    <div class="info-value">{{ ucfirst($e->gender) }}</div>
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Emergency Contact</label>
-                                    <p class="form-control-static">{{ $e->emergency_contact }}</p>
+
+                                <div class="info-row">
+                                    <div class="info-label">Date of Birth</div>
+                                    <div class="info-value">{{ $e->date_of_birth->format('M d, Y') }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @endif
+
+                    <div class="profile-clean-card mb-4">
+                        <div class="profile-clean-header">
+                            <h3>CONTACT INFORMATION</h3>
+                        </div>
+                        <div class="profile-clean-body">
+                            <div class="simple-grid">
+                                <div class="contact-box">
+                                    <div class="info-label">Primary Phone</div>
+                                    <div class="info-value mt-2">{{ $e->phone }}</div>
+                                </div>
+
+                                <div class="contact-box">
+                                    <div class="info-label">Secondary Phone</div>
+                                    <div class="info-value mt-2">{{ $e->secondary_phone ?? 'Not provided' }}</div>
+                                </div>
+
+                                <div class="contact-box">
+                                    <div class="info-label">Emergency Contact</div>
+                                    <div class="info-value mt-2">{{ $e->emergency_contact ?? 'Not provided' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-clean-card">
+                        <div class="profile-clean-header">
+                            <h3>JOB DETAILS</h3>
+                        </div>
+                        <div class="profile-clean-body">
+                            <div class="simple-grid">
+                                <div class="info-row">
+                                    <div class="info-label">Job Title</div>
+                                    <div class="info-value">{{ ucwords(str_replace('_', ' ', $e->latestContract->job_title->value)) ?? 'Not specified' }}</div>
+                                </div>
+
+                                <div class="info-row">
+                                    <div class="info-label">Contract Type</div>
+                                    <div class="info-value">{{ ucwords(str_replace('_', ' ', $e->latestContract->contract_type->value)) ?? 'Not specified' }}</div>
+                                </div>
+
+                                <div class="info-row">
+                                    <div class="info-label">Working Hours</div>
+                                    <div class="info-value">
+                                        @if($e->latestContract && $e->latestContract->working_hours)
+                                            {{ $e->latestContract->working_hours}}
+                                        @else
+                                            Not specified
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="info-row">
+                                    <div class="info-label">Monthly Salary</div>
+                                    <div class="info-value">
+                                        @if($e->latestContract && $e->latestContract->salary)
+                                            Rs {{ number_format($e->latestContract->salary, 2) }}
+                                        @else
+                                            Not specified
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="info-row">
+                                    <div class="info-label">Contract Start Date</div>
+                                    <div class="info-value">
+                                        @if($e->latestContract && $e->latestContract->start_date)
+                                            {{ $e->latestContract->start_date->format('M d, Y') }}
+                                        @else
+                                            Not specified
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="info-row">
+                                    <div class="info-label">Contract End Date</div>
+                                    <div class="info-value">
+                                        @if($e->latestContract && $e->latestContract->end_date)
+                                            {{ $e->latestContract->end_date->format('M d, Y') }}
+                                        @else
+                                            Not specified / Open-ended
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="profile-clean-card">
+                        <div class="profile-clean-body text-center py-4">
+                            <div class="mb-3">
+                                <div class="profile-pic-wrapper mx-auto" style="width: 80px; height: 80px;">
+                                    <img src="{{ asset('images/icon.jpg') }}" alt="Default">
+                                </div>
+                            </div>
+                            <h5 class="text-muted">No Employee Data</h5>
+                            <p class="text-muted mb-0">Your user account is not linked to any employee record.</p>
+                        </div>
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
+        document.getElementById('profileImage').addEventListener('change', function(event) {
             const file = event.target.files[0];
-            const imagePreview = document.getElementById('imagePreview');
-            const uploadButton = document.getElementById('uploadButton');
+            const previewSection = document.getElementById('imagePreviewSection');
+            const previewImage = document.getElementById('previewImage');
 
             if (file && file.type.match('image.*')) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.classList.remove('d-none');
-                    uploadButton.disabled = false;
+                    previewImage.src = e.target.result;
+                    previewSection.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
-            } else {
-                imagePreview.classList.add('d-none');
-                imagePreview.src = '';
-                uploadButton.disabled = true;
             }
         });
+
+        function cancelUpload() {
+            document.getElementById('profileImage').value = '';
+            document.getElementById('imagePreviewSection').style.display = 'none';
+        }
     </script>
 @endsection

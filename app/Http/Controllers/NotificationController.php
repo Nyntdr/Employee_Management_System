@@ -21,6 +21,13 @@ class NotificationController extends Controller
         if ($notification->type === 'App\Notifications\AssetRequestNotification') {
             return redirect()->route('assets.index');
         }
+        if ($notification->type === 'App\Notifications\LeaveUpdatedNotification') {
+            return redirect()->route('employee.leaves.index');
+        }
+        if ($notification->type === 'App\Notifications\AssetUpdatedNotification') {
+            return redirect()->route('employee.assets.index');
+        }
+
         if ($notification->type === 'App\Notifications\NoticeCreatedNotification') {
             if (in_array(auth()->user()->role_id, [1, 2])) {
                 return redirect()->route('notices.index');

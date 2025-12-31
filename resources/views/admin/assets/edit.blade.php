@@ -8,12 +8,22 @@
             <div class="col-12">
                 <div class="form-card">
                     <div class="form-card-header">
-                        <h1>Update Asset</h1>
+                        <h1>Edit Asset</h1>
                     </div>
                     <div class="form-card-body">
                         <form method="POST" action="{{ route('assets.update', $asset->asset_id) }}">
                             @csrf
                             @method('PUT')
+
+                            @if($errors->any())
+                                <div class="form-alert form-alert-danger">
+                                    <ul class="mb-0">
+                                        @foreach($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
 
                             <fieldset class="form-fieldset">
                                 <legend>Basic Asset Information</legend>
@@ -45,8 +55,7 @@
                                         <select name="type" id="type" class="form-select" required>
                                             <option value="">-- Select Type --</option>
                                             @foreach(App\Enums\AssetTypes::cases() as $type)
-                                                <option value="{{ $type->value }}"
-                                                    {{ old('type', $asset->type->value) == $type->value ? 'selected' : '' }}>
+                                                <option value="{{ $type->value }}" {{ old('type', $asset->type->value) == $type->value ? 'selected' : '' }}>
                                                     {{ ucfirst($type->value) }}
                                                 </option>
                                             @endforeach
@@ -157,11 +166,6 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        @if($asset->assignments()->where('status', 'active')->exists())
-                                            <div class="form-hint" style="color: #dc3545;">
-                                                ⚠ This asset has active assignments. Status cannot be changed.
-                                            </div>
-                                        @endif
                                         @error('status')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
@@ -172,13 +176,50 @@
                                         <select name="current_condition" id="current_condition" class="form-select" required>
                                             <option value="">-- Select Condition --</option>
                                             @foreach(App\Enums\AssetConditions::cases() as $condition)
-                                                <option value="{{ $condition->value }}"
-                                                    {{ old('current_condition', $asset->current_condition->value) == $condition->value ? 'selected' : '' }}>
+                                                <option value="{{ $condition->value }}" {{ old('current_condition', $asset->current_condition->value) == $condition->value ? 'selected' : '' }}>
                                                     {{ ucfirst($condition->value) }}
                                                 </option>
                                             @endforeach
                                         </select>
                                         @error('current_condition')
+                                        <span class="form-error">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <hr class="form-divider">
+
+                            <fieldset class="form-fieldset">
+                                <legend>Request Information (Optional)</legend>
+
+                                <div class="form-row">
+                                    <div class="form-col-6">
+                                        <label for="requested_by" class="form-label">Requested By (Employee)</label>
+                                        <select name="requested_by" id="requested_by" class="form-select">
+                                            <option value="">-- Select Employee --</option>
+                                            @foreach($employees as $employee)
+                                                <option value="{{ $employee->employee_id }}"
+                                                    {{ old('requested_by', $asset->requested_by) == $employee->employee_id ? 'selected' : '' }}>
+                                                    {{ $employee->first_name }} {{ $employee->last_name }}
+                                                    ({{ $employee->employee_id }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div class="form-hint">Employee who requested this asset (if applicable)</div>
+                                        @error('requested_by')
+                                        <span class="form-error">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-col-12">
+                                        <label for="request_reason" class="form-label">Request Reason</label>
+                                        <textarea name="request_reason" id="request_reason" class="form-control"
+                                                  rows="3" maxlength="500">{{ old('request_reason', $asset->request_reason) }}</textarea>
+                                        <div class="form-hint">Reason for requesting this asset (if applicable)</div>
+                                        @error('request_reason')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
                                     </div>

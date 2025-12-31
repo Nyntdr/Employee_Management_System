@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 
 class Employee extends Model
 {
-    use HasFactory;
+    use Notifiable;
 
     protected $primaryKey = 'employee_id';
     public $timestamps = true;
@@ -78,9 +79,9 @@ class Employee extends Model
     {
         return $this->hasMany(AssetAssignment::class, 'employee_id','employee_id');
     }
-    public function requestedAssets()
+    public function requestedAssets() : HasMany
     {
-        return $this->hasMany(Asset::class, 'requested_by')
+        return $this->hasMany(Asset::class, 'requested_by','employee_id')
             ->where('status', AssetStatuses::REQUESTED->value);
     }
     public function getFullNameAttribute(): string

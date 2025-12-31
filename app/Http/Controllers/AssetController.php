@@ -6,6 +6,8 @@ use App\Exports\AssetsExport;
 use App\Imports\AssetsImport;
 use App\Http\Requests\AssetRequest;
 use App\Models\Asset;
+use App\Models\Employee;
+use App\Notifications\AssetUpdatedNotification;
 use Illuminate\Http\Request;
 use App\Enums\AssetStatuses;
 use Maatwebsite\Excel\Facades\Excel;
@@ -14,21 +16,27 @@ class AssetController extends Controller
 {
     public function index(Request $request)
     {
-//        $assets = Asset::paginate(5);
         $search = $request->get('search', '');
 
-        $assets = Asset::query()->when($search, function ($query) use ($search) {
-            $query->whereAny(['asset_code', 'name', 'category', 'brand', 'model','serial_number','type','status','current_condition'], 'like', "%{$search}%");
-        })->paginate(8);
+        $assets = Asset::query()
+            ->when($search, function ($query) use ($search) {
+                $query->whereAny(['asset_code', 'name', 'category', 'brand', 'model','serial_number','type','status','current_condition'], 'like', "%{$search}%");
+            })
+            ->orderByRaw("CASE WHEN status = ? THEN 1 ELSE 2 END", [AssetStatuses::REQUESTED->value])
+            ->orderBy('created_at', 'desc')
+            ->paginate(8);
+
         if ($request->ajax()) {
             return view('admin.assets.table', compact('assets'))->render();
         }
+
         return view('admin.assets.index', compact('assets'));
     }
 
     public function create()
     {
-        return view('admin.assets.create');
+        $employees = Employee::all();
+        return view('admin.assets.create',compact('employees'));
     }
 
     public function export()
@@ -48,9 +56,17 @@ class AssetController extends Controller
     public function store(AssetRequest $request)
     {
         $validated = $request->validated();
+
+        // Set default status if not provided
         if (!isset($validated['status'])) {
             $validated['status'] = AssetStatuses::AVAILABLE->value;
         }
+
+        // Set requested_at if requested_by is set but requested_at is not
+        if (isset($validated['requested_by']) && !isset($validated['requested_at'])) {
+            $validated['requested_at'] = now();
+        }
+
         Asset::create($validated);
         return redirect()->route('assets.index')->with('success', 'Asset created successfully!');
     }
@@ -58,15 +74,32 @@ class AssetController extends Controller
     public function edit(string $id)
     {
         $asset = Asset::findOrFail($id);
-        return view('admin.assets.edit', compact('asset'));
+        $employees = Employee::all();
+        return view('admin.assets.edit', compact('asset', 'employees'));
     }
 
     public function update(AssetRequest $request, string $id)
     {
-        $asset = Asset::findOrFail($id);
+        $asset = Asset::with(['assignments', 'requestedBy.user'])->findOrFail($id);
 
         $isCurrentlyAssigned = $asset->status->value === AssetStatuses::ASSIGNED->value;
         $data = $request->validated();
+        $oldStatus = $asset->status->value;
+        $newStatus = $request->status;
+
+        // Handle requested_at logic
+        if (isset($data['requested_by']) && !isset($data['requested_at'])) {
+            $data['requested_at'] = now();
+        }
+
+        // Clear requested fields if status is no longer REQUESTED
+        if ($oldStatus === AssetStatuses::REQUESTED->value && $newStatus !== AssetStatuses::REQUESTED->value) {
+            $data['requested_by'] = null;
+            $data['requested_at'] = null;
+            $data['request_reason'] = null;
+        }
+
+        // Check if asset has active assignments when changing from ASSIGNED status
         if ($isCurrentlyAssigned && isset($data['status']) && $data['status'] !== AssetStatuses::ASSIGNED->value) {
             $hasActiveAssignments = $asset->assignments()
                 ->where('status', 'active')
@@ -78,7 +111,17 @@ class AssetController extends Controller
                     ->withInput();
             }
         }
+
         $asset->update($data);
+
+        // Send notification if asset request was rejected (changed from REQUESTED to AVAILABLE)
+        if ($oldStatus === AssetStatuses::REQUESTED->value &&
+            $newStatus === AssetStatuses::AVAILABLE->value &&
+            $asset->requestedBy &&
+            $asset->requestedBy->user) {
+            $asset->requestedBy->user->notify(new AssetUpdatedNotification($asset));
+        }
+
         return redirect()->route('assets.index')->with('success', 'Asset updated successfully!');
     }
 

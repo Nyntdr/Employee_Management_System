@@ -188,6 +188,43 @@
                                 </div>
                             </fieldset>
 
+                            <hr class="form-divider">
+
+                            <fieldset class="form-fieldset">
+                                <legend>Request Information (Optional)</legend>
+
+                                <div class="form-row">
+                                    <div class="form-col-6">
+                                        <label for="requested_by" class="form-label">Requested By (Employee)</label>
+                                        <select name="requested_by" id="requested_by" class="form-select">
+                                            <option value="">-- Select Employee --</option>
+                                            @foreach($employees as $employee)
+                                                <option value="{{ $employee->employee_id }}"
+                                                    {{ old('requested_by') == $employee->employee_id ? 'selected' : '' }}>
+                                                    {{ $employee->first_name }} {{ $employee->last_name }}
+                                                    ({{ $employee->employee_id }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div class="form-hint">Employee who requested this asset (if applicable)</div>
+                                        @error('requested_by')
+                                        <span class="form-error">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-col-12">
+                                        <label for="request_reason" class="form-label">Request Reason</label>
+                                        <textarea name="request_reason" id="request_reason" class="form-control"
+                                                  rows="3" maxlength="500">{{ old('request_reason') }}</textarea>
+                                        <div class="form-hint">Reason for requesting this asset (if applicable)</div>
+                                        @error('request_reason')
+                                        <span class="form-error">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </fieldset>
                             <div class="form-btn-group">
                                 <a href="{{ route('assets.index') }}" class="form-btn-outline">
                                     Cancel

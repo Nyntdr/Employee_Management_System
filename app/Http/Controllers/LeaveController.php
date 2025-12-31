@@ -8,8 +8,12 @@ use App\Models\Leave;
 use App\Models\Employee;
 use App\Models\LeaveType;
 use App\Http\Requests\LeaveRequest;
+use App\Models\User;
+use App\Notifications\EventCreatedNotification;
+use App\Notifications\LeaveUpdatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LeaveController extends Controller
@@ -74,9 +78,17 @@ class LeaveController extends Controller
     }
     public function update(LeaveRequest $request, string $id)
     {
-        $leave=Leave::findOrFail($id);
-        $leave->update(array_merge($request->validated(),['approved_by' => Auth::id()]));
+        $leave = Leave::with(['employee', 'approver'])->findOrFail($id);
+        $oldStatus = $leave->status->value;
+        $newStatus = $request->status;
 
+        $leave->update(array_merge($request->validated(), ['approved_by' => Auth::id()]));
+
+        if (($newStatus === 'approved' || $newStatus === 'rejected') && $oldStatus !== $newStatus) {
+            if ($leave->employee->user) {
+                $leave->employee->user->notify(new LeaveUpdatedNotification($leave));
+            }
+        }
         return redirect()->route('leaves.index')->with('success', 'Leave updated successfully.');
     }
     public function destroy(string $id)

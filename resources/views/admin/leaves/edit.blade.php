@@ -93,10 +93,9 @@
                                 <div class="form-col-12">
                                     <label for="status" class="form-label">Status</label>
                                     <select name="status" id="status" class="form-select">
-                                        <option value="pending" {{ old('status', $leave->status) == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="approved" {{ old('status', $leave->status) == 'approved' ? 'selected' : '' }}>Approved</option>
-                                        <option value="rejected" {{ old('status', $leave->status) == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                        <option value="cancelled" {{ old('status', $leave->status) == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                        <option value="pending" {{ old('status', $leave->status->value) == 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="approved" {{ old('status', $leave->status->value) == 'approved' ? 'selected' : '' }}>Approved</option>
+                                        <option value="rejected" {{ old('status', $leave->status->value) == 'rejected' ? 'selected' : '' }}>Rejected</option>
                                     </select>
                                     @error('status')
                                     <span class="form-error">{{ $message }}</span>
