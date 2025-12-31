@@ -80,5 +80,12 @@
                 </tbody>
             </table>
         </div>
+        @if($events->hasPages())
+            <div class="pagination-wrapper">
+                <div class="d-flex justify-content-center">
+                    {{ $events->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
+        @endif
     </div>
 </div>

@@ -55,7 +55,7 @@ class PayrollController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Log::info("Importing file from controller");
+        Log::info("Importing file from payroll controller");
         Excel::import(new PayrollsImport(), $request->file('file'));
         Log::info("File imported successfully");
         return back()->with('success', 'All good!');

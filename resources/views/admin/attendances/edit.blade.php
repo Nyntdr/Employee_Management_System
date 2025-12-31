@@ -83,7 +83,7 @@
                                     <select name="status" id="status" class="form-select" required>
                                         @foreach($statuses as $status)
                                             <option value="{{ $status->value }}"
-                                                {{ old('status', $attendance->status) == $status->value ? 'selected' : '' }}>
+                                                {{ old('status', $attendance->status->value) == $status->value ? 'selected' : '' }}>
                                                 {{ ucfirst($status->value) }}
                                             </option>
                                         @endforeach

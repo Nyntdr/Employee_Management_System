@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\LeavesExport;
+use App\Imports\LeaveImport;
 use App\Models\Leave;
 use App\Models\Employee;
 use App\Models\LeaveType;
@@ -31,7 +32,7 @@ class LeaveController extends Controller
                         $q->where('name', 'like', "%{$search}%");
                     });
             })
-            ->orderBy('created_at', 'DESC')->paginate(8);
+            ->orderBy('created_at', 'DESC')->paginate(5);
         if ($request->ajax()) {
             return view('admin.leaves.table', compact('leaves'))->render();
         }
@@ -47,6 +48,15 @@ class LeaveController extends Controller
     {
         return Excel::download(new LeavesExport(), 'leaves_export.xlsx');
     }
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        Excel::import(new LeaveImport(), $request->file('file'));
+        return back()->with('success', 'All good!');
+    }
+
     public function store(LeaveRequest $request)
     {
         $data = $request->validated();

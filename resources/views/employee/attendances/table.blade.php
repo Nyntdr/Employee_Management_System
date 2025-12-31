@@ -87,5 +87,13 @@
                     </tbody>
                 </table>
             </div>
+            @if($attendances->hasPages())
+                <div class="pagination-wrapper">
+                    <div class="d-flex justify-content-center">
+                        {{ $attendances->links('pagination::bootstrap-5') }}
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
+</div>

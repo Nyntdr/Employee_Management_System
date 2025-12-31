@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\EventsExport;
+use App\Imports\EventImport;
 use App\Models\Event;
 use App\Models\User;
 use App\Notifications\EventCreatedNotification;
@@ -39,7 +40,16 @@ class EventController extends Controller
     {
         return Excel::download(new EventsExport(), 'event_export.xlsx');
     }
-   public function store(EventRequest $request)
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        Excel::import(new EventImport(), $request->file('file'));
+        return back()->with('success', 'All good!');
+    }
+
+    public function store(EventRequest $request)
 {
         $validated = $request->validated();
         $validated['created_by'] = Auth::id();

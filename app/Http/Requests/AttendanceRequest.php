@@ -20,7 +20,6 @@ class AttendanceRequest extends FormRequest
             'date' => 'required|date',
             'clock_in' => 'nullable|date_format:H:i',
             'clock_out' => 'nullable|date_format:H:i',
-            'status' =>['required', Rule::enum(AttendanceStatus::class)],
         ];
 
         $rules['date'] = [
@@ -48,8 +47,6 @@ class AttendanceRequest extends FormRequest
             'clock_in.date_format' => 'Invalid time format (HH:MM)',
             'clock_out.date_format' => 'Invalid time format (HH:MM)',
             'clock_out.after_or_equal' => 'Clock out time must be after clock in time',
-            'status.required' => 'Status is required',
-            'status.in' => 'Invalid status selected',
         ];
     }
 }

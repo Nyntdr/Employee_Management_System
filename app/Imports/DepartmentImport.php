@@ -3,47 +3,51 @@
 namespace App\Imports;
 
 use App\Models\Department;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Concerns\ToModel;
+use App\Models\Employee;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-class DepartmentImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows
+class DepartmentImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows
 {
-
-    public function model(array $row)
+    public function collection(Collection $rows): void
     {
         DB::beginTransaction();
         try {
-            if (empty($row['name'])) {
-                Log::warning('Skipped empty department row', $row);
-                DB::rollBack();
-                return null;
+            foreach ($rows as $row) {
+                if (empty($row['department_name'])) {
+                    Log::warning('Skipped empty department row', $row);
+                    continue;
+                }
+                $manager = Employee::where('first_name', trim($row['manager_name']))->first();
+                $managerId = $manager ? $manager->employee_id : null;
+
+                Department::create([
+                    'name' => trim($row['department_name']),
+                    'manager_id' => $managerId,
+                ]);
             }
-            $department = new Department([
-                'name' => $row['name'],
-                'manager_id' => $row['manager_id'] ?? null,
-            ]);
-            $department->save();
             DB::commit();
-            return $department;
+            Log::info('Department import completed successfully');
+
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Department import failed', [
-                'row' => $row,
                 'message' => $e->getMessage(),
             ]);
             throw $e;
         }
     }
-
+//validation uses excel column names
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:departments,name',
-            'manager_id' => 'nullable|integer|exists:employees,employee_id',
+            'department_name' => 'required|string|max:255|unique:departments,name',
+            'manager_name' => 'nullable|string|exists:employees,first_name',
         ];
     }
 }

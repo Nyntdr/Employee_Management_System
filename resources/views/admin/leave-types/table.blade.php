@@ -45,5 +45,12 @@
                 </tbody>
             </table>
         </div>
+        @if($leave_types->hasPages())
+            <div class="pagination-wrapper">
+                <div class="d-flex justify-content-center">
+                    {{ $leave_types->links('pagination::bootstrap-5') }}
+                </div>
+            </div>
+        @endif
     </div>
 </div>

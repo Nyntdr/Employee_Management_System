@@ -6,58 +6,64 @@ use App\Enums\ContractStatus;
 use App\Enums\ContractType;
 use App\Enums\JobTitle;
 use App\Models\Contract;
+use App\Models\Employee;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class ContractsImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows
+class ContractsImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows
 {
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
-    public function model(array $row)
+    public function collection(Collection $rows) : void
     {
             DB::beginTransaction();
         try{
-          if (empty($row['employee_id']) || empty($row['contract_type'])) {
-             Log::warning('Skipped empty contract row',$row);
-             DB::rollBack();
-             return null;
+            foreach ($rows as $row)
+            {
+                if (empty($row['employee_email']) || empty($row['contract_type'])) {
+                    Log::warning('Skipped empty needed values contract row ',$row);
+                    continue;
+                }
+                $user = User::where('email', $row['employee_email'])->first();
+                if ($user)
+                {
+                    $employee = Employee::where('user_id', $user->id)->first();
+                }
+                else{
+                    Log::error('Employee not found');
+                    continue;
+                }
+                Contract::create([
+                    'employee_id' => $employee->employee_id,
+                    'contract_type' => $row['contract_type'],
+                    'job_title' => $row['job_title'],
+                    'start_date' => $this->parseDate($row['start_date']),
+                    'end_date' => $this->parseDate($row['end_date'] ?? null),
+                    'probation_period' => $row['probation_days'] ?? null,
+                    'working_hours' => $row['working_hours'] ?? null,
+                    'salary' => $row['salary'],
+                    'contract_status' => $row['contract_status'],
+                ]);
+                Log::info('Contract created',$row->toArray());
           }
-          $contract = new Contract([
-              'employee_id' => $row['employee_id'],
-              'contract_type' => $row['contract_type'],
-              'job_title' => $row['job_title'],
-              'start_date' => $this->excelDateToCarbon($row['start_date'] ?? null),
-              'end_date' => $this->excelDateToCarbon($row['end_date'] ?? null),
-              'probation_period' => $row['probation_days'] ?? null,
-              'working_hours' => $row['working_hours'] ?? null,
-              'salary' => $row['salary'],
-              'contract_status' => $row['contract_status'],
-          ]);
-          $contract->save();
           DB::commit();
-          return $contract;
         }
         catch (\Throwable $e){
             DB::rollBack();
-            Log::error('Contract import failed', [
-                'row' => $row,
-                'message' => $e->getMessage(),
-            ]);
+            Log::error('Contract import failed'.$e->getMessage());
             throw $e;
         }
     }
     public function rules(): array
     {
         return [
-            'employee_id' => 'required|exists:employees,employee_id',
+            'employee_email' => 'required|exists:users,email',
             'contract_type' => 'required|in:'. implode(',', array_column(ContractType::cases(), 'value')),
             'job_title' => 'required|in:'. implode(',', array_column(JobTitle::cases(), 'value')),
             'start_date' => 'required|numeric',
@@ -68,13 +74,18 @@ class ContractsImport implements ToModel, WithHeadingRow, WithValidation, SkipsE
             'contract_status' => 'required|in:'. implode(',', array_column(ContractStatus::cases(), 'value')),
         ];
     }
-    private function excelDateToCarbon($value): ?string
+    private function parseDate($value): ?string
     {
-        if (!$value) {
+        if (empty($value)) {
             return null;
         }
-        return Carbon::createFromTimestamp(
-            ((int)$value - 25569) * 86400
-        )->format('Y-m-d');
+        try {
+            if (is_numeric($value)) {
+                return Date::excelToDateTimeObject($value)->format('Y-m-d');
+            }
+            return Carbon::parse($value)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

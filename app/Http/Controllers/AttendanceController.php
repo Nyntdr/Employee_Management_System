@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AttendancesExport;
+use App\Imports\AttendanceImport;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Enums\AttendanceStatus;
@@ -27,7 +28,7 @@ class AttendanceController extends Controller
                     ->orWhere('clock_in', 'like', "%{$search}%")
                     ->orWhere('clock_out', 'like', "%{$search}%");
             })
-            ->latest()->paginate(8);
+            ->orderBy('date','desc')->paginate(8);
         if ($request->ajax()) {
             return view('admin.attendances.table', compact('attendances'))->render();
         }
@@ -41,23 +42,48 @@ class AttendanceController extends Controller
         $statuses = AttendanceStatus::cases();
         return view('admin.attendances.create', compact('employees', 'statuses'));
     }
+
     public function export()
     {
         return Excel::download(new AttendancesExport(), 'attendances_export.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        Excel::import(new AttendanceImport(), $request->file('file'));
+        return back()->with('success', 'All good!');
     }
 
     public function store(AttendanceRequest $request)
     {
         $data = $request->validated();
 
-        // Calculate total hours before creating
         if (!empty($data['clock_in']) && !empty($data['clock_out'])) {
-            $attendance = new Attendance($data);
-            $data['total_hours'] = $attendance->calculateTotalHours();
+            $clockIn = Carbon::parse($data['clock_in']);
+            $clockOut = Carbon::parse($data['clock_out']);
+            $data['total_hours'] = $clockIn->diffInHours($clockOut);
         }
 
-        Attendance::create($data);
+        if (!empty($data['clock_in']) && empty($data['status'])) {
+            $clockInTime = Carbon::parse($data['clock_in']);
+            $nineThirty = Carbon::createFromTime(9, 30, 0);
+            $tenThirty = Carbon::createFromTime(13, 30, 0);
 
+            if ($clockInTime->lessThanOrEqualTo($nineThirty)) {
+                $data['status'] = AttendanceStatus::PRESENT;
+            } elseif ($clockInTime->lessThanOrEqualTo($tenThirty)) {
+                $data['status'] = AttendanceStatus::LATE;
+            } else {
+                $data['status'] = AttendanceStatus::ABSENT;
+            }
+        }
+        if ($data['status'] instanceof AttendanceStatus) {
+            $data['status'] = $data['status']->value;
+        }
+        Attendance::create($data);
         return redirect()->route('attendances.index')->with('success', 'Attendance created successfully.');
     }
 
@@ -71,12 +97,12 @@ class AttendanceController extends Controller
     public function update(AttendanceRequest $request, Attendance $attendance)
     {
         $data = $request->validated();
+        $data['status'] = $request->input('status');
 
-        // Calculate total hours before updating
         if (!empty($data['clock_in']) && !empty($data['clock_out'])) {
-            // Temporarily set attributes to calculate
-            $attendance->fill($data);
-            $data['total_hours'] = $attendance->calculateTotalHours();
+            $clockIn = Carbon::parse($data['clock_in']);
+            $clockOut = Carbon::parse($data['clock_out']);
+            $data['total_hours'] = $clockIn->diffInHours($clockOut);
         } else {
             $data['total_hours'] = null;
         }

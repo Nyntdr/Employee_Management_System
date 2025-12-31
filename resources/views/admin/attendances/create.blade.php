@@ -72,23 +72,6 @@
                                 </div>
                             </div>
 
-                            <div class="form-row">
-                                <div class="form-col-12">
-                                    <label for="status" class="form-label form-label-required">Status</label>
-                                    <select name="status" id="status" class="form-select" required>
-                                        @foreach($statuses as $status)
-                                            <option value="{{ $status->value }}"
-                                                {{ old('status', 'present') == $status->value ? 'selected' : '' }}>
-                                                {{ ucfirst($status->value) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('status')
-                                    <span class="form-error">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
                             <div class="form-btn-group">
                                 <a href="{{ route('attendances.index') }}" class="form-btn-outline">
                                     Back to List

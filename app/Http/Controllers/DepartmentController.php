@@ -9,6 +9,7 @@ use App\Imports\DepartmentImport;
 use App\Models\Department;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DepartmentController extends Controller

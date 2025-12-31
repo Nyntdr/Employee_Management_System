@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AssetAssignmentsExport;
+use App\Imports\AssetAssignmentImport;
 use App\Models\Asset;
 use App\Models\Employee;
 use App\Models\AssetAssignment;
@@ -56,6 +57,14 @@ class AssetAssignmentController extends Controller
     public function export()
     {
         return Excel::download(new AssetAssignmentsExport(), 'asset_assigns_export.xlsx');
+    }
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        Excel::import(new AssetAssignmentImport(), $request->file('file'));
+        return back()->with('success', 'All good!');
     }
 
     public function store(AssetAssignmentRequest $request): RedirectResponse

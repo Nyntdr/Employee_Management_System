@@ -7,53 +7,50 @@ use App\Enums\AssetStatuses;
 use App\Enums\AssetTypes;
 use App\Models\Asset;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class AssetsImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows
+class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows
 {
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
-    public function model(array $row)
+    public function collection(Collection $rows)
     {
+
         DB::beginTransaction();
         try{
-            if (empty($row['asset_code']) || empty($row['asset_name'])) {
-                Log::warning('Skipped empty asset row',$row);
-                DB::rollBack();
-                return null;
-            }
-            $asset = new Asset([
-                'asset_code' => $row['asset_code'],
-                'name' => $row['asset_name'],
-                'category' => $row['category'],
-                'brand' => $row['brand'],
-                'model' => $row['model'],
-                'serial_number' => $row['serial_number'],
-                'purchase_date' => $this->excelDateToCarbon($row['purchase_date'] ?? null),
-                'purchase_cost' => $row['purchase_cost'],
-                'warranty_until' => $this->excelDateToCarbon($row['warranty_until'] ?? null),
-                'type' => $row['type'],
-                'status' => $row['status'],
-                'current_condition' => $row['current_condition'],
+            foreach ($rows as $row) {
+                if (empty($row['asset_code']) || empty($row['asset_name'])) {
+                    Log::warning('Skipped empty asset row',$row);
+                    continue;
+                }
+                Asset::create([
+                    'asset_code' => $row['asset_code'],
+                    'name' => $row['asset_name'],
+                    'category' => $row['category'],
+                    'brand' => $row['brand'],
+                    'model' => $row['model'],
+                    'serial_number' => $row['serial_number'],
+                    'purchase_date' => $this->parseDate($row['purchase_date'] ?? null),
+                    'purchase_cost' => $row['purchase_cost'],
+                    'warranty_until' => $this->parseDate($row['warranty_until'] ?? null),
+                    'type' => $row['type'],
+                    'status' => $row['status'],
+                    'current_condition' => $row['current_condition'],
                 ]);
-            $asset->save();
+                Log::info('Assets imported',$row->toArray());
+            }
+
             DB::commit();
-            return $asset;
         }
         catch (\Throwable $e){
             DB::rollBack();
-            Log::error('Asset import failed', [
-                'row' => $row,
-                'message' => $e->getMessage(),
-            ]);
+            Log::error('Asset import failed'.$e->getMessage());
             throw $e;
         }
     }
@@ -74,13 +71,18 @@ class AssetsImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmpt
             'current_condition' => 'required|string|in:' . implode(',', array_column(AssetConditions::cases(), 'value')),
         ];
     }
-    private function excelDateToCarbon($value): ?string
+    private function parseDate($value): ?string
     {
-        if (!$value) {
+        if (empty($value)) {
             return null;
         }
-        return Carbon::createFromTimestamp(
-            ((int)$value - 25569) * 86400
-        )->format('Y-m-d');
+        try {
+            if (is_numeric($value)) {
+                return Date::excelToDateTimeObject($value)->format('Y-m-d');
+            }
+            return Carbon::parse($value)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

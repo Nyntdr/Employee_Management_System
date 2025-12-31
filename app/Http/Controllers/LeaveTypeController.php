@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\LeaveTypesExport;
+use App\Imports\LeaveTypeImport;
 use App\Models\LeaveType;
 use App\Http\Requests\LeaveTypeRequest;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class LeaveTypeController extends Controller
         $leave_types = LeaveType::query()
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
-            })->paginate(8);
+            })->paginate(5);
         if ($request->ajax()) {
             return view('admin.leave-types.table', compact('leave_types'))->render();
         }
@@ -32,6 +33,15 @@ class LeaveTypeController extends Controller
     {
         return Excel::download(new LeaveTypesExport(), 'leave_types_export.xlsx');
     }
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+        Excel::import(new LeaveTypeImport(), $request->file('file'));
+        return back()->with('success', 'All good!');
+    }
+
     public function store(LeaveTypeRequest $request)
     {
         LeaveType::create($request->validated());
