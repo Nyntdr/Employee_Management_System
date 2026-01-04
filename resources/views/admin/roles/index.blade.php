@@ -4,7 +4,7 @@
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="text-midnight mb-2">Roles List</h1>
-            <a href="{{ route('roles.create') }}" class="btn btn-primary">
+            <a href="{{ route('roles.create') }}" class="btn btn-midnight">
                 Add Role
             </a>
 
@@ -85,7 +85,7 @@
             font-size: 0.875rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #6c757d;
+            color: #ffffff;
         }
 
         .table td {

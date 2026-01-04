@@ -53,9 +53,29 @@
                                 </span>
                         </td>
                         <td>
-                                <span class="table-badge {{ $conditionBadgeClass }}">
-                                    {{ ucwords(str_replace('_', ' ', $condition)) }}
-                                </span>
+                            @php
+                                // Convert enum condition to string
+                                $assignedCondition = $asset_assign->condition_at_assignment->value ?? (string) $asset_assign->condition_at_assignment;
+                                $returnedCondition = $asset_assign->condition_at_return->value ?? (string) $asset_assign->condition_at_return;
+                            @endphp
+                            @if($asset_assign->condition_at_return)
+                                <div>
+                                    <small class="text-muted-small">Assigned:</small>
+                                    <span class="table-badge badge-opacity-info">
+                                                {{ ucwords(str_replace('_', ' ', $assignedCondition ?? 'N/S')) }}
+                                            </span>
+                                </div>
+                                <div class="mt-1">
+                                    <small class="text-muted-small">Returned:</small>
+                                    <span class="table-badge badge-opacity-success">
+                                                {{ ucwords(str_replace('_', ' ', $returnedCondition ?? 'N/A')) }}
+                                            </span>
+                                </div>
+                            @else
+                                <span class="table-badge badge-opacity-info">
+                                            {{ ucwords(str_replace('_', ' ', $assignedCondition ?? 'N/S')) }}
+                                        </span>
+                            @endif
                         </td>
                         <td>
                                 <span class="table-badge badge-opacity-primary">
@@ -69,7 +89,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No assets assigned</h5>
                                 <p class="text-muted mb-4">You don't have any assets assigned to you</p>
-                                <a href="{{route('asset-requests.index')}}" class="btn btn-primary">
+                                <a href="{{route('asset-requests.index')}}" class="btn btn-midnight">
                                     Request Asset
                                 </a>
                             </div>

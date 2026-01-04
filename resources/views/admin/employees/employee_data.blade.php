@@ -88,7 +88,7 @@
     <div class="employee-empty-state">
         <h5>No employees found</h5>
         <p>Get started by adding your first employee</p>
-        <a href="{{ route('employees.create') }}" class="btn btn-primary">
+        <a href="{{ route('employees.create') }}" class="btn btn-midnight">
             Add First Employee
         </a>
     </div>

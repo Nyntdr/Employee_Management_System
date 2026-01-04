@@ -8,7 +8,7 @@
                 <h1 class="text-midnight mb-2">Attendance List</h1>
                 <p class="text-muted mb-0">Manage employee attendance records</p>
             </div>
-            <a href="{{ route('attendances.create') }}" class="btn btn-primary">Add Attendance</a>
+            <a href="{{ route('attendances.create') }}" class="btn btn-midnight">Add Attendance</a>
         </div>
 
         @include('layouts.components.alert')

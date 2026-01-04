@@ -9,9 +9,9 @@
                 <p class="text-muted mb-0">Manage different types of leave</p>
             </div>
 
-            <div class="d-flex gap-3">
-                <a href="{{ route('leaves.index') }}" class="btn btn-outline-secondary">Leave Records</a>
-                <a href="{{ route('leave-types.create') }}" class="btn btn-primary">Add Type</a>
+            <div class="d-flex gap-1">
+                <a href="{{ route('leaves.index') }}" class="btn btn-success">Leave Records</a>
+                <a href="{{ route('leave-types.create') }}" class="btn btn-midnight">Add Type</a>
             </div>
         </div>
         @include('layouts.components.alert')

@@ -3,6 +3,7 @@ use App\Http\Controllers\AssetRequestController;
 use App\Http\Controllers\ClockInClockOutController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PayrollController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -96,7 +97,6 @@ Route::get('/employee-notice', [EmployeeDashboardController::class, 'noticeIndex
 Route::get('/employee-leaves', [EmployeeDashboardController::class, 'leaveIndex'])->name('employee.leaves.index')->middleware('auth');
 Route::get('/employee-attendances', [EmployeeDashboardController::class, 'attendanceIndex'])->name('employee.attendances.index')->middleware('auth');
 Route::get('/employee-salaries', [EmployeeDashboardController::class, 'salaryIndex'])->name('employee.salaries.index')->middleware('auth');
-
 //import try
 Route::post('/users/import', [AuthController::class, 'import'])->name('users.import');
 Route::post('contracts/import', [ContractController::class, 'import'])->name('contracts.import');
@@ -109,54 +109,13 @@ Route::post('/leaves/import', [LeaveController::class, 'import'])->name('leaves.
 Route::post('/attendances/import', [AttendanceController::class, 'import'])->name('attendances.import');
 Route::post('/events/import', [EventController::class, 'import'])->name('events.import');
 Route::post('/leave-types/import', [LeaveTypeController::class, 'import'])->name('leave-types.import');
-
 //notification
 Route::get('/notification/{id}', [NotificationController::class, 'handle'])->middleware('auth')->name('notifications.handle');
-
 // Forgot password request form
-Route::get('/forgot-password', function () {
-    return view('admin.auth.forgot-password');
-})->middleware('guest')->name('password.request');
-
+Route::get('/forgot-password', [PasswordController::class,'request'])->middleware('guest')->name('password.request');
 // Send reset link
-Route::post('/forgot-password', function (Request $request) {
-    $request->validate(['email' => 'required|email']);
-
-    $status = Password::sendResetLink(
-        $request->only('email')
-    );
-
-    return $status === Password::RESET_LINK_SENT
-        ? back()->with(['status' => __($status)])
-        : back()->withErrors(['email' => __($status)]);
-})->middleware('guest')->name('password.email');
-
+Route::post('/forgot-password', [PasswordController::class,'forgotPassword'])->middleware('guest')->name('password.email');
 // Reset password form (with token)
-Route::get('/reset-password/{token}', function (string $token, Request $request) {
-    return view('admin.auth.reset-password', ['token' => $token, 'request' => $request]);
-})->middleware('guest')->name('password.reset');
-
+Route::get('/reset-password/{token}',[PasswordController::class,'resetPassword'])->middleware('guest')->name('password.reset');
 // Update password
-Route::post('/reset-password', function (Request $request) {
-    $request->validate([
-        'token' => 'required',
-        'email' => 'required|email',
-        'password' => 'required|min:8|confirmed',
-    ]);
-
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function ($user, $password) {
-            $user->forceFill([
-                'password' => bcrypt($password)
-            ])->setRememberToken(Str::random(60));
-
-            $user->save();
-
-            event(new \Illuminate\Auth\Events\PasswordReset($user));
-        }
-    );
-    return $status === Password::PASSWORD_RESET
-        ? redirect()->route('login')->with('status', __($status))
-        : back()->withErrors(['email' => [__($status)]]);
-})->middleware('guest')->name('password.update');
+Route::post('/reset-password', [PasswordController::class,'updatePassword'])->middleware('guest')->name('password.update');

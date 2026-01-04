@@ -62,9 +62,10 @@ class AuthController extends Controller
         $totalAssets = Asset::count();
         $totalEvents = Event::count();
         $totalLeaves = Leave::count();
+        $totalAssetAssignments = AssetAssignment::count();
         $employeesByDepartment = Department::withCount('employees')->get();
         return view('admin.dashboards.admin_dashboard', compact('totalUsers', 'totalDepartments',
-            'totalEmployees', 'totalEvents', 'totalNotices', 'totalAssets', 'totalLeaves','employeesByDepartment'));
+            'totalEmployees', 'totalEvents', 'totalNotices', 'totalAssets', 'totalLeaves','totalAssetAssignments','employeesByDepartment'));
     }
 
     private $officeIp = ['110.34.27.186', '127.0.0.1'];

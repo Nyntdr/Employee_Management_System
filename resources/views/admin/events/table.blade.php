@@ -72,7 +72,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No events found</h5>
                                 <p class="text-muted mb-4">Get started by creating your first event</p>
-                                <a href="{{ route('events.create') }}" class="btn btn-primary">Create First Event</a>
+                                <a href="{{ route('events.create') }}" class="btn btn-midnight">Create First Event</a>
                             </div>
                         </td>
                     </tr>

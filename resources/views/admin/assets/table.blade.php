@@ -120,8 +120,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No assets found</h5>
                                 <p class="text-muted mb-4">Get started by adding your first asset</p>
-                                <a href="{{ route('assets.create') }}" class="btn btn-primary">Add First
-                                    Asset</a>
+                                <a href="{{ route('assets.create') }}" class="btn btn-midnight">Add First Asset</a>
                             </div>
                         </td>
                     </tr>

@@ -8,9 +8,9 @@
                 <h1 class="text-midnight mb-2">Leave Records</h1>
                 <p class="text-muted mb-0">Manage employee leave requests</p>
             </div>
-            <div class="d-flex gap-3">
-                <a href="{{ route('leave-types.index') }}" class="btn btn-outline-secondary">Leave Types</a>
-                <a href="{{ route('leaves.create') }}" class="btn btn-primary">Add Leave</a>
+            <div class="d-flex gap-1">
+                <a href="{{ route('leave-types.index') }}" class="btn btn-success">Leave Types</a>
+                <a href="{{ route('leaves.create') }}" class="btn btn-midnight">Add Leave</a>
             </div>
         </div>
         @include('layouts.components.alert')

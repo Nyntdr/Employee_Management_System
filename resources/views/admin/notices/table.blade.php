@@ -54,7 +54,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No notices found</h5>
                                 <p class="text-muted mb-4">Get started by creating your first notice</p>
-                                <a href="{{ route('notices.create') }}" class="btn btn-primary">
+                                <a href="{{ route('notices.create') }}" class="btn btn-midnight">
                                     Create First Notice
                                 </a>
                             </div>

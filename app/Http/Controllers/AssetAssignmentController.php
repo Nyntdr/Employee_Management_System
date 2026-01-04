@@ -7,6 +7,7 @@ use App\Imports\AssetAssignmentImport;
 use App\Models\Asset;
 use App\Models\Employee;
 use App\Models\AssetAssignment;
+use App\Notifications\AssetAssignedNotification;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\AssetAssignmentRequest;
 use App\Enums\AssignmentStatus;
@@ -71,9 +72,18 @@ class AssetAssignmentController extends Controller
     {
         $validated = $request->validated();
         $validated['assigned_by'] = auth()->id();
-        AssetAssignment::create($validated);
+
+        $assignment = AssetAssignment::create($validated);
+
         Asset::where('asset_id', $request->asset_id)
             ->update(['status' => 'assigned']);
+
+        $employee = Employee::find($request->employee_id);
+        if ($employee && $employee->user) {
+            $asset = Asset::find($request->asset_id);
+            $employee->user->notify(new AssetAssignedNotification($assignment, $asset));
+        }
+
         return redirect()->route('asset-assignments.index')
             ->with('success', 'Asset assigned successfully!');
     }

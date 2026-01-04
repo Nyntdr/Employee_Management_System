@@ -86,7 +86,7 @@
                         <div class="py-4">
                             <h5 class="text-muted">No leave records found</h5>
                             <p class="text-muted mb-4">Get started by adding a leave record</p>
-                            <a href="{{ route('leaves.create') }}" class="btn btn-primary">Add First Leave</a>
+                            <a href="{{ route('leaves.create') }}" class="btn btn-midnight">Add First Leave</a>
                         </div>
                     </td>
                 </tr>

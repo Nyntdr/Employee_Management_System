@@ -8,7 +8,7 @@
                 <h1 class="text-midnight mb-2">Salary Records</h1>
                 <p class="text-muted mb-0">Manage employee salary and payroll</p>
             </div>
-            <a href="{{ route('payrolls.create') }}" class="btn btn-primary">Add Salary Record</a>
+            <a href="{{ route('payrolls.create') }}" class="btn btn-midnight">Add Salary Record</a>
         </div>
         @include('layouts.components.alert')
         @include('layouts.components.import_export', ['import' => route('payrolls.import'),'export' => route('payrolls.export')])

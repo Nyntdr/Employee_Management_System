@@ -8,7 +8,7 @@
                 <h1 class="text-midnight mb-2">Notices List</h1>
                 <p class="text-muted mb-0">Manage company notices and announcements</p>
             </div>
-            <a href="{{ route('notices.create') }}" class="btn btn-primary">
+            <a href="{{ route('notices.create') }}" class="btn btn-midnight">
                 Create Notice
             </a>
         </div>

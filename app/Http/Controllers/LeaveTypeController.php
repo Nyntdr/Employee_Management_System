@@ -18,7 +18,7 @@ class LeaveTypeController extends Controller
         $leave_types = LeaveType::query()
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%{$search}%");
-            })->paginate(5);
+            })->get();
         if ($request->ajax()) {
             return view('admin.leave-types.table', compact('leave_types'))->render();
         }

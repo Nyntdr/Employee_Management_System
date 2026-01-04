@@ -61,6 +61,9 @@
                             @elseif($notification->type === 'App\Notifications\AssetUpdatedNotification')
                                 <strong>{{ $notification->data['message'] }}</strong> <small
                                     class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                            @elseif($notification->type === 'App\Notifications\AssetAssignedNotification')
+                                <strong>{{ $notification->data['message'] }}</strong> <small
+                                    class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                             @else
                                 {{ $notification->data['message'] ?? 'New notification' }}
                             @endif

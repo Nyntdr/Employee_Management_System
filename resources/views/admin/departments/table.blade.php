@@ -50,7 +50,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No departments found</h5>
                                 <p class="text-muted mb-4">Get started by adding a new department</p>
-                                <a href="{{ route('departments.create') }}" class="btn btn-primary">
+                                <a href="{{ route('departments.create') }}" class="btn btn-midnight">
                                     Add First Department
                                 </a>
                             </div>

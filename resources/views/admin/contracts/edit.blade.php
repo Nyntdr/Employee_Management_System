@@ -108,20 +108,11 @@
                                 </div>
 
                                 <div class="form-row">
-                                    <div class="form-col-6">
+                                    <div class="form-col-12">
                                         <label for="probation_period" class="form-label">Probation Period (days)</label>
                                         <input type="number" name="probation_period" id="probation_period" class="form-control"
                                                value="{{ old('probation_period', $contract->probation_period) }}" min="0" max="365">
                                         @error('probation_period')
-                                        <span class="form-error">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="form-col-6">
-                                        <label for="working_hours" class="form-label">Working Hours</label>
-                                        <input type="text" name="working_hours" id="working_hours" class="form-control"
-                                               value="{{ old('working_hours', $contract->working_hours) }}" placeholder="Eg: 9AM - 5PM">
-                                        @error('working_hours')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
                                     </div>

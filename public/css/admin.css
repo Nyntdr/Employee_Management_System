@@ -1,4 +1,4 @@
-/* Admin Dashboard Styles */
+
 body {
     font-family: "Poppins", sans-serif;
     margin: 0;
@@ -13,7 +13,6 @@ body {
     --midnight-white: #e0e0ff;
 }
 
-/* Layout Components */
 .admin-navbar {
     background-color: var(--midnight-blue) !important;
     padding: 10px 0;
@@ -33,7 +32,6 @@ body {
     min-height: calc(100vh - 56px);
 }
 
-/* Navigation */
 .admin-navbar .navbar-brand {
     color: white !important;
     font-weight: 600;
@@ -56,7 +54,7 @@ body {
     border-left: 3px solid var(--midnight-light);
 }
 
-/* Cards & Containers */
+
 .dashboard-card, .chart-card {
     border: 1px solid rgba(0,0,0,0.05);
     border-radius: 16px !important;
@@ -83,7 +81,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* Typography & Colors */
+
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
 }
@@ -113,7 +111,6 @@ h1, h2, h3, h4, h5, h6 {
     white-space: nowrap;
 }
 
-/* Buttons */
 .btn-midnight {
     background: var(--midnight-blue);
     color: white;
@@ -131,7 +128,7 @@ h1, h2, h3, h4, h5, h6 {
     color: white;
 }
 
-.btn-success, .btn-warning {
+.btn-success, .btn-warning, .btn-danger {
     transition: all 0.3s ease;
     border: none;
     border-radius: 12px;
@@ -149,13 +146,11 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4);
 }
 
-/* Form Elements */
 .form-control:focus {
     border-color: var(--midnight-blue);
     box-shadow: 0 0 0 0.25rem rgba(25, 25, 112, 0.25);
 }
 
-/* Utilities */
 .rounded {
     border-radius: 12px !important;
 }
@@ -177,7 +172,6 @@ h1, h2, h3, h4, h5, h6 {
     padding: 1.25rem;
     border-radius: 12px;
 }
-/* Simple Profile Page - No Icons */
 .profile-clean-card {
     border: none;
     border-radius: 10px;
@@ -188,7 +182,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .profile-clean-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-20px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
@@ -315,7 +309,6 @@ h1, h2, h3, h4, h5, h6 {
     gap: 1rem;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .admin-sidebar {
         width: 180px;

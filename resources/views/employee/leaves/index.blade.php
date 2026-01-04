@@ -8,7 +8,7 @@
                 <h1 class="text-midnight mb-2">My Leaves</h1>
                 <p class="text-muted mb-0">View your leave requests</p>
             </div>
-            <a href="{{route('leave-requests.create')}}" class="btn btn-primary">Request Leave</a>
+            <a href="{{route('leave-requests.create')}}" class="btn btn-midnight">Request Leave</a>
         </div>
         @include('layouts.components.alert')
 {{--        @include('layouts.components.search', ['route' => route('employee.leaves.index'),'placeholder' => 'Search records by reason, leave type, status or approver...'])--}}

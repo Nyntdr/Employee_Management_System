@@ -67,7 +67,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No leave requests found</h5>
                                 <p class="text-muted mb-4">Get started by requesting your first leave</p>
-                                <a href="{{route('leave-requests.create')}}" class="btn btn-primary">Request First Leave</a>
+                                <a href="{{route('leave-requests.create')}}" class="btn btn-midnight">Request First Leave</a>
                             </div>
                         </td>
                     </tr>

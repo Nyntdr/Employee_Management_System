@@ -95,7 +95,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No attendance records found</h5>
                                 <p class="text-muted mb-4">Get started by adding attendance records</p>
-                                <a href="{{ route('attendances.create') }}" class="btn btn-primary">Add First Attendance</a>
+                                <a href="{{ route('attendances.create') }}" class="btn btn-midnight">Add First Attendance</a>
                             </div>
                         </td>
                     </tr>

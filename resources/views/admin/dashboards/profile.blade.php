@@ -66,8 +66,9 @@
                             </div>
 
                             <div class="info-row">
-                                <div class="info-label">Status</div>
+                                <div class="info-label">Contract Type & Status</div>
                                 <div class="info-value">
+                                    <span class="status-badge status-active">{{ ucwords(str_replace('_', ' ', $e->latestContract->contract_type->value)) ?? 'Not specified' }}</span>
                                     @if($e->latestContract->contract_status->value == 'active')
                                         <span class="status-badge status-active">Active</span>
                                     @else
@@ -174,23 +175,6 @@
                                     <div class="info-label">Job Title</div>
                                     <div class="info-value">{{ ucwords(str_replace('_', ' ', $e->latestContract->job_title->value)) ?? 'Not specified' }}</div>
                                 </div>
-
-                                <div class="info-row">
-                                    <div class="info-label">Contract Type</div>
-                                    <div class="info-value">{{ ucwords(str_replace('_', ' ', $e->latestContract->contract_type->value)) ?? 'Not specified' }}</div>
-                                </div>
-
-                                <div class="info-row">
-                                    <div class="info-label">Working Hours</div>
-                                    <div class="info-value">
-                                        @if($e->latestContract && $e->latestContract->working_hours)
-                                            {{ $e->latestContract->working_hours}}
-                                        @else
-                                            Not specified
-                                        @endif
-                                    </div>
-                                </div>
-
                                 <div class="info-row">
                                     <div class="info-label">Monthly Salary</div>
                                     <div class="info-value">

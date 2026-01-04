@@ -8,9 +8,7 @@
                 <h1 class="text-midnight mb-2">Events List</h1>
                 <p class="text-muted mb-0">Manage company events and announcements</p>
             </div>
-            <a href="{{ route('events.create') }}" class="btn btn-primary">
-                Create Event
-            </a>
+            <a href="{{ route('events.create') }}" class="btn btn-midnight">Create Event</a>
         </div>
         @include('layouts.components.alert')
         @include('layouts.components.import_export', ['import' => route('events.import'),'export' => route('events.export')])

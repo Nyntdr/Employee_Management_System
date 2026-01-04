@@ -195,7 +195,7 @@
 
                                 <div class="form-row">
                                     <div class="form-col-6">
-                                        <label for="requested_by" class="form-label">Requested By (Employee)</label>
+                                        <label for="requested_by" class="form-label">Requested By</label>
                                         <select name="requested_by" id="requested_by" class="form-select">
                                             <option value="">-- Select Employee --</option>
                                             @foreach($employees as $employee)
@@ -206,7 +206,6 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <div class="form-hint">Employee who requested this asset (if applicable)</div>
                                         @error('requested_by')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
@@ -218,7 +217,6 @@
                                         <label for="request_reason" class="form-label">Request Reason</label>
                                         <textarea name="request_reason" id="request_reason" class="form-control"
                                                   rows="3" maxlength="500">{{ old('request_reason', $asset->request_reason) }}</textarea>
-                                        <div class="form-hint">Reason for requesting this asset (if applicable)</div>
                                         @error('request_reason')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror

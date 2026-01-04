@@ -37,7 +37,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No leave types found</h5>
                                 <p class="text-muted mb-4">Get started by adding your first leave type</p>
-                                <a href="{{ route('leave-types.create') }}" class="btn btn-primary">Add First Leave Type</a>
+                                <a href="{{ route('leave-types.create') }}" class="btn btn-midnight">Add First Leave Type</a>
                             </div>
                         </td>
                     </tr>
@@ -45,12 +45,12 @@
                 </tbody>
             </table>
         </div>
-        @if($leave_types->hasPages())
-            <div class="pagination-wrapper">
-                <div class="d-flex justify-content-center">
-                    {{ $leave_types->links('pagination::bootstrap-5') }}
-                </div>
-            </div>
-        @endif
+{{--        @if($leave_types->hasPages())--}}
+{{--            <div class="pagination-wrapper">--}}
+{{--                <div class="d-flex justify-content-center">--}}
+{{--                    {{ $leave_types->links('pagination::bootstrap-5') }}--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        @endif--}}
     </div>
 </div>

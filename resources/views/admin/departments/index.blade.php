@@ -8,7 +8,7 @@
                 <h1 class="text-midnight mb-2">Department List</h1>
                 <p class="text-muted mb-0">Manage employee departments</p>
             </div>
-            <a href="{{ route('departments.create') }}" class="btn btn-primary">
+            <a href="{{ route('departments.create') }}" class="btn btn-midnight">
                 Add Department
             </a>
         </div>

@@ -8,7 +8,6 @@
                     <th scope="col">Employee</th>
                     <th scope="col">Contract Type</th>
                     <th scope="col">Job Title</th>
-                    <th scope="col">Hours</th>
                     <th scope="col">Salary</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">Status</th>
@@ -29,7 +28,6 @@
                         <td>
                             <span class="fw-medium">{{ ucwords(str_replace('_', ' ', $contract->job_title->value)) }}</span>
                         </td>
-                        <td><span class="table-badge badge-opacity-info">{{$contract->working_hours}}</span></td>
                         <td> {{$contract->salary}}</td>
                         <td>
                             <span class="fw-medium">{{ $contract->start_date->format('M d, Y') }}</span>
@@ -64,7 +62,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No contracts found</h5>
                                 <p class="text-muted mb-4">Get started by adding a new contract</p>
-                                <a href="{{ route('contracts.create') }}" class="btn btn-primary">Add First Contract</a>
+                                <a href="{{ route('contracts.create') }}" class="btn btn-midnight">Add First Contract</a>
                             </div>
                         </td>
                     </tr>

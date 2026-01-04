@@ -92,7 +92,7 @@
                             <div class="py-4">
                                 <h5 class="text-muted">No salary records found</h5>
                                 <p class="text-muted mb-4">Get started by adding salary records</p>
-                                <a href="{{ route('payrolls.create') }}" class="btn btn-primary">Add First Salary Record</a>
+                                <a href="{{ route('payrolls.create') }}" class="btn btn-midnight">Add First Salary Record</a>
                             </div>
                         </td>
                     </tr>

@@ -9,8 +9,8 @@
                 <p class="text-muted mb-0">Manage asset assignments to employees</p>
             </div>
             <div>
-                <a href="{{ route('asset-assignments.create') }}" class="btn btn-primary me-2">Assign Asset</a>
-                <a href="{{ route('assets.index') }}" class="btn btn-outline-secondary">Assets</a>
+                <a href="{{ route('assets.index') }}" class="btn btn-success">Assets</a>
+                <a href="{{ route('asset-assignments.create') }}" class="btn btn-midnight">Assign Asset</a>
             </div>
         </div>
         @include('layouts.components.alert')

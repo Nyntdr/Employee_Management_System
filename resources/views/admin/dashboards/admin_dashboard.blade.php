@@ -80,15 +80,6 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card dashboard-card">
                     <div class="card-body stat-card">
-                        <h6 class="stat-label mb-2">Total Users</h6>
-                        <h2 class="stat-number mb-0">{{ $totalUsers }}</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card dashboard-card">
-                    <div class="card-body stat-card">
                         <h6 class="stat-label mb-2">Total Employees</h6>
                         <h2 class="stat-number mb-0">{{ $totalEmployees }}</h2>
                     </div>
@@ -112,13 +103,22 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-body stat-card">
+                        <h6 class="stat-label mb-2">Total Events</h6>
+                        <h2 class="stat-number mb-0">{{ $totalEvents }}</h2>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row mb-4">
             <div class="col-xl-8 col-lg-7 mb-4">
                 <div class="card chart-card">
                     <div class="card-body">
-                        <h5 class="card-title mb-4 text-midnight">Organization Overview</h5>
+                        <h5 class="card-title mb-4 text-midnight">Assets by Category Overview</h5>
                         <div class="chart-container" style="position: relative; height: 300px;">
                             <canvas id="overviewChart"></canvas>
                         </div>
@@ -129,7 +129,7 @@
             <div class="col-xl-4 col-lg-5 mb-4">
                 <div class="card dashboard-card">
                     <div class="card-body">
-                        <h5 class="card-title mb-4 text-midnight">Quick Stats</h5>
+                        <h5 class="card-title mb-4 text-midnight">Quick Stats on Assets and Leaves</h5>
                         <div class="d-flex flex-column gap-3">
                             <div class="quick-stat-item">
                                 <div>
@@ -140,8 +140,8 @@
 
                             <div class="quick-stat-item">
                                 <div>
-                                    <h6 class="mb-1 text-muted">Total Events</h6>
-                                    <h4 class="mb-0 fw-bold text-midnight">{{ $totalEvents }}</h4>
+                                    <h6 class="mb-1 text-muted">Total Assets Assignment</h6>
+                                    <h4 class="mb-0 fw-bold text-midnight">{{ $totalAssetAssignments }}</h4>
                                 </div>
                             </div>
 
@@ -161,7 +161,7 @@
             <div class="col-12">
                 <div class="card chart-card">
                     <div class="card-body">
-                        <h5 class="card-title mb-4 text-midnight">Employee Department Distribution</h5>
+                        <h5 class="card-title mb-4 text-midnight">Employee Per Department Distribution</h5>
                         <div class="chart-container" style="position: relative; height: 300px;">
                             <canvas id="distributionChart"></canvas>
                         </div>

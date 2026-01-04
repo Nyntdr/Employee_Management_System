@@ -9,7 +9,7 @@
                 <p class="text-muted mb-0">Request company assets and equipments for your workplace</p>
             </div>
             <div>
-                <a href="{{ route('employee.assets.index') }}" class="btn btn-primary">My Assets</a>
+                <a href="{{ route('employee.assets.index') }}" class="btn btn-midnight">My Assets</a>
             </div>
         </div>
         @include('layouts.components.alert')

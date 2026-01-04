@@ -84,7 +84,7 @@
                         <div class="py-4">
                             <h5 class="text-muted">No assets assigned</h5>
                             <p class="text-muted mb-4">Get started by assigning assets to employees</p>
-                            <a href="{{ route('asset-assignments.create') }}" class="btn btn-primary">
+                            <a href="{{ route('asset-assignments.create') }}" class="btn btn-midnight">
                                 Assign First Asset
                             </a>
                         </div>

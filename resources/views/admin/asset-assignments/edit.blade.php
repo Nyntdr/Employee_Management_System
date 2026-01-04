@@ -142,7 +142,7 @@
                                             <option value="">-- Select Condition (if returned) --</option>
                                             @foreach ($conditions as $condition)
                                                 <option value="{{ $condition->value }}"
-                                                    {{ old('condition_at_return', $asset_assign->condition_at_return->value) == $condition->value ? 'selected' : '' }}>
+                                                    {{ old('condition_at_return', $asset_assign->condition_at_return?->value) == $condition->value ? 'selected' : '' }}>
                                                     {{ ucfirst($condition->value) }}
                                                 </option>
                                             @endforeach
