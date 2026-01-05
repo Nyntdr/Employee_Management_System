@@ -11,27 +11,36 @@ use App\Models\Payroll;
 use Illuminate\Http\Request;
 use App\Models\AssetAssignment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class EmployeeDashboardController extends Controller
 {
     public function assetIndex(Request $request)
     {
         $search = $request->get('search', '');
+        $page = $request->get('page', 1);
 
-        $asset_assigns = AssetAssignment::with(['asset', 'assigner'])
-            ->where('employee_id', Auth::user()->employee->employee_id)
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->whereAny(
-                        ['purpose', 'status', 'condition_at_assignment', 'condition_at_return'], 'like', "%{$search}%")
-                        ->orWhereHas('asset', function ($q2) use ($search) {
-                            $q2->whereAny(['asset_code', 'name'], 'like', "%{$search}%");
-                        })
-                        ->orWhereHas('assigner', function ($q3) use ($search) {
-                            $q3->where('name', 'like', "%{$search}%");
+        $cacheKey = 'asset_index_' . md5($search . '_page_' . $page);
+        $asset_assigns = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return AssetAssignment::with(['asset', 'assigner'])
+                    ->where('employee_id', Auth::user()->employee->employee_id)
+                    ->when($search, function ($query) use ($search) {
+                        $query->where(function ($q) use ($search) {
+                            $q->whereAny(
+                                ['purpose', 'status', 'condition_at_assignment', 'condition_at_return'], 'like', "%{$search}%")
+                                ->orWhereHas('asset', function ($q2) use ($search) {
+                                    $q2->whereAny(['asset_code', 'name'], 'like', "%{$search}%");
+                                })
+                                ->orWhereHas('assigner', function ($q3) use ($search) {
+                                    $q3->where('name', 'like', "%{$search}%");
+                                });
                         });
-                });
-            })->latest()->paginate(6);
+                    })->latest()->paginate(6);
+            }
+        );
         if ($request->ajax()) {
             return view('employee.assets.table', compact('asset_assigns'))->render();
         }
@@ -40,16 +49,24 @@ class EmployeeDashboardController extends Controller
 
     public function eventIndex(Request $request)
     {
-//        $events=Event::latest()->get();
         $search = $request->get('search', '');
-        $events = Event::query()->with('creator')
-            ->when($search, function ($query) use ($search) {
-                $query->whereAny(['title',], 'like', "%{$search}%")
-                    ->orWhereHas('creator', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    })
-                    ->orWhereDate('event_date', 'like', "%{$search}%");
-            })->latest()->paginate(5);
+        $page = $request->get('page', 1);
+
+        $cacheKey = 'event_index_' . md5($search . '_page_' . $page);
+        $events = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return Event::query()->with('creator')
+                    ->when($search, function ($query) use ($search) {
+                        $query->whereAny(['title',], 'like', "%{$search}%")
+                            ->orWhereHas('creator', function ($q) use ($search) {
+                                $q->where('name', 'like', "%{$search}%");
+                            })
+                            ->orWhereDate('event_date', 'like', "%{$search}%");
+                    })->latest()->paginate(5);
+            }
+        );
         if ($request->ajax()) {
             return view('employee.events.table', compact('events'))->render();
         }
@@ -60,15 +77,23 @@ class EmployeeDashboardController extends Controller
     {
 //        $notices=Notice::latest()->paginate(5);
         $search = $request->get('search', '');
+        $page = $request->get('page', 1);
 
-        $notices = Notice::query()->with('poster')
-            ->when($search, function ($query) use ($search) {
-                $query->whereAny(['title', 'content'], 'like', "%{$search}%")
-                    ->orWhereHas('poster', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
-            })
-            ->latest()->paginate(5);
+        $cacheKey = 'notice_index_' . md5($search . '_page_' . $page);
+        $notices = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return Notice::query()->with('poster')
+                    ->when($search, function ($query) use ($search) {
+                        $query->whereAny(['title', 'content'], 'like', "%{$search}%")
+                            ->orWhereHas('poster', function ($q) use ($search) {
+                                $q->where('name', 'like', "%{$search}%");
+                            });
+                    })
+                    ->latest()->paginate(5);
+            }
+        );
         if ($request->ajax()) {
             return view('employee.notices.table', compact('notices'))->render();
         }
@@ -79,23 +104,33 @@ class EmployeeDashboardController extends Controller
     public function leaveIndex(Request $request)
     {
         $search = $request->get('search', '');
-        $employeeId = Auth::user()->employee->employee_id;
 
-        $leaves = Leave::query()
-            ->with(['leaveType', 'approver'])
-            ->where('employee_id', $employeeId)
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->whereAny(['status', 'reason'], 'like', "%{$search}%")
-                        ->orWhereHas('leaveType', function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%");
-                        })
-                        ->orWhereHas('approver', function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%");
+        $page = $request->get('page', 1);
+
+        $cacheKey = 'leave_index_' . md5($search . '_page_' . $page);
+
+        $leaves = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                $employeeId = Auth::user()->employee->employee_id;
+                return Leave::query()
+                    ->with(['leaveType', 'approver'])
+                    ->where('employee_id', $employeeId)
+                    ->when($search, function ($query) use ($search) {
+                        $query->where(function ($q) use ($search) {
+                            $q->whereAny(['status', 'reason'], 'like', "%{$search}%")
+                                ->orWhereHas('leaveType', function ($q) use ($search) {
+                                    $q->where('name', 'like', "%{$search}%");
+                                })
+                                ->orWhereHas('approver', function ($q) use ($search) {
+                                    $q->where('name', 'like', "%{$search}%");
+                                });
                         });
-                });
-            })
-            ->orderBy('created_at', 'DESC')->paginate(8);
+                    })
+                    ->orderBy('created_at', 'DESC')->paginate(8);
+            }
+        );
         if ($request->ajax()) {
             return view('employee.leaves.table', compact('leaves'))->render();
         }
@@ -105,19 +140,28 @@ class EmployeeDashboardController extends Controller
 
     public function attendanceIndex(Request $request)
     {
-//        $attendances=Attendance::where('employee_id',Auth::user()->employee->employee_id)->orderBy('date', 'desc')->get();
+//      $attendances=Attendance::where('employee_id',Auth::user()->employee->employee_id)->orderBy('date', 'desc')->get();
         $search = $request->get('search', '');
+        $page = $request->get('page', 1);
 
-        $attendances = Attendance::where('employee_id', Auth::user()->employee->employee_id)
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->whereAny(['status'], 'like', "%{$search}%")
-                        ->orWhereDate('date', 'like', "%{$search}%")
-                        ->orWhere('clock_in', 'like', "%{$search}%")
-                        ->orWhere('clock_out', 'like', "%{$search}%");
-                });
-            })
-            ->orderBy('date', 'desc')->paginate(8);
+        $cacheKey = 'attendance_index_' . md5($search . '_page_' . $page);
+
+        $attendances = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return Attendance::where('employee_id', Auth::user()->employee->employee_id)
+                    ->when($search, function ($query) use ($search) {
+                        $query->where(function ($q) use ($search) {
+                            $q->whereAny(['status'], 'like', "%{$search}%")
+                                ->orWhereDate('date', 'like', "%{$search}%")
+                                ->orWhere('clock_in', 'like', "%{$search}%")
+                                ->orWhere('clock_out', 'like', "%{$search}%");
+                        });
+                    })
+                    ->orderBy('date', 'desc')->paginate(8);
+            }
+        );
         if ($request->ajax()) {
             return view('employee.attendances.table', compact('attendances'))->render();
         }
@@ -127,19 +171,29 @@ class EmployeeDashboardController extends Controller
     public function salaryIndex(Request $request)
     {
         $search = $request->get('search', '');
-        $employeeId = Auth::user()->employee->employee_id;
 
-        $payrolls = Payroll::query()->with(['employee', 'generator'])
-            ->where('employee_id', $employeeId)
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->whereAny(['payment_status', 'net_salary', 'month_year'], 'like', "%{$search}%")
-                        ->orWhereHas('generator', function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%");
+        $page = $request->get('page', 1);
+
+        $cacheKey = 'payroll_index_' . md5($search . '_page_' . $page);
+
+        $payrolls = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                $employeeId = Auth::user()->employee->employee_id;
+                return Payroll::query()->with(['employee', 'generator'])
+                    ->where('employee_id', $employeeId)
+                    ->when($search, function ($query) use ($search) {
+                        $query->where(function ($q) use ($search) {
+                            $q->whereAny(['payment_status', 'net_salary', 'month_year'], 'like', "%{$search}%")
+                                ->orWhereHas('generator', function ($q) use ($search) {
+                                    $q->where('name', 'like', "%{$search}%");
+                                });
                         });
-                });
-            })
-            ->orderBy('month_year', 'desc')->orderBy('created_at', 'desc')->paginate(8);
+                    })
+                    ->orderBy('month_year', 'desc')->orderBy('created_at', 'desc')->paginate(8);
+            }
+        );
         if ($request->ajax()) {
             return view('employee.salaries.table', compact('payrolls'))->render();
         }

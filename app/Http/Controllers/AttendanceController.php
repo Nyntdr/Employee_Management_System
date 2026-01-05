@@ -10,6 +10,7 @@ use App\Enums\AttendanceStatus;
 use App\Http\Requests\AttendanceRequest;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceController extends Controller
@@ -17,18 +18,26 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search', '');
+        $page = $request->get('page', 1);
 
-        $attendances = Attendance::query()->with('employee')
-            ->when($search, function ($query) use ($search) {
-                $query->whereAny(['status'], 'like', "%{$search}%")
-                    ->orWhereHas('employee', function ($q) use ($search) {
-                        $q->whereAny(['first_name','last_name'], 'like', "%{$search}%");
+        $cacheKey = 'contracts_index_' . md5($search . '_page_' . $page);
+        $attendances = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return Attendance::query()->with('employee')
+                    ->when($search, function ($query) use ($search) {
+                        $query->whereAny(['status'], 'like', "%{$search}%")
+                            ->orWhereHas('employee', function ($q) use ($search) {
+                                $q->whereAny(['first_name','last_name'], 'like', "%{$search}%");
+                            })
+                            ->orWhereDate('date', 'like', "%{$search}%")
+                            ->orWhere('clock_in', 'like', "%{$search}%")
+                            ->orWhere('clock_out', 'like', "%{$search}%");
                     })
-                    ->orWhereDate('date', 'like', "%{$search}%")
-                    ->orWhere('clock_in', 'like', "%{$search}%")
-                    ->orWhere('clock_out', 'like', "%{$search}%");
-            })
-            ->orderBy('date','desc')->paginate(8);
+                    ->orderBy('date','desc')->paginate(8);
+            }
+        );
         if ($request->ajax()) {
             return view('admin.attendances.table', compact('attendances'))->render();
         }
@@ -84,6 +93,7 @@ class AttendanceController extends Controller
             $data['status'] = $data['status']->value;
         }
         Attendance::create($data);
+        Cache::flush();
         return redirect()->route('attendances.index')->with('success', 'Attendance created successfully.');
     }
 
@@ -107,7 +117,7 @@ class AttendanceController extends Controller
             $data['total_hours'] = null;
         }
         $attendance->update($data);
-
+        Cache::flush();
         return redirect()->route('attendances.index')->with('success', 'Attendance updated successfully.');
     }
 

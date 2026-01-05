@@ -22,7 +22,7 @@
             <h1 class="mb-2">Login</h1>
             <p class="text-muted">Enter your credentials</p>
         </div>
-
+        @include('layouts.components.alert')
         <form action="{{ route('login.store') }}" method="POST">
             @csrf
 

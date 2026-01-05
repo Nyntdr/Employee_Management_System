@@ -10,6 +10,7 @@ use App\Models\Employee;
 use App\Notifications\AssetUpdatedNotification;
 use Illuminate\Http\Request;
 use App\Enums\AssetStatuses;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AssetController extends Controller
@@ -17,15 +18,23 @@ class AssetController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search', '');
+        $page = $request->get('page', 1);
 
-        $assets = Asset::query()
-            ->when($search, function ($query) use ($search) {
-                $query->whereAny(['asset_code', 'name', 'category', 'brand', 'model','serial_number','type','status','current_condition'], 'like', "%{$search}%");
-            })
-            ->orderByRaw("CASE WHEN status = ? THEN 1 ELSE 2 END", [AssetStatuses::REQUESTED->value])
-            ->orderBy('created_at', 'desc')
-            ->paginate(8);
+        $cacheKey = 'assets_index_' . md5($search . '_page_' . $page);
 
+        $assets =Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return Asset::query()
+                    ->when($search, function ($query) use ($search) {
+                        $query->whereAny(['asset_code', 'name', 'category', 'brand', 'model','serial_number','type','status','current_condition'], 'like', "%{$search}%");
+                    })
+                    ->orderByRaw("CASE WHEN status = ? THEN 1 ELSE 2 END", [AssetStatuses::REQUESTED->value])
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(8);
+            }
+        );
         if ($request->ajax()) {
             return view('admin.assets.table', compact('assets'))->render();
         }
@@ -68,6 +77,7 @@ class AssetController extends Controller
         }
 
         Asset::create($validated);
+        Cache::flush();
         return redirect()->route('assets.index')->with('success', 'Asset created successfully!');
     }
 
@@ -113,6 +123,7 @@ class AssetController extends Controller
         }
 
         $asset->update($data);
+        Cache::flush();
 
         // Send notification if asset request was rejected (changed from REQUESTED to AVAILABLE)
         if ($oldStatus === AssetStatuses::REQUESTED->value &&

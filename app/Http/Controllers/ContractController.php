@@ -11,6 +11,7 @@ use App\Enums\ContractType;
 use Illuminate\Http\Request;
 use App\Enums\ContractStatus;
 use App\Http\Requests\ContractRequest;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ContractController extends Controller
@@ -18,15 +19,24 @@ class ContractController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search', '');
+        $page = $request->get('page', 1);
 
-        $contracts = Contract::query()->with('employee')
-            ->when($search, function ($query) use ($search) {
-                $query->whereAny(['contract_type','job_title','contract_status'], 'like', "%{$search}%")
-                    ->orWhereHas('employee', function ($q) use ($search) {
-                        $q->whereAny(['first_name', 'last_name'], 'like', "%{$search}%");
-                    });
-            })
-            ->latest()->paginate(6)->withQueryString();
+        $cacheKey = 'contracts_index_' . md5($search . '_page_' . $page);
+
+        $contracts =Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return Contract::query()->with('employee')
+                    ->when($search, function ($query) use ($search) {
+                        $query->whereAny(['contract_type','job_title','contract_status'], 'like', "%{$search}%")
+                            ->orWhereHas('employee', function ($q) use ($search) {
+                                $q->whereAny(['first_name', 'last_name'], 'like', "%{$search}%");
+                            });
+                    })
+                    ->latest()->paginate(6)->withQueryString();
+            }
+        );
         if ($request->ajax()) {
             return view('admin.contracts.table', compact('contracts'))->render();
         }
@@ -60,6 +70,7 @@ class ContractController extends Controller
     public function store(ContractRequest $request)
     {
         Contract::create($request->validated());
+        Cache::flush();
         return redirect()->route('contracts.index')
             ->with('success', 'Contract created successfully!');
     }
@@ -80,7 +91,7 @@ class ContractController extends Controller
         $contract = Contract::findOrFail($id);
 
         $contract->update($request->validated());
-
+        Cache::flush();
         return redirect()->route('contracts.index')
             ->with('success', 'Contract updated successfully!');
     }

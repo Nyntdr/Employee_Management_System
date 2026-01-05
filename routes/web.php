@@ -1,13 +1,14 @@
 <?php
+
 use App\Http\Controllers\AssetRequestController;
 use App\Http\Controllers\ClockInClockOutController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PayrollController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AssetController;
@@ -22,23 +23,29 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\AssetAssignmentController;
 use App\Http\Controllers\EmployeeDashboardController;
+
 Route::get('/', function () {
     return view('admin.auth.login');
 });
 //login and register
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+//Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login.store');
-Route::post('/register', [AuthController::class, 'register'])->name('register.store');
+//Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 //profile of admin and employees both
 Route::get('/admin-profile', [AuthController::class, 'show'])->name('admin.profile');
 Route::get('/employee-profile', [AuthController::class, 'showEmployee'])->name('employee.profile');
 
+//email verification
+Route::get('/email/verify', [EmailVerificationController::class,'emailVerify'])->middleware('auth')->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class,'verifyEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
+Route::post('/email/verification-notification', [EmailVerificationController::class,'resendEmail'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
 //dashboard
-Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard')->middleware('auth');
-Route::get('/employee-dashboard', [AuthController::class, 'employeeDashboard'])->name('employee.dashboard')->middleware('auth');
+Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard')->middleware(['auth','verified']);
+Route::get('/employee-dashboard', [DashboardController::class, 'employeeDashboard'])->name('employee.dashboard')->middleware(['auth','verified']);
 
 // Route::resource('roles', RoleController::class)
 //role
@@ -112,10 +119,10 @@ Route::post('/leave-types/import', [LeaveTypeController::class, 'import'])->name
 //notification
 Route::get('/notification/{id}', [NotificationController::class, 'handle'])->middleware('auth')->name('notifications.handle');
 // Forgot password request form
-Route::get('/forgot-password', [PasswordController::class,'request'])->middleware('guest')->name('password.request');
+Route::get('/forgot-password', [PasswordController::class, 'request'])->middleware('guest')->name('password.request');
 // Send reset link
-Route::post('/forgot-password', [PasswordController::class,'forgotPassword'])->middleware('guest')->name('password.email');
+Route::post('/forgot-password', [PasswordController::class, 'forgotPassword'])->middleware('guest')->name('password.email');
 // Reset password form (with token)
-Route::get('/reset-password/{token}',[PasswordController::class,'resetPassword'])->middleware('guest')->name('password.reset');
+Route::get('/reset-password/{token}', [PasswordController::class, 'resetPassword'])->middleware(['guest','signed'])->name('password.reset');
 // Update password
-Route::post('/reset-password', [PasswordController::class,'updatePassword'])->middleware('guest')->name('password.update');
+Route::post('/reset-password', [PasswordController::class, 'updatePassword'])->middleware('guest')->name('password.update');

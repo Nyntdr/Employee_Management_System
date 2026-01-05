@@ -10,6 +10,7 @@ use App\Enums\PayStatus;
 use App\Models\Employee;
 use App\Http\Requests\PayrollRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -21,20 +22,28 @@ class PayrollController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search', '');
+        $page = $request->get('page', 1);
 
-        $payrolls = Payroll::query()->with(['employee', 'generator'])
-            ->when($search, function ($query) use ($search) {
-                $query->whereAny(['payment_status','net_salary','month_year'], 'like', "%{$search}%")
-                    ->orWhereHas('employee', function ($q) use ($search) {
-                        $q->whereAny(['first_name', 'last_name',], 'like', "%{$search}%");
+        $cacheKey = 'payrolls_index_' . md5($search . '_page_' . $page);
+
+        $payrolls = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return Payroll::query()->with(['employee', 'generator'])
+                    ->when($search, function ($query) use ($search) {
+                        $query->whereAny(['payment_status', 'net_salary', 'month_year'], 'like', "%{$search}%")
+                            ->orWhereHas('employee', function ($q) use ($search) {
+                                $q->whereAny(['first_name', 'last_name',], 'like', "%{$search}%");
+                            })
+                            ->orWhereHas('generator', function ($q) use ($search) {
+                                $q->where('name', 'like', "%{$search}%");
+                            });
                     })
-                    ->orWhereHas('generator', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
-            })
-            ->orderBy('month_year', 'desc')
-            ->orderBy('created_at', 'desc')->paginate(8);
-
+                    ->orderBy('month_year', 'desc')
+                    ->orderBy('created_at', 'desc')->paginate(8);
+            }
+        );
         if ($request->ajax()) {
             return view('admin.salaries.table', compact('payrolls'))->render();
         }
@@ -49,6 +58,7 @@ class PayrollController extends Controller
 
         return view('admin.salaries.create', compact('statuses', 'employees'));
     }
+
     public function import(Request $request)
     {
 
@@ -60,16 +70,18 @@ class PayrollController extends Controller
         Log::info("File imported successfully");
         return back()->with('success', 'All good!');
     }
+
     public function export()
     {
         return Excel::download(new PayrollsExport(), 'payrolls_export.xlsx');
     }
+
     public function store(PayrollRequest $request)
     {
         try {
             DB::beginTransaction();
 
-            $employee = Employee::with(['contracts' => function($query) {
+            $employee = Employee::with(['contracts' => function ($query) {
                 $query->where('contract_status', 'active')
                     ->orderBy('start_date', 'desc');
             }])->findOrFail($request->employee_id);
@@ -101,9 +113,8 @@ class PayrollController extends Controller
                 $payroll->paid_date = null;
             }
             $payroll->save();
-
             DB::commit();
-
+            Cache::flush();
             return redirect()->route('payrolls.index')
                 ->with('success', 'Payroll record created successfully.');
 
@@ -132,7 +143,7 @@ class PayrollController extends Controller
         try {
             DB::beginTransaction();
             $payroll = Payroll::with('employee')->findOrFail($id);
-            $employee = Employee::with(['contracts' => function($query) {
+            $employee = Employee::with(['contracts' => function ($query) {
                 $query->where('contract_status', 'active')
                     ->orderBy('start_date', 'desc');
             }])->findOrFail($request->employee_id ?? $payroll->employee_id);
@@ -168,7 +179,7 @@ class PayrollController extends Controller
             }
             $payroll->save();
             DB::commit();
-
+            Cache::flush();
             return redirect()->route('payrolls.index')
                 ->with('success', 'Payroll record updated successfully.');
 
@@ -179,6 +190,7 @@ class PayrollController extends Controller
                 ->with('error', 'Failed to update payroll record. Error: ' . $e->getMessage());
         }
     }
+
     public function destroy(string $id)
     {
         try {
@@ -193,6 +205,7 @@ class PayrollController extends Controller
                 ->with('error', 'Failed to delete payroll record. Error: ' . $e->getMessage());
         }
     }
+
     public function generatePayslip($payrollId)
     {
         $payroll = Payroll::with(['employee.user', 'employee.latestContract', 'generator'])->findOrFail($payrollId);
@@ -200,7 +213,7 @@ class PayrollController extends Controller
         $pdf = Pdf::loadView('admin.salaries.payslip', compact('payroll'));
 
         return $pdf->download(
-            'Payslip_'.$payroll->employee->first_name.'_'.$payroll->employee->last_name.'_'.$payroll->month_year.'.pdf'
+            'Payslip_' . $payroll->employee->first_name . '_' . $payroll->employee->last_name . '_' . $payroll->month_year . '.pdf'
         );
     }
 
@@ -213,8 +226,7 @@ class PayrollController extends Controller
             return redirect()->route('payrolls.index')
                 ->with('success', 'Payslip download link sent to ' . $payroll->employee->user->email . '!');
 
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error('Email sending failed: ' . $e->getMessage());
             return redirect()->route('payrolls.index')
                 ->with('error', 'Failed to send email: ' . $e->getMessage());

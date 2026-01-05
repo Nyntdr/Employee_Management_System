@@ -118,7 +118,7 @@
             <div class="col-xl-8 col-lg-7 mb-4">
                 <div class="card chart-card">
                     <div class="card-body">
-                        <h5 class="card-title mb-4 text-midnight">Assets by Category Overview</h5>
+                        <h5 class="card-title mb-4 text-midnight">Assets by Types</h5>
                         <div class="chart-container" style="position: relative; height: 300px;">
                             <canvas id="overviewChart"></canvas>
                         </div>
@@ -180,8 +180,11 @@
             totalNotices: {{ $totalNotices }},
             totalAssets: {{ $totalAssets }},
             totalEvents: {{ $totalEvents }},
-            totalLeaves:{{$totalLeaves}},
-            employeesByDepartment: {!! json_encode($employeesByDepartment) !!}
+            totalLeaves: {{ $totalLeaves }},
+            employeesByDepartment: {!! json_encode($employeesByDepartment) !!},
+            // Add asset type data
+            assetTypeLabels: {!! json_encode($assetTypeLabels) !!},
+            assetsByType: {!! json_encode($assetsByType) !!}
         };
     </script>
 @endsection

@@ -13,7 +13,6 @@
                     <th scope="col">Net Salary</th>
                     <th scope="col">Paid Date</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Generator</th>
                     <th scope="col" width="200" class="text-center">Actions</th>
                 </tr>
                 </thead>
@@ -26,7 +25,10 @@
                         </td>
                         <td>
                             <span class="table-badge badge-opacity-info">
-                                {{ $payroll->month_year->format('M Y') }}
+                                {{ $payroll->month_year?->format('M Y') }}
+                            </span> <br>
+                            <span class="table-badge badge-opacity-primary">
+                                {{ $payroll->generator->name }}
                             </span>
                         </td>
                         <td>
@@ -64,7 +66,6 @@
                             @endphp
                             <span class="table-badge {{ $badgeClass }}">{{ ucfirst($status) }}</span>
                         </td>
-                        <td><span class="table-badge badge-opacity-primary">{{$payroll->generator->name}}</span></td>
                         <td class="text-center">
                             <div class="d-flex flex-column gap-1">
                                 <div class="d-flex justify-content-center gap-1">

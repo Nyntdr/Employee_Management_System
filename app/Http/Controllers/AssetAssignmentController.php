@@ -13,6 +13,7 @@ use App\Http\Requests\AssetAssignmentRequest;
 use App\Enums\AssignmentStatus;
 use App\Enums\AssetConditions;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AssetAssignmentController extends Controller
@@ -21,21 +22,30 @@ class AssetAssignmentController extends Controller
     {
         $asset_assigns = AssetAssignment::with(['asset', 'employee', 'assigner'])->latest()->paginate(6);
         $search = $request->get('search', '');
+        $page = $request->get('page', 1);
 
-        $asset_assigns = AssetAssignment::query()->with(['asset', 'employee', 'assigner'])
-            ->when($search, function ($query) use ($search) {
-                $query->whereAny(['purpose','status','condition_at_assignment','condition_at_return'], 'like', "%{$search}%")
-                    ->orWhereHas('asset', function ($q) use ($search) {
-                        $q->whereAny(['asset_code', 'name',], 'like', "%{$search}%");
+        $cacheKey = 'asset_assigns_index_' . md5($search . '_page_' . $page);
+
+        $asset_assigns = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return AssetAssignment::query()->with(['asset', 'employee', 'assigner'])
+                    ->when($search, function ($query) use ($search) {
+                        $query->whereAny(['purpose','status','condition_at_assignment','condition_at_return'], 'like', "%{$search}%")
+                            ->orWhereHas('asset', function ($q) use ($search) {
+                                $q->whereAny(['asset_code', 'name',], 'like', "%{$search}%");
+                            })
+                            ->orWhereHas('employee', function ($q) use ($search) {
+                                $q->whereAny(['first_name', 'last_name',], 'like', "%{$search}%");
+                            })
+                            ->orWhereHas('assigner', function ($q) use ($search) {
+                                $q->where('name', 'like', "%{$search}%");
+                            });
                     })
-                    ->orWhereHas('employee', function ($q) use ($search) {
-                        $q->whereAny(['first_name', 'last_name',], 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('assigner', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
-            })
-            ->latest()->paginate(6);
+                    ->latest()->paginate(6);
+            }
+        );
         if ($request->ajax()) {
             return view('admin.asset-assignments.table', compact('asset_assigns'))->render();
         }
@@ -77,7 +87,7 @@ class AssetAssignmentController extends Controller
 
         Asset::where('asset_id', $request->asset_id)
             ->update(['status' => 'assigned']);
-
+        Cache::flush();
         $employee = Employee::find($request->employee_id);
         if ($employee && $employee->user) {
             $asset = Asset::find($request->asset_id);
@@ -116,6 +126,7 @@ class AssetAssignmentController extends Controller
         unset($validated['assigned_by']);
 
         $asset_assign->update($validated);
+        Cache::flush();
         if ($old_asset_id != $new_asset_id) {
             Asset::where('asset_id', $old_asset_id)->update(['status' => 'available']);
             Asset::where('asset_id', $new_asset_id)->update(['status' => 'assigned']);

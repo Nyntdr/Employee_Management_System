@@ -128,7 +128,52 @@
     color: #2d3748;
     text-decoration: underline;
 }
+.verify-page .instructions {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
 
+.verify-page .user-greeting {
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.verify-page .user-greeting strong {
+    color: #191970;
+}
+
+.verify-page .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.verify-page .btn-outline-midnight {
+    background: transparent;
+    color: #191970;
+    border: 2px solid #191970;
+    padding: 0.85rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.verify-page .btn-outline-midnight:hover {
+    background: rgba(25, 25, 112, 0.1);
+    border-color: #0c0c2e;
+    color: #0c0c2e;
+    transform: translateY(-2px);
+}
+
+.verify-page .note {
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
 @media (max-width: 576px) {
     .login-card {
         padding: 2rem;
@@ -142,6 +187,16 @@
     .company-brand {
         top: 20px;
         font-size: 1rem;
+    }
+    .verify-page .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .verify-page .btn-midnight,
+    .verify-page .btn-outline-midnight {
+        width: 100%;
+        margin: 0;
     }
 }
 

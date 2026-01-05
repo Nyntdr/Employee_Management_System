@@ -1,5 +1,5 @@
 @extends('layouts.navbars')
-@section('title','Salaries')
+@section('title', 'Salaries')
 @section('content')
 
     <div class="container-fluid py-4">
@@ -11,13 +11,21 @@
             <a href="{{ route('payrolls.create') }}" class="btn btn-midnight">Add Salary Record</a>
         </div>
         @include('layouts.components.alert')
-        @include('layouts.components.import_export', ['import' => route('payrolls.import'),'export' => route('payrolls.export')])
-{{--        @include('layouts.components.search', ['route' => route('payrolls.index'),'placeholder' => 'Search by month, employee name, net salary, generator or status...'])--}}
-        <input type="text" id="payroll-search" class="form-control" placeholder="Search by month(YYYY-MM), employee name, net salary, generator or status..." autocomplete="off"><br>
+        @include('layouts.components.import_export', [
+            'import' => route('payrolls.import'),
+            'export' => route('payrolls.export'),
+        ])
+        {{--        @include('layouts.components.search', ['route' => route('payrolls.index'),'placeholder' => 'Search by month, employee name, net salary, generator or status...']) --}}
+        <input type="text" id="payroll-search" class="form-control"
+            placeholder="Search by month(YYYY-MM), employee name, net salary, generator or status..." autocomplete="off"><br>
         <div id="payroll-results">
             @include('admin.salaries.table')
         </div>
     </div>
-    @include('layouts.components.search_script',['search'=>'payroll-search','result' => 'payroll-results','route' => route('payrolls.index')])
+    @include('layouts.components.search_script', [
+        'search' => 'payroll-search',
+        'result' => 'payroll-results',
+        'route' => route('payrolls.index'),
+    ])
 
 @endsection

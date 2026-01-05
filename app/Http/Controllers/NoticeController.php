@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Notifications\NoticeCreatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -19,15 +20,24 @@ class NoticeController extends Controller
     {
 //      $notices = Notice::latest()->paginate(5);
         $search = $request->get('search', '');
+        $page = $request->get('page', 1);
 
-        $notices = Notice::query()->with('poster')
-            ->when($search, function ($query) use ($search) {
-                $query->whereAny(['title', 'content'], 'like', "%{$search}%")
-                    ->orWhereHas('poster', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
-            })
-            ->latest()->paginate(5);
+        $cacheKey = 'contracts_index_' . md5($search . '_page_' . $page);
+
+        $notices = Cache::remember(
+            $cacheKey,
+            now()->addMinutes(5),
+            function () use ($search) {
+                return Notice::query()->with('poster')
+                    ->when($search, function ($query) use ($search) {
+                        $query->whereAny(['title', 'content'], 'like', "%{$search}%")
+                            ->orWhereHas('poster', function ($q) use ($search) {
+                                $q->where('name', 'like', "%{$search}%");
+                            });
+                    })
+                    ->latest()->paginate(5);
+            }
+        );
         if ($request->ajax()) {
             return view('admin.notices.table', compact('notices'))->render();
         }
@@ -38,6 +48,7 @@ class NoticeController extends Controller
     {
         return view('admin.notices.create');
     }
+
     public function import(Request $request)
     {
         $request->validate([
@@ -46,14 +57,17 @@ class NoticeController extends Controller
         Excel::import(new NoticesImport(), $request->file('file'));
         return back()->with('success', 'All good!');
     }
+
     public function export()
     {
         return Excel::download(new NoticesExport(), 'notices_export.xlsx');
     }
+
     public function store(NoticeRequest $request)
     {
         // dd($request->all(),$request->ip());
-        $notice=Notice::create(array_merge($request->validated(),['posted_by' => Auth::id()]));
+        $notice = Notice::create(array_merge($request->validated(), ['posted_by' => Auth::id()]));
+        Cache::flush();
         $users = User::whereNot('id', auth()->id())->get();
         Notification::send($users, new NoticeCreatedNotification($notice));
         return redirect()->route('notices.index')->with('success', 'Notice published successfully!');
@@ -69,7 +83,7 @@ class NoticeController extends Controller
     {
         $notice = Notice::findOrFail($id);
         $notice->update($request->validated());
-
+        Cache::flush();
         return redirect()->route('notices.index')->with('success', 'Notice updated successfully!');
     }
 
