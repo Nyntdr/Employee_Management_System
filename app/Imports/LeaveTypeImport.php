@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\LeaveType;
+use App\Rules\AlphaSpaces;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -43,7 +44,11 @@ class LeaveTypeImport implements ToCollection, WithHeadingRow, WithValidation, S
     public function rules(): array
     {
         return [
-            'leave_name' => 'required|string|unique:leave_types,name',
+            'leave_name' => [
+                'required',
+                'unique:leave_types,name',
+                new AlphaSpaces,
+            ],
             'max_days_per_year' => 'required|numeric',
         ];
     }

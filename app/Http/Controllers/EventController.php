@@ -55,8 +55,15 @@ class EventController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new EventImport(), $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new EventImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Events imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function store(EventRequest $request)
@@ -87,6 +94,7 @@ public function update(EventRequest $request, string $id)
     {
         $event = Event::findOrFail($id);
         $event->delete();
+        Cache::flush();
         return redirect()->route('events.index')->with('success', 'Event deleted successfully!');
     }
 }

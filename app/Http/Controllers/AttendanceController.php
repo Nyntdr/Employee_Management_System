@@ -62,8 +62,15 @@ class AttendanceController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new AttendanceImport(), $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new AttendanceImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Attendance records imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function store(AttendanceRequest $request)
@@ -124,6 +131,7 @@ class AttendanceController extends Controller
     public function destroy(Attendance $attendance)
     {
         $attendance->delete();
+        Cache::flush();
         return redirect()->route('attendances.index')->with('success', 'Attendance deleted successfully.');
     }
 }

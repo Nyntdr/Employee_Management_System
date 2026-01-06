@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use App\Models\LeaveType;
+use App\Models\Leave;
+use Carbon\Carbon;
 
 class LeaveRequest extends FormRequest
 {
@@ -14,35 +16,69 @@ class LeaveRequest extends FormRequest
 
     public function rules(): array
     {
-        $rules = [
-            'employee_id' => 'required|exists:employees,employee_id',
-            'leave_type_id' => 'required|exists:leave_types,id',
-            'start_date' => 'required|date|after_or_equal:today',
+        return [
+            'leave_type_id' => [
+                'required',
+                'exists:leave_types,id',
+                function ($attribute, $value, $fail) {
+                    $leaveType = LeaveType::find($value);
+                    if ($this->routeIs('leaves.*')) {
+                        $employeeId = $this->employee_id;
+                    } else {
+                        $employeeId = auth()->user()->employee->employee_id;
+                    }
+                    if (!$employeeId) {
+                        $fail('Employee ID is required.');
+                        return;
+                    }
+                    $start = Carbon::parse($this->start_date);
+                    $end = Carbon::parse($this->end_date);
+                    $requestedDays = $start->diffInDays($end) + 1;
+                    $usedDays = Leave::where('employee_id', $employeeId)
+                        ->where('leave_type_id', $value)
+                        ->whereYear('start_date', now()->year)
+                        ->where('status', 'approved')
+                        ->get()
+                        ->sum(function ($leave) {
+                            $leaveStart = Carbon::parse($leave->start_date);
+                            $leaveEnd = Carbon::parse($leave->end_date);
+                            return $leaveStart->diffInDays($leaveEnd) + 1;
+                        });
+                    if ($this->routeIs('leaves.update')) {
+                        $leaveId = $this->route('leave') ?? $this->route('id');
+                        $existingLeave = Leave::find($leaveId);
+
+                        if ($existingLeave && $existingLeave->status === 'approved') {
+                            $existingStart = Carbon::parse($existingLeave->start_date);
+                            $existingEnd = Carbon::parse($existingLeave->end_date);
+                            $existingDays = $existingStart->diffInDays($existingEnd) + 1;
+                            $usedDays -= $existingDays;
+                        }
+                    }
+                    if (($usedDays + $requestedDays) > $leaveType->max_days_per_year) {
+                        $remaining = $leaveType->max_days_per_year - $usedDays;
+                        $fail("You can only request $remaining more days for '{$leaveType->name}'.");
+                    }
+                }
+            ],
+            'employee_id' => 'sometimes|required|exists:employees,employee_id',
+            'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'reason' => 'required|string|max:500',
+            'reason' => 'required|string|max:50',
+            'status' => 'sometimes|in:pending,approved,rejected,cancelled',
         ];
-
-        if ($this->isMethod('put') || $this->isMethod('patch')) {
-            $rules['status'] = 'sometimes|string';
-            $rules['approved_by'] = 'sometimes|nullable|exists:users,id';
-        }
-
-        return $rules;
     }
 
     public function messages(): array
     {
         return [
-            'employee_id.required' => 'Please select an employee.',
-            'employee_id.exists' => 'The selected employee does not exist.',
             'leave_type_id.required' => 'Please select a leave type.',
-            'leave_type_id.exists' => 'The selected leave type does not exist.',
+            'employee_id.required' => 'Please select an employee.',
             'start_date.required' => 'Start date is required.',
-            'start_date.after_or_equal' => 'Start date must be today or in the future.',
             'end_date.required' => 'End date is required.',
             'end_date.after_or_equal' => 'End date must be after or equal to start date.',
-            'reason.required' => 'Please provide a reason for the leave.',
-            'reason.max' => 'Reason must not exceed 200 characters.',
+            'reason.required' => 'Please provide a reason for leave.',
+            'reason.max' => 'Reason cannot exceed 500 characters.',
         ];
     }
 }

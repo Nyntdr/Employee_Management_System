@@ -54,8 +54,15 @@ class DepartmentController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new DepartmentImport, $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new DepartmentImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Departments imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function export()
@@ -91,6 +98,7 @@ class DepartmentController extends Controller
     {
         $department = Department::findOrFail($id);
         $department->delete();
+        Cache::flush();
         return redirect()->route('departments.index');
     }
 }

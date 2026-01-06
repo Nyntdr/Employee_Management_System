@@ -17,14 +17,15 @@ class LeaveRequestController extends Controller
         $leaveTypes = LeaveType::all();
         return view('employee.leaves.request_leave', compact( 'leaveTypes'));
     }
-    public function store(Request $request)
+    public function store(LeaveRequest $request)
     {
+        $validated = $request->validated();
         $leave = Leave::create([
             'employee_id' => auth()->user()->employee->employee_id,
-            'leave_type_id' => $request->leave_type_id,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'reason' => $request->reason,
+            'leave_type_id' => $validated['leave_type_id'],
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'reason' => $validated['reason'],
             'status' => 'pending',
         ]);
         $admins = User::whereIn('role_id', [1,2])->get();

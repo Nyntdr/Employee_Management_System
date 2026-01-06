@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\AlphaSpaces;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,7 +20,7 @@ class UpdateEmployeeRequest extends FormRequest
 
         return [
             'role_id' => 'required|exists:roles,role_id',
-            'name'    => 'required|string|max:255',
+            'name'    => 'required|string|max:20',
             'email'   => [
                 'required',
                 'email',
@@ -28,14 +29,14 @@ class UpdateEmployeeRequest extends FormRequest
             ],
             'password' => 'nullable|min:6|confirmed',
 
-            'first_name'      => 'required|string|max:100',
-            'last_name'       => 'required|string|max:100',
+            'first_name'      => ['required', 'string', 'max:20',new AlphaSpaces],
+            'last_name'       => ['required', 'string', 'max:20',new AlphaSpaces],
             'gender'          => 'required|in:male,female',
-            'phone'           => 'required|string|max:20',
-            'secondary_phone' => 'nullable|string|max:20',
+            'phone'           => 'required|string|max:10',
+            'secondary_phone' => 'nullable|string|max:10',
             'emergency_contact' => 'nullable|string|max:150',
             'department_id'   => 'required|exists:departments,department_id',
-            'dob'             => 'nullable|date|before:today',
+            'dob'             => 'required|date|before:today',
             'doj'             => 'required|date',
         ];
     }

@@ -46,8 +46,15 @@ class LeaveTypeController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new LeaveTypeImport(), $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new LeaveTypeImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Leave types imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function store(LeaveTypeRequest $request)
@@ -75,6 +82,7 @@ class LeaveTypeController extends Controller
     {
         $leave_type = LeaveType::findOrFail($id);
         $leave_type->delete();
+        Cache::flush();
         return redirect()->route('leave-types.index')->with('success', 'LeaveType deleted successfully!');
     }
 }

@@ -58,8 +58,15 @@ class AssetController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new AssetsImport(), $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new AssetsImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Assets imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function store(AssetRequest $request)
@@ -144,6 +151,7 @@ class AssetController extends Controller
                 ->with('error', 'Cannot delete asset that has assignment records. Delete assignments first.');
         }
         $asset->delete();
+        Cache::flush();
         return redirect()->route('assets.index')->with('success', 'Asset deleted successfully!');
     }
 }

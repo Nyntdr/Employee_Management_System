@@ -59,8 +59,15 @@ class ContractController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new ContractsImport(), $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new ContractsImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Contracts imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
     public function export()
     {
@@ -100,6 +107,7 @@ class ContractController extends Controller
     {
         $contract = Contract::findOrFail($id);
         $contract->delete();
+        Cache::flush();
         return redirect()->route('contracts.index')->with('success', 'Contract deleted successfully!');
     }
 }

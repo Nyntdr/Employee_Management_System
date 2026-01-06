@@ -23,7 +23,7 @@ class EmployeeDashboardController extends Controller
         $cacheKey = 'asset_index_' . md5($search . '_page_' . $page);
         $asset_assigns = Cache::remember(
             $cacheKey,
-            now()->addMinutes(5),
+            now()->addSeconds(60),
             function () use ($search) {
                 return AssetAssignment::with(['asset', 'assigner'])
                     ->where('employee_id', Auth::user()->employee->employee_id)
@@ -55,7 +55,7 @@ class EmployeeDashboardController extends Controller
         $cacheKey = 'event_index_' . md5($search . '_page_' . $page);
         $events = Cache::remember(
             $cacheKey,
-            now()->addMinutes(5),
+            now()->addSeconds(60),
             function () use ($search) {
                 return Event::query()->with('creator')
                     ->when($search, function ($query) use ($search) {
@@ -82,7 +82,7 @@ class EmployeeDashboardController extends Controller
         $cacheKey = 'notice_index_' . md5($search . '_page_' . $page);
         $notices = Cache::remember(
             $cacheKey,
-            now()->addMinutes(5),
+            now()->addSeconds(60),
             function () use ($search) {
                 return Notice::query()->with('poster')
                     ->when($search, function ($query) use ($search) {
@@ -111,7 +111,7 @@ class EmployeeDashboardController extends Controller
 
         $leaves = Cache::remember(
             $cacheKey,
-            now()->addMinutes(5),
+            now()->addSeconds(60),
             function () use ($search) {
                 $employeeId = Auth::user()->employee->employee_id;
                 return Leave::query()
@@ -148,7 +148,7 @@ class EmployeeDashboardController extends Controller
 
         $attendances = Cache::remember(
             $cacheKey,
-            now()->addMinutes(5),
+            now()->addSeconds(60),
             function () use ($search) {
                 return Attendance::where('employee_id', Auth::user()->employee->employee_id)
                     ->when($search, function ($query) use ($search) {
@@ -178,7 +178,7 @@ class EmployeeDashboardController extends Controller
 
         $payrolls = Cache::remember(
             $cacheKey,
-            now()->addMinutes(5),
+            now()->addSeconds(60),
             function () use ($search) {
                 $employeeId = Auth::user()->employee->employee_id;
                 return Payroll::query()->with(['employee', 'generator'])

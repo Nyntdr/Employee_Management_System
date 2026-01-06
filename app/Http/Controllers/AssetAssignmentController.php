@@ -74,8 +74,15 @@ class AssetAssignmentController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new AssetAssignmentImport(), $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new AssetAssignmentImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Assignments imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function store(AssetAssignmentRequest $request): RedirectResponse
@@ -142,7 +149,7 @@ class AssetAssignmentController extends Controller
             ->update(['status' => 'available']);
 
         $asset_assign->delete();
-
+        Cache::flush();
         return redirect()->route('asset-assignments.index')
             ->with('success', 'Assignment deleted successfully!');
     }

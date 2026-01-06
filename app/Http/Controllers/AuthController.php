@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;
 use Maatwebsite\Excel\Facades\Excel;
@@ -23,8 +24,15 @@ class AuthController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new UsersEmployeesImport, $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new UsersEmployeesImport(), $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Employees imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function showRegister()

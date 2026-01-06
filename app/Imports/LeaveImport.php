@@ -9,49 +9,65 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class LeaveImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows
+class LeaveImport implements ToCollection, WithHeadingRow, WithValidation
 {
     public function collection(Collection $rows): void
     {
         DB::beginTransaction();
+
         try {
-            foreach ($rows as $row) {
+            foreach ($rows as $rowIndex => $row) {
+                $rowNumber = $rowIndex + 2;
+
                 if (empty($row['employee_email']) || empty($row['leave_type'])) {
-                    Log::warning('Skipped empty needed values leave record row', $row);
-                    continue;
+                    throw new \Exception("Row {$rowNumber}: Missing required fields");
                 }
 
-                $user = User::where('email', $row['employee_email'])->first();
-                if (!$user) {
-                    Log::error('Employee not found with email: ' . $row['employee_email']);
-                    continue;
-                }
+                $employee = Employee::whereHas('user', function($query) use ($row) {
+                    $query->where('email', $row['employee_email']);
+                })->first();
 
-                $employee = Employee::where('user_id', $user->id)->first();
                 if (!$employee) {
-                    Log::error('Employee record not found for user: ' . $user->id);
-                    continue;
+                    throw new \Exception("Row {$rowNumber}: Employee not found with email: " . $row['employee_email']);
                 }
 
                 $leaveType = LeaveType::where('name', $row['leave_type'])->first();
                 if (!$leaveType) {
-                    Log::error('Leave type not found: ' . $row['leave_type']);
-                    continue;
+                    throw new \Exception("Row {$rowNumber}: Leave type not found: " . $row['leave_type']);
                 }
 
                 $startDate = $this->parseDate($row['start_date']);
                 $endDate = $this->parseDate($row['end_date']);
-
                 if (!$startDate || !$endDate) {
-                    Log::error('Invalid date format in row: ', $row);
-                    continue;
+                    throw new \Exception("Row {$rowNumber}: Invalid date format");
+                }
+
+                $start = Carbon::parse($startDate);
+                $end = Carbon::parse($endDate);
+                if ($end->lt($start)) {
+                    throw new \Exception("Row {$rowNumber}: End date must be after start date");
+                }
+
+                $requestedDays = $start->diffInDays($end) + 1;
+
+                $usedDays = Leave::where('employee_id', $employee->employee_id)
+                    ->where('leave_type_id', $leaveType->id)
+                    ->whereYear('start_date', $start->year)
+                    ->where('status', 'approved')
+                    ->get()
+                    ->sum(function ($leave) {
+                        $leaveStart = Carbon::parse($leave->start_date);
+                        $leaveEnd = Carbon::parse($leave->end_date);
+                        return $leaveStart->diffInDays($leaveEnd) + 1;
+                    });
+
+                if (($usedDays + $requestedDays) > $leaveType->max_days_per_year) {
+                    throw new \Exception("Row {$rowNumber}: Exceeds maximum days for '{$leaveType->name}'. Used: {$usedDays} days, Requested: {$requestedDays} days, Max: {$leaveType->max_days_per_year} days");
                 }
 
                 $approvedBy = null;
@@ -60,30 +76,24 @@ class LeaveImport implements ToCollection, WithHeadingRow, WithValidation, Skips
                     $approvedBy = $approver?->id;
                 }
 
-                $status = $row['status'] ?? 'pending';
-
                 Leave::create([
                     'employee_id' => $employee->employee_id,
                     'leave_type_id' => $leaveType->id,
                     'start_date' => $startDate,
                     'end_date' => $endDate,
                     'reason' => $row['reason'] ?? '',
-                    'status' => $status,
+                    'status' => $this->getValidStatus($row['status'] ?? 'pending'),
                     'approved_by' => $approvedBy,
                 ]);
             }
+
             DB::commit();
-            Log::info('Leave record import completed successfully');
-        } catch (\Throwable $e) {
+
+        } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Leave record import failed', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
             throw $e;
         }
     }
-
     public function rules(): array
     {
         return [
@@ -92,11 +102,10 @@ class LeaveImport implements ToCollection, WithHeadingRow, WithValidation, Skips
             'start_date' => 'required',
             'end_date' => 'required',
             'reason' => 'required|string|max:500',
-            'status' => 'string|in:pending,approved,rejected',
+            'status' => 'nullable|string|in:pending,approved,rejected',
             'approved_by' => 'nullable|exists:users,name',
         ];
     }
-
     private function parseDate($value): ?string
     {
         if (empty($value)) {
@@ -111,5 +120,11 @@ class LeaveImport implements ToCollection, WithHeadingRow, WithValidation, Skips
         } catch (\Exception $e) {
             return null;
         }
+    }
+    private function getValidStatus($status): string
+    {
+        return in_array($status, ['pending', 'approved', 'rejected'])
+            ? $status
+            : 'pending';
     }
 }

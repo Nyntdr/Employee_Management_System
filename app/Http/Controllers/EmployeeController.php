@@ -153,7 +153,7 @@ class EmployeeController extends Controller
             $employee->delete();
         });
 
-        Cache::flush(); // ✅ clear cache after delete
+        Cache::flush();
 
         return redirect()
             ->route('employees.index')

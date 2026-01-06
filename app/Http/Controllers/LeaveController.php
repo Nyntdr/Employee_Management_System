@@ -67,8 +67,15 @@ class LeaveController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new LeaveImport(), $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new LeaveImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Leave records imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function store(LeaveRequest $request)
@@ -106,6 +113,7 @@ class LeaveController extends Controller
     {
         $leave=Leave::findOrFail($id);
         $leave->delete();
+        Cache::flush();
         return redirect()->route('leaves.index')->with('success', 'Leave deleted successfully.');
     }
 }

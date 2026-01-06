@@ -13,17 +13,6 @@
                     <div class="form-card-body">
                         <form action="{{ route('leave-requests.store') }}" method="POST">
                             @csrf
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <fieldset class="form-fieldset">
                                 <legend>Leave Details</legend>
 
@@ -34,7 +23,7 @@
                                             <option value="">Select Leave Type</option>
                                             @foreach($leaveTypes as $type)
                                                 <option value="{{ $type->id }}" {{ old('leave_type_id') == $type->id ? 'selected' : '' }}>
-                                                    {{ $type->name }}
+                                                    {{ $type->name }} ({{$type->max_days_per_year}} days per year)
                                                 </option>
                                             @endforeach
                                         </select>

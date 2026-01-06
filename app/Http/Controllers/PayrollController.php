@@ -61,14 +61,18 @@ class PayrollController extends Controller
 
     public function import(Request $request)
     {
-
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Log::info("Importing file from payroll controller");
-        Excel::import(new PayrollsImport(), $request->file('file'));
-        Log::info("File imported successfully");
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new PayrollsImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Salary records imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function export()
@@ -196,7 +200,7 @@ class PayrollController extends Controller
         try {
             $payroll = Payroll::findOrFail($id);
             $payroll->delete();
-
+            Cache::flush();
             return redirect()->route('payrolls.index')
                 ->with('success', 'Payroll record deleted successfully.');
 

@@ -14,17 +14,6 @@
                         <form method="POST" action="{{ route('employees.store') }}" class="needs-validation" novalidate>
                             @csrf
 
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <strong>Please fix the following errors:</strong>
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <fieldset class="form-fieldset">
                                 <legend>User Account Details</legend>
 
@@ -47,7 +36,7 @@
 
                                 <div class="form-row">
                                     <div class="form-col-12">
-                                        <label for="name" class="form-label form-label-required">Full Name</label>
+                                        <label for="name" class="form-label form-label-required">Username</label>
                                         <input type="text" name="name" id="name" class="form-control"
                                                value="{{ old('name') }}" required>
                                         @error('name')
@@ -73,7 +62,6 @@
                                         <div class="form-input-group">
                                             <input type="password" name="password" id="password"
                                                    class="form-control" required>
-                                            <span class="form-input-group-icon">🔒</span>
                                         </div>
                                         @error('password')
                                         <span class="form-error">{{ $message }}</span>
@@ -85,7 +73,6 @@
                                         <div class="form-input-group">
                                             <input type="password" name="password_confirmation"
                                                    id="password_confirmation" class="form-control" required>
-                                            <span class="form-input-group-icon">✓</span>
                                         </div>
                                     </div>
                                 </div>
@@ -134,7 +121,7 @@
                                     <div class="form-col-6">
                                         <label for="phone" class="form-label form-label-required">Contact Number</label>
                                         <input type="tel" name="phone" id="phone" class="form-control"
-                                               value="{{ old('phone') }}" maxlength="20" required>
+                                               value="{{ old('phone') }}" maxlength="10" required>
                                         @error('phone')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
@@ -143,7 +130,7 @@
                                     <div class="form-col-6">
                                         <label for="secondary_phone" class="form-label">Secondary Contact Number</label>
                                         <input type="tel" name="secondary_phone" id="secondary_phone"
-                                               class="form-control" value="{{ old('secondary_phone') }}" maxlength="20">
+                                               class="form-control" value="{{ old('secondary_phone') }}" maxlength="10">
                                         @error('secondary_phone')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror

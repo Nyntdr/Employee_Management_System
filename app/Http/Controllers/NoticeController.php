@@ -54,8 +54,15 @@ class NoticeController extends Controller
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-        Excel::import(new NoticesImport(), $request->file('file'));
-        return back()->with('success', 'All good!');
+
+        try {
+            Excel::import(new NoticesImport, $request->file('file'));
+            Cache::flush();
+            return back()->with('success', 'Notice records imported successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
     }
 
     public function export()
@@ -91,6 +98,7 @@ class NoticeController extends Controller
     {
         $notice = Notice::findOrFail($id);
         $notice->delete();
+        Cache::flush();
         return redirect()->route('notices.index')->with('success', 'Notice deleted successfully!');
     }
 }

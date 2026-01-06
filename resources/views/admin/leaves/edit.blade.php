@@ -49,7 +49,7 @@
                                         <option value="">Select Leave Type</option>
                                         @foreach($leaveTypes as $type)
                                             <option value="{{ $type->id }}" {{ old('leave_type_id', $leave->leave_type_id) == $type->id ? 'selected' : '' }}>
-                                                {{ $type->name }}
+                                                {{ $type->name }} ({{$type->max_days_per_year}} days per year)
                                             </option>
                                         @endforeach
                                     </select>
@@ -78,7 +78,10 @@
                                     @enderror
                                 </div>
                             </div>
-
+                            @php
+                                $daysCount = $leave->start_date->diffInDays($leave->end_date) + 1;
+                            @endphp
+                            <p>Total Days: <span class="fw-bold">{{ $daysCount }} day{{ $daysCount > 1 ? 's' : '' }}</span></p>
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="reason" class="form-label form-label-required">Reason</label>
