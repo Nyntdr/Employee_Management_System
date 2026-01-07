@@ -42,6 +42,8 @@
                                         @error('name')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
+                                        <div class="form-hint">Only alphanumeric and underscores allowed and also unique per users </div>
+
                                     </div>
                                 </div>
 
@@ -66,6 +68,8 @@
                                         @error('password')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
+                                        <div class="form-hint">6~12 characters with a uppercase, lowercase, alphanumeric and one special symbol</div>
+
                                     </div>
 
                                     <div class="form-col-6">
@@ -142,10 +146,12 @@
                                         <label for="emergency_contact" class="form-label form-label-required">Emergency Contact</label>
                                         <input type="text" name="emergency_contact" id="emergency_contact"
                                                class="form-control" value="{{ old('emergency_contact') }}"
-                                               placeholder="e.g., John Doe (Father - 9876543210)" required>
+                                               placeholder="e.g., Hari Bahadur (Father - 9876543XXX)" required>
                                         @error('emergency_contact')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
+                                        <div class="form-hint">Format: Name (Relationship - Phone Number)</div>
+
                                     </div>
                                 </div>
 

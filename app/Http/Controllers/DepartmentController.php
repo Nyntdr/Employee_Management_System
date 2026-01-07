@@ -91,14 +91,24 @@ class DepartmentController extends Controller
         $validated = $request->validated();
         $department->update($validated);
         Cache::flush();
-        return redirect()->route('departments.index');
+        return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
     }
 
     public function destroy(string $id)
     {
         $department = Department::findOrFail($id);
+        $employeeCount = $department->employees()->count();
+        if ($employeeCount > 0) {
+            return redirect()->route('departments.index')
+                ->with('error',
+                    "Cannot delete the department because it has {$employeeCount} employees assigned. Please reassign all employees to another department first."
+                );
+        }
+
         $department->delete();
         Cache::flush();
-        return redirect()->route('departments.index');
+
+        return redirect()->route('departments.index')
+            ->with('success', 'Department deleted successfully.');
     }
 }

@@ -49,7 +49,7 @@ class LeaveTypeImport implements ToCollection, WithHeadingRow, WithValidation, S
                 'unique:leave_types,name',
                 new AlphaSpaces,
             ],
-            'max_days_per_year' => 'required|numeric',
+            'max_days_per_year' => 'required|numeric|between:1,365',
         ];
     }
 }

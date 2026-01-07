@@ -16,32 +16,16 @@
                             @csrf
                             @method('PUT')
 
-                            @if(session('success'))
-                                <div class="form-alert form-alert-success">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <strong>Please fix the following errors:</strong>
-                                    <ul class="mb-0 mt-2">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <fieldset class="form-fieldset">
                                 <legend>User Account Details</legend>
 
                                 <div class="form-row">
                                     <div class="form-col-12">
-                                        <label for="name" class="form-label form-label-required">Full Name</label>
+                                        <label for="name" class="form-label form-label-required">Username</label>
                                         <input type="text" name="name" id="name"
                                                value="{{ old('name', $employee->user->name) }}"
                                                class="form-control" required>
+                                        <div class="form-hint">Only alphanumeric and underscores allowed and also unique per users </div>
                                         @error('name')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
@@ -86,7 +70,7 @@
                                         @error('password')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
-                                        <div class="form-hint">Minimum 8 characters with letters and numbers</div>
+                                        <div class="form-hint">6~8 characters with a uppercase, lowercase, alphanumeric and one special symbol</div>
                                     </div>
 
                                     <div class="form-col-6">

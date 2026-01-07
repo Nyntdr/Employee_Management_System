@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RoleRequest;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,12 +18,10 @@ class RoleController extends Controller
     {
         return view('admin.roles.create');
     }
-    public function store(Request $request)
+    public function store(RoleRequest $request)
     {
-        $request->validate([
-            'role_name' => 'required|string|max:50|unique:roles,role_name',]);
-        Role::create([
-            'role_name' => $request->role_name,]);
+        $data=$request->validated();
+        Role::create($data);
         return redirect()->route('roles.index')->with('success', 'Role created successfully.');
     }
     public function edit($id)
@@ -30,21 +29,21 @@ class RoleController extends Controller
         $role = Role::findOrFail($id);
         return view('admin.roles.edit', compact('role'));
     }
-    public function update(Request $request, $id)
+    public function update(RoleRequest $request, $id)
     {
         $role = Role::findOrFail($id);
-        $request->validate([
-            'role_name' => 'required|string|max:50|unique:roles,role_name',
-        ]);
-        $role->update([
-            'role_name' => $request->role_name,
-        ]);
+        $role->update($request->validated());
         return redirect()->route('roles.index');
     }
     public function destroy($id)
     {
         $role = Role::findOrFail($id);
+        if ($role->users()->exists()) {
+            return redirect()->route('roles.index')
+                ->with('error', 'Cannot delete role because there are users assigned to it.');
+        }
         $role->delete();
-        return redirect()->route('roles.index');
+        return redirect()->route('roles.index')
+            ->with('success', 'Role deleted successfully.');
     }
 }

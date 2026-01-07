@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\AlphaSpaces;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -21,6 +22,7 @@ class DepartmentRequest extends FormRequest
                 'required',
                 'string',
                 'max:100',
+                new AlphaSpaces,
                 Rule::unique('departments', 'name')
                     ->ignore(
                         $department?->department_id ?? $department,

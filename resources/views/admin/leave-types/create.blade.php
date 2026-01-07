@@ -13,17 +13,6 @@
                     <div class="form-card-body">
                         <form action="{{ route('leave-types.store') }}" method="POST">
                             @csrf
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="name" class="form-label form-label-required">Name</label>
@@ -39,7 +28,7 @@
                                 <div class="form-col-12">
                                     <label for="max_days_per_year" class="form-label form-label-required">Max Days Per Year</label>
                                     <input type="number" name="max_days_per_year" id="max_days_per_year" class="form-control"
-                                           value="{{ old('max_days_per_year') }}" min="1" max="365" required>
+                                           value="{{ old('max_days_per_year') }}" min="1"  required>
                                     @error('max_days_per_year')
                                     <span class="form-error">{{ $message }}</span>
                                     @enderror

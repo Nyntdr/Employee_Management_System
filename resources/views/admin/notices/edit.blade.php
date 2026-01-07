@@ -9,23 +9,11 @@
                 <div class="form-card">
                     <div class="form-card-header">
                         <h1>Edit Notice</h1>
-                        <p class="mb-0 form-text-muted">Notice ID: NTC-{{ str_pad($notice->notice_id, 6, '0', STR_PAD_LEFT) }}</p>
                     </div>
                     <div class="form-card-body">
                         <form action="{{ route('notices.update', $notice->notice_id) }}" method="POST">
                             @csrf
                             @method('PUT')
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="title" class="form-label form-label-required">Title</label>

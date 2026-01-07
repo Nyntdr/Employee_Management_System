@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exports\EmployeesExport;
-use App\Models\Contract;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Employee;
@@ -22,9 +21,7 @@ class EmployeeController extends Controller
     {
         $search = $request->get('search', '');
         $page = $request->get('page', 1);
-
         $cacheKey = 'employees_index_' . md5($search . '_page_' . $page);
-
         $employees = Cache::remember(
             $cacheKey,
             now()->addMinutes(5),

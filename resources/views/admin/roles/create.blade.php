@@ -13,17 +13,6 @@
                     <div class="form-card-body">
                         <form action="{{ route('roles.store') }}" method="POST">
                             @csrf
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="role_name" class="form-label form-label-required">Role Name</label>

@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Department;
 use App\Models\Employee;
+use App\Rules\AlphaSpaces;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -46,7 +47,7 @@ class DepartmentImport implements ToCollection, WithHeadingRow, WithValidation, 
     public function rules(): array
     {
         return [
-            'department_name' => 'required|string|max:255|unique:departments,name',
+            'department_name' => ['required','string','max:50','unique:departments,name',new AlphaSpaces],
             'manager_name' => 'nullable|string|exists:employees,first_name',
         ];
     }

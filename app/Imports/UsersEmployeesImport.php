@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Employee;
 use App\Models\Department;
 use App\Models\Role;
+use App\Rules\AlphaSpaces;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -24,8 +25,7 @@ class UsersEmployeesImport implements ToCollection, WithHeadingRow, SkipsEmptyRo
         DB::beginTransaction();
 
         try {
-            foreach ($rows as $row)
-            {
+            foreach ($rows as $row) {
                 if (empty($row['username']) || empty($row['email']) || empty($row['password'])) {
                     Log::warning("Skipping row - missing required fields");
                     continue;
@@ -62,23 +62,30 @@ class UsersEmployeesImport implements ToCollection, WithHeadingRow, SkipsEmptyRo
                 Log::info("Imported user: {$email}");
             }
             DB::commit();
-        }
-        catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Import failed: ' . $e->getMessage());
             throw $e;
         }
     }
+
     public function rules(): array
     {
         return [
-            'username' => 'required|string|max:255',
+            'username' => 'required|string|max:20|unique:users,name|regex:/^(?=.*[a-zA-Z])[a-zA-Z0-9_]+$',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
+            'password' => [
+                'required',
+                'string',
+                'min:6',
+                'max:12',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,12}$/'
+            ],
             'role' => 'required|string|exists:roles,role_name',
             'department' => 'required|string|max:255|exists:departments,name',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => ['required', 'string', 'max:20', new AlphaSpaces],
+            'last_name' => ['required', 'string', 'max:20', new AlphaSpaces],
             'gender' => 'required|in:male,female',
             'phone' => 'required|digits:10',
             'secondary' => 'nullable|digits:10',
@@ -87,6 +94,7 @@ class UsersEmployeesImport implements ToCollection, WithHeadingRow, SkipsEmptyRo
             'join_date' => 'required',
         ];
     }
+
     private function parseDate($value): ?string
     {
         if (empty($value)) {

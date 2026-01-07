@@ -46,8 +46,8 @@ class NoticesImport implements ToCollection, WithHeadingRow, WithValidation, Ski
     public function rules(): array
     {
         return [
-            'title'   => 'required|string|max:200',
-            'content' => 'required|string',
+            'title'   => 'required|string|max:200|min:5',
+            'content' => 'required|string|max:300|min:10',
             'poster'   => 'required|string|exists:users,name',
         ];
     }

@@ -18,7 +18,6 @@ class NoticeController extends Controller
 {
     public function index(Request $request)
     {
-//      $notices = Notice::latest()->paginate(5);
         $search = $request->get('search', '');
         $page = $request->get('page', 1);
 
@@ -72,7 +71,6 @@ class NoticeController extends Controller
 
     public function store(NoticeRequest $request)
     {
-        // dd($request->all(),$request->ip());
         $notice = Notice::create(array_merge($request->validated(), ['posted_by' => Auth::id()]));
         Cache::flush();
         $users = User::whereNot('id', auth()->id())->get();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\AlphaSpaces;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,16 +25,18 @@ class LeaveTypeRequest extends FormRequest
     {
         $method = $this->method();
         $rules = [
-            'max_days_per_year' => 'required|numeric',
+            'max_days_per_year' => 'required|numeric|between:1,365',
         ];
         if ($method === 'POST') {
-            $rules['name'] = 'required|string|unique:leave_types,name';
+            $rules['name'] = [
+                'required',
+                'unique:leave_types,name',
+                new AlphaSpaces,
+            ];
         }
         if ($method === 'PUT') {
             $leaveTypeId = $this->route('leave_type') ?? $this->route('id');
-            $rules['name'] = ['required','string',
-                Rule::unique('leave_types', 'name')->ignore($leaveTypeId),
-            ];
+            $rules['name'] = ['required','string', new AlphaSpaces, Rule::unique('leave_types', 'name')->ignore($leaveTypeId),];
         }
         return $rules;
     }
