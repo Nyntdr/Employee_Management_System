@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\AssetConditions;
+use App\Enums\AssetStatuses;
+use App\Enums\AssetTypes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -24,6 +27,9 @@ class Asset extends Model
     ];
 
       protected $casts = [
+        'type' => AssetTypes::class,
+        'status' => AssetStatuses::class,
+        'current_condition' => AssetConditions::class,
         'purchase_date' => 'date',
         'warranty_until' => 'date',
         'purchase_cost' => 'decimal:2'

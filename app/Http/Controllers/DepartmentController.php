@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DepartmentRequest;
 use App\Models\Department;
 use Illuminate\Http\Request;
 
@@ -16,15 +17,10 @@ class DepartmentController extends Controller
     {
         return view('admin.departments.create');
     }
-    public function store(Request $request)
+    public function store(DepartmentRequest $request)
     {
-        $request->validate([
-            'name'       => 'required|string|max:100|unique:departments,name',
-            'manager_id' => 'nullable|integer|exists:employees,employee_id',
-        ]);
-        Department::create([
-            'name' => $request->name,
-            'manager_id'=>$request->manager_id]);
+        $validated=$request->validated();
+        Department::create($validated);
         return redirect()->route('departments.index')->with('success', 'Department created successfully.');
     }
     public function edit(string $id)
@@ -32,17 +28,12 @@ class DepartmentController extends Controller
         $department = Department::findOrFail($id);
         return view('admin.departments.edit', compact('department'));
     }
-    public function update(Request $request, string $id)
+    public function update(DepartmentRequest $request, string $id)
     {
         $department = Department::findOrFail($id);
-       $request->validate([
-            'name'       => 'required|string|max:100|unique:departments,name',
-            'manager_id' => 'nullable|integer|exists:employees,employee_id',
-        ]);
-        $department->update([
-            'name' => $request->name,
-            'manager_id'=>$request->manager_id,
-        ]);
+        $validated=$request->validated();
+        $department->update($validated);
+
         return redirect()->route('admin.departments.index');
     }
     public function destroy(string $id)

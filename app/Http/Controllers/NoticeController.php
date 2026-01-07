@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notice;
-use Illuminate\Http\Request;
+use App\Http\Requests\NoticeRequest;
 use Illuminate\Support\Facades\Auth;
 
 class NoticeController extends Controller
@@ -13,50 +13,40 @@ class NoticeController extends Controller
         $notices = Notice::all();
         return view('admin.notices.index', compact('notices'));
     }
+
     public function create()
     {
         return view('admin.notices.create'); 
     }
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title'   => 'required|string|max:200',
-            'content' => 'required|string',
-        ]);
 
-        Notice::create([
-            'title'       => $request->title,
-            'content'     => $request->input('content'),
-            'posted_by'   => Auth::id(),               
-            'published_at'=> now(),                   
-            'created_at'  => now(),
-        ]);
+    public function store(NoticeRequest $request)
+    {
+        Notice::create(array_merge(
+            $request->validated(),
+            ['posted_by' => Auth::id()]
+        ));
 
         return redirect()->route('notices.index')->with('success', 'Notice published successfully!');
     }
+
     public function edit(string $id)
     {
         $notice = Notice::findOrFail($id);
         return view('admin.notices.edit', compact('notice'));
     }
-    public function update(Request $request, string $id)
+
+    public function update(NoticeRequest $request, string $id)
     {
         $notice = Notice::findOrFail($id);
-        $request->validate([
-            'title'   => 'required|string|max:200',
-            'content' => 'required|string',
-        ]);
-        $notice->update([
-            'title'       => $request->title,
-            'content'     => $request->input('content'),
+        $notice->update($request->validated());
 
-        ]);
-        return redirect()->route('notices.index');
+        return redirect()->route('notices.index')->with('success', 'Notice updated successfully!');
     }
+
     public function destroy(string $id)
     {
         $notice = Notice::findOrFail($id);
         $notice->delete();
-        return redirect()->route('notices.index');   
+        return redirect()->route('notices.index')->with('success', 'Notice deleted successfully!');
     }
 }

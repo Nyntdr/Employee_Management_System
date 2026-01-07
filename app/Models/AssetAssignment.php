@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\AssetConditions;
+use App\Enums\AssignmentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -23,6 +25,9 @@ class AssetAssignment extends Model
     ];
 
     protected $casts = [
+        'status' => AssignmentStatus::class,
+        'condition_at_assignment' => AssetConditions::class,
+        'condition_at_return' => AssetConditions::class,
         'assigned_date' => 'date',
         'returned_date' => 'date'
     ];
