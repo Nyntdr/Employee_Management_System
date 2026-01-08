@@ -13,7 +13,7 @@ class AttendanceRequest extends FormRequest
         return true;
     }
 
-    public function rules()
+    public function rules(): array
     {
         $rules = [
             'employee_id' => 'required|exists:employees,employee_id',
@@ -25,6 +25,7 @@ class AttendanceRequest extends FormRequest
         $rules['date'] = [
             'required',
             'date',
+            'before_or_equal:today',
             Rule::unique('attendances')->where(function ($query) {
                 return $query->where('employee_id', $this->employee_id);
             })->ignore($this->attendance?->attendance_id, 'attendance_id')

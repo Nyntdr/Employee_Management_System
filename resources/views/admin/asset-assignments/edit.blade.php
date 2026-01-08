@@ -91,7 +91,9 @@
                                 <div class="form-row">
                                     <div class="form-col-12">
                                         <label for="purpose" class="form-label form-label-required">Purpose/Reason</label>
-                                        <textarea name="purpose" id="purpose" class="form-control" rows="3" required>{{ old('purpose', $asset_assign->purpose) }}</textarea>
+                                        <textarea name="purpose" id="purpose" class="form-control" rows="3" maxlength="50" required>{{ old('purpose', $asset_assign->purpose) }}</textarea>
+                                        <div class="form-hint">Try to summarize in 50 words if have to</div>
+
                                         @error('purpose')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror

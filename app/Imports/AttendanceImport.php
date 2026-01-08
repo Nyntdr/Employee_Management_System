@@ -47,7 +47,7 @@ class AttendanceImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, 
                 }
 
                 // Parse times
-                $clockIn  = $this->parseTime($row['clock_in'] ?? null);
+                $clockIn = $this->parseTime($row['clock_in'] ?? null);
                 $clockOut = $this->parseTime($row['clock_out'] ?? null);
 
                 // Calculate total hours
@@ -60,11 +60,11 @@ class AttendanceImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, 
 
                 Attendance::create([
                     'employee_id' => $employee->employee_id,
-                    'date'        => $this->parseDate($row['date']),
-                    'clock_in'    => $clockIn,
-                    'clock_out'   => $clockOut,
+                    'date' => $this->parseDate($row['date']),
+                    'clock_in' => $clockIn,
+                    'clock_out' => $clockOut,
                     'total_hours' => $totalHours,
-                    'status'      => $row['status'],
+                    'status' => $row['status'],
                 ]);
             }
 
@@ -82,10 +82,10 @@ class AttendanceImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, 
     {
         return [
             '*.employee_email' => 'required|exists:users,email',
-            '*.date'           => 'required',
-            '*.clock_in'       => 'nullable',
-            '*.clock_out'      => 'nullable',
-            '*.status'         => ['required', Rule::enum(AttendanceStatus::class)],
+            '*.date' => 'required',
+            '*.clock_in' => 'nullable',
+            '*.clock_out' => 'nullable',
+            '*.status' => ['required', Rule::enum(AttendanceStatus::class)],
         ];
     }
 

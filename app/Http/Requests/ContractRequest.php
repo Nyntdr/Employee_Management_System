@@ -20,9 +20,8 @@ class ContractRequest extends FormRequest
             'contract_type' => 'required|in:'. implode(',', array_column(ContractType::cases(), 'value')),
             'job_title' => 'required|in:'. implode(',', array_column(JobTitle::cases(), 'value')),
             'start_date' => 'required|date',
-            'end_date' => 'nullable|date|after:start_date',
-            'probation_period' => 'nullable|integer|min:0|max:365',
-            'working_hours' => 'nullable|string|max:100',
+            'end_date' => 'required|date|after:start_date',
+            'probation_period' => 'required|numeric|min:0|max:365',
             'salary' => 'required|numeric|min:0',
             'contract_status' => 'required|in:'. implode(',', array_column(ContractStatus::cases(), 'value')),
         ];

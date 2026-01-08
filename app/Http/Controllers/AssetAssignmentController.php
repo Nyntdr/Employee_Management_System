@@ -20,7 +20,6 @@ class AssetAssignmentController extends Controller
 {
     public function index(Request $request)
     {
-        $asset_assigns = AssetAssignment::with(['asset', 'employee', 'assigner'])->latest()->paginate(6);
         $search = $request->get('search', '');
         $page = $request->get('page', 1);
 
@@ -54,7 +53,7 @@ class AssetAssignmentController extends Controller
 
     public function create()
     {
-        $assets = Asset::where('status', 'available')->get();
+        $assets = Asset::where('status', 'available')->orWhere('status','requested')->get();
         $employees = Employee::all();
         $statuses = AssignmentStatus::cases();
         $conditions = AssetConditions::cases();
@@ -90,6 +89,9 @@ class AssetAssignmentController extends Controller
         $validated = $request->validated();
         $validated['assigned_by'] = auth()->id();
 
+        if (empty($validated['condition_at_return'])) {
+            $validated['condition_at_return'] = 'unreturned';
+        }
         $assignment = AssetAssignment::create($validated);
 
         Asset::where('asset_id', $request->asset_id)
@@ -113,19 +115,13 @@ class AssetAssignmentController extends Controller
         $statuses = AssignmentStatus::cases();
         $conditions = AssetConditions::cases();
 
-        return view('admin.asset-assignments.edit', compact(
-            'asset_assign',
-            'assets',
-            'employees',
-            'statuses',
-            'conditions'
+        return view('admin.asset-assignments.edit', compact('asset_assign', 'assets', 'employees', 'statuses', 'conditions'
         ));
     }
 
     public function update(AssetAssignmentRequest $request, string $id): RedirectResponse
     {
         $asset_assign = AssetAssignment::findOrFail($id);
-
         $old_asset_id = $asset_assign->asset_id;
         $new_asset_id = $request->asset_id;
 
@@ -134,10 +130,21 @@ class AssetAssignmentController extends Controller
 
         $asset_assign->update($validated);
         Cache::flush();
+
         if ($old_asset_id != $new_asset_id) {
             Asset::where('asset_id', $old_asset_id)->update(['status' => 'available']);
             Asset::where('asset_id', $new_asset_id)->update(['status' => 'assigned']);
         }
+        else if ($request->status == 'returned') {
+            Asset::where('asset_id', $old_asset_id)->update([
+                'status' => 'available',
+                'current_condition' => $request->condition_at_return,
+            ]);
+        }
+        else if ($request->status == 'active') {
+            Asset::where('asset_id', $old_asset_id)->update(['status' => 'assigned']);
+        }
+
         return redirect()->route('asset-assignments.index')
             ->with('success', 'Assignment updated successfully!');
     }

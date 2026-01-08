@@ -68,8 +68,7 @@ class ContractsImport implements ToCollection, WithHeadingRow, WithValidation, S
             'job_title' => 'required|in:'. implode(',', array_column(JobTitle::cases(), 'value')),
             'start_date' => 'required|numeric',
             'end_date' => 'nullable|numeric|after:start_date',
-            'probation_days' => 'nullable|integer|min:0|max:365',
-            'working_hours' => 'nullable|string|max:100',
+            'probation_days' => 'nullable|numeric|min:0|max:365',
             'salary' => 'required|numeric|min:0',
             'contract_status' => 'required|in:'. implode(',', array_column(ContractStatus::cases(), 'value')),
         ];

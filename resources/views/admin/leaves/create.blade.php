@@ -74,16 +74,13 @@
                                     @error('reason')
                                     <span class="form-error">{{ $message }}</span>
                                     @enderror
+                                    <div class="form-hint">Try to summarize in 20 words </div>
                                 </div>
                             </div>
 
                             <div class="form-btn-group">
-                                <a href="{{ route('leaves.index') }}" class="form-btn-outline">
-                                    Cancel
-                                </a>
-                                <button type="submit" class="form-btn-primary">
-                                    Add Leave
-                                </button>
+                                <a href="{{ route('leaves.index') }}" class="form-btn-outline">Cancel</a>
+                                <button type="submit" class="form-btn-primary">Add Leave</button>
                             </div>
                         </form>
                     </div>

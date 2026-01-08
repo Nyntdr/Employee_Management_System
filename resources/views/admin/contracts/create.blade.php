@@ -13,17 +13,6 @@
                     <div class="form-card-body">
                         <form action="{{ route('contracts.store') }}" method="POST">
                             @csrf
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <fieldset class="form-fieldset">
                                 <legend>Contract Information</legend>
 
@@ -109,7 +98,7 @@
 
                                 <div class="form-row">
                                     <div class="form-col-12">
-                                        <label for="probation_period" class="form-label">Probation Period (days)</label>
+                                        <label for="probation_period" class="form-label form-label-required">Probation Period (days)</label>
                                         <input type="number" name="probation_period" id="probation_period" class="form-control"
                                                value="{{ old('probation_period', 0) }}" min="0" max="365">
                                         @error('probation_period')

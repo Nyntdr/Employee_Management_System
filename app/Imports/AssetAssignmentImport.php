@@ -70,7 +70,7 @@ class AssetAssignmentImport implements ToCollection, WithHeadingRow, SkipsEmptyR
             '*.assigned_date' => ['required'],
             '*.returned_date' => ['nullable'],
             '*.status' => ['required', Rule::enum(AssignmentStatus::class)],
-            '*.purpose' => ['required', 'string', 'max:500'],
+            '*.purpose' => ['required', 'string', 'max:50'],
             '*.condition_at_assignment' => ['required', Rule::enum(AssetConditions::class)],
             '*.condition_at_return' => ['nullable', Rule::enum(AssetConditions::class)],
         ];

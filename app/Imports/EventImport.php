@@ -51,7 +51,7 @@ class EventImport implements ToCollection,  WithHeadingRow, WithValidation, Skip
     public function rules(): array
     {
         return [
-            'title'       => 'required|string|max:200',
+            'title'       => 'required|string|max:50|min:5',
             'description' => 'nullable|string',
             'event_date'  => 'required',
             'start_time'  => 'required',

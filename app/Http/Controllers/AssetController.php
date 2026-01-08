@@ -22,13 +22,13 @@ class AssetController extends Controller
 
         $cacheKey = 'assets_index_' . md5($search . '_page_' . $page);
 
-        $assets =Cache::remember(
+        $assets = Cache::remember(
             $cacheKey,
             now()->addMinutes(5),
             function () use ($search) {
                 return Asset::query()
                     ->when($search, function ($query) use ($search) {
-                        $query->whereAny(['asset_code', 'name', 'category', 'brand', 'model','serial_number','type','status','current_condition'], 'like', "%{$search}%");
+                        $query->whereAny(['asset_code', 'name', 'category', 'brand', 'model', 'serial_number', 'type', 'status', 'current_condition'], 'like', "%{$search}%");
                     })
                     ->orderByRaw("CASE WHEN status = ? THEN 1 ELSE 2 END", [AssetStatuses::REQUESTED->value])
                     ->orderBy('created_at', 'desc')
@@ -45,7 +45,7 @@ class AssetController extends Controller
     public function create()
     {
         $employees = Employee::all();
-        return view('admin.assets.create',compact('employees'));
+        return view('admin.assets.create', compact('employees'));
     }
 
     public function export()
@@ -73,12 +73,10 @@ class AssetController extends Controller
     {
         $validated = $request->validated();
 
-        // Set default status if not provided
         if (!isset($validated['status'])) {
             $validated['status'] = AssetStatuses::AVAILABLE->value;
         }
 
-        // Set requested_at if requested_by is set but requested_at is not
         if (isset($validated['requested_by']) && !isset($validated['requested_at'])) {
             $validated['requested_at'] = now();
         }
@@ -104,19 +102,16 @@ class AssetController extends Controller
         $oldStatus = $asset->status->value;
         $newStatus = $request->status;
 
-        // Handle requested_at logic
         if (isset($data['requested_by']) && !isset($data['requested_at'])) {
             $data['requested_at'] = now();
         }
 
-        // Clear requested fields if status is no longer REQUESTED
         if ($oldStatus === AssetStatuses::REQUESTED->value && $newStatus !== AssetStatuses::REQUESTED->value) {
             $data['requested_by'] = null;
             $data['requested_at'] = null;
             $data['request_reason'] = null;
         }
 
-        // Check if asset has active assignments when changing from ASSIGNED status
         if ($isCurrentlyAssigned && isset($data['status']) && $data['status'] !== AssetStatuses::ASSIGNED->value) {
             $hasActiveAssignments = $asset->assignments()
                 ->where('status', 'active')

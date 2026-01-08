@@ -57,6 +57,7 @@ class Employee extends Model
     {
         return $this->hasOne(Contract::class, 'employee_id', 'employee_id')
             ->where('contract_status', 'active')
+            ->orWhere('contract_status', 'renewed')
             ->orderBy('start_date', 'desc')
             ->latest();
     }

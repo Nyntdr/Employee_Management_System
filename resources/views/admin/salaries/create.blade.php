@@ -13,17 +13,6 @@
                     <div class="form-card-body">
                         <form action="{{ route('payrolls.store') }}" method="POST">
                             @csrf
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="employee_id" class="form-label form-label-required">Employee</label>
@@ -55,8 +44,8 @@
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="overtime_pay" class="form-label">Overtime Pay</label>
-                                    <input type="number" step="0.01" name="overtime_pay" id="overtime_pay" class="form-control"
-                                           value="{{ old('overtime_pay', 0) }}" min="0" oninput="this.value = Math.max(0, this.value)">
+                                    <input type="number" step="10" name="overtime_pay" id="overtime_pay" class="form-control"
+                                           value="{{ old('overtime_pay', 0) }}" min="0">
                                     @error('overtime_pay')
                                     <span class="form-error">{{ $message }}</span>
                                     @enderror
@@ -66,8 +55,8 @@
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="bonus" class="form-label">Bonus</label>
-                                    <input type="number" step="0.01" name="bonus" id="bonus" class="form-control"
-                                           value="{{ old('bonus', 0) }}" min="0" oninput="this.value = Math.max(0, this.value)">
+                                    <input type="number" step="10" name="bonus" id="bonus" class="form-control"
+                                           value="{{ old('bonus', 0) }}" min="0">
                                     @error('bonus')
                                     <span class="form-error">{{ $message }}</span>
                                     @enderror
@@ -77,8 +66,8 @@
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="deductions" class="form-label">Deductions</label>
-                                    <input type="number" step="0.01" name="deductions" id="deductions" class="form-control"
-                                           value="{{ old('deductions', 0) }}" min="0" oninput="this.value = Math.max(0, this.value)">
+                                    <input type="number" step="10" name="deductions" id="deductions" class="form-control"
+                                           value="{{ old('deductions', 0) }}" min="0">
                                     @error('deductions')
                                     <span class="form-error">{{ $message }}</span>
                                     @enderror

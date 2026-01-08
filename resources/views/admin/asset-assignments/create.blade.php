@@ -19,17 +19,6 @@
 
                         <form action="{{ route('asset-assignments.store') }}" method="POST">
                             @csrf
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
                             <fieldset class="form-fieldset">
                                 <legend>Assignment Details</legend>
 
@@ -93,8 +82,9 @@
                                 <div class="form-row">
                                     <div class="form-col-12">
                                         <label for="purpose" class="form-label form-label-required">Purpose/Reason</label>
-                                        <textarea name="purpose" id="purpose" class="form-control" rows="3"
+                                        <textarea name="purpose" id="purpose" class="form-control" rows="3" maxlength="50"
                                                   placeholder="Why is this asset being assigned?" required>{{ old('purpose') }}</textarea>
+                                        <div class="form-hint">Try to summarize in 50 words if have to</div>
                                         @error('purpose')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror
@@ -140,9 +130,9 @@
 
                                 <div class="form-row">
                                     <div class="form-col-12">
-                                        <label for="condition_at_return" class="form-label">Condition at Return</label>
+                                        <label for="condition_at_return" class="form-label">Condition at Return (Only if returned)</label>
                                         <select name="condition_at_return" id="condition_at_return" class="form-select">
-                                            <option value="">-- Select Condition if Returned --</option>
+                                            <option value="">-- Select Return Condition--</option>
                                             @foreach($conditions as $condition)
                                                 <option value="{{ $condition->value }}"
                                                     {{ old('condition_at_return') == $condition->value ? 'selected' : '' }}>

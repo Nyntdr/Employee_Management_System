@@ -14,17 +14,7 @@
                         <form method="POST" action="{{ route('assets.update', $asset->asset_id) }}">
                             @csrf
                             @method('PUT')
-
-                            @if($errors->any())
-                                <div class="form-alert form-alert-danger">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
+                            @include('layouts.components.alert')
                             <fieldset class="form-fieldset">
                                 <legend>Basic Asset Information</legend>
 
@@ -129,7 +119,7 @@
                                         <div class="input-group">
                                             <span class="input-group-text">Rs</span>
                                             <input type="number" name="purchase_cost" id="purchase_cost" class="form-control"
-                                                   value="{{ old('purchase_cost', $asset->purchase_cost) }}" step="0.01" min="0" max="9999999999.99">
+                                                   value="{{ old('purchase_cost', $asset->purchase_cost) }}" step="5" min="0" max="9999999">
                                         </div>
                                         @error('purchase_cost')
                                         <span class="form-error">{{ $message }}</span>
@@ -216,7 +206,8 @@
                                     <div class="form-col-12">
                                         <label for="request_reason" class="form-label">Request Reason</label>
                                         <textarea name="request_reason" id="request_reason" class="form-control"
-                                                  rows="3" maxlength="500">{{ old('request_reason', $asset->request_reason) }}</textarea>
+                                                  rows="3" maxlength="50">{{ old('request_reason', $asset->request_reason) }}</textarea>
+                                        <div class="form-hint">Try to summarize in 50 words</div>
                                         @error('request_reason')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror

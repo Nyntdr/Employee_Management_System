@@ -29,13 +29,13 @@ class AttendanceController extends Controller
                     ->when($search, function ($query) use ($search) {
                         $query->whereAny(['status'], 'like', "%{$search}%")
                             ->orWhereHas('employee', function ($q) use ($search) {
-                                $q->whereAny(['first_name','last_name'], 'like', "%{$search}%");
+                                $q->whereAny(['first_name', 'last_name'], 'like', "%{$search}%");
                             })
                             ->orWhereDate('date', 'like', "%{$search}%")
                             ->orWhere('clock_in', 'like', "%{$search}%")
                             ->orWhere('clock_out', 'like', "%{$search}%");
                     })
-                    ->orderBy('date','desc')->paginate(8);
+                    ->orderBy('date', 'desc')->paginate(8);
             }
         );
         if ($request->ajax()) {

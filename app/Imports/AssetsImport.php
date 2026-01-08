@@ -6,6 +6,7 @@ use App\Enums\AssetConditions;
 use App\Enums\AssetStatuses;
 use App\Enums\AssetTypes;
 use App\Models\Asset;
+use App\Rules\AlphaSpaces;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -57,13 +58,13 @@ class AssetsImport implements ToCollection, WithHeadingRow, WithValidation, Skip
     public function rules(): array
     {
         return [
-            'asset_code' => 'required|string|max:50',
-            'asset_name' => 'required|string|max:100',
+            'asset_code' => 'required|string|max:30|unique:assets,asset_code',
+            'asset_name' => 'required|string|max:30',
             'type' => 'required|string|in:' . implode(',', array_column(AssetTypes::cases(), 'value')),
-            'category' => 'nullable|string|max:100',
-            'brand' => 'nullable|string|max:100',
-            'model' => 'nullable|string|max:100',
-            'serial_number' => 'required|string|max:100',
+            'category' => ['nullable','string','max:30',new AlphaSpaces],
+            'brand' => 'nullable|string|max:20',
+            'model' => 'nullable|string|max:20',
+            'serial_number' => 'required|string|max:50',
             'purchase_date' => 'nullable|numeric',
             'purchase_cost' => 'nullable|numeric|min:0',
             'warranty_until' => 'nullable|numeric',

@@ -8,20 +8,16 @@ use App\Models\Leave;
 use App\Models\Employee;
 use App\Models\LeaveType;
 use App\Http\Requests\LeaveRequest;
-use App\Models\User;
-use App\Notifications\EventCreatedNotification;
 use App\Notifications\LeaveUpdatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Notification;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LeaveController extends Controller
 {
     public function index(Request $request)
     {
-//        $leaves = Leave::orderBy('created_at', 'DESC')->get();
         $search = $request->get('search', '');
         $page = $request->get('page', 1);
 

@@ -101,7 +101,7 @@ class LeaveImport implements ToCollection, WithHeadingRow, WithValidation
             'leave_type' => 'required|exists:leave_types,name',
             'start_date' => 'required',
             'end_date' => 'required',
-            'reason' => 'required|string|max:500',
+            'reason' => 'required|string|max:20',
             'status' => 'nullable|string|in:pending,approved,rejected',
             'approved_by' => 'nullable|exists:users,name',
         ];

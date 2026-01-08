@@ -22,7 +22,7 @@ class EventController extends Controller
         $page = $request->get('page', 1);
 
         $cacheKey = 'events_index_' . md5($search . '_page_' . $page);
-        $events =Cache::remember(
+        $events = Cache::remember(
             $cacheKey,
             now()->addMinutes(5),
             function () use ($search) {
@@ -42,14 +42,17 @@ class EventController extends Controller
 
         return view('admin.events.index', compact('events'));
     }
+
     public function create()
     {
         return view('admin.events.create');
     }
+
     public function export()
     {
         return Excel::download(new EventsExport(), 'event_export.xlsx');
     }
+
     public function import(Request $request)
     {
         $request->validate([
@@ -67,29 +70,32 @@ class EventController extends Controller
     }
 
     public function store(EventRequest $request)
-{
+    {
         $validated = $request->validated();
         $validated['created_by'] = Auth::id();
-        $event=Event::create($validated);
+        $event = Event::create($validated);
         Cache::flush();
         $users = User::whereNot('id', auth()->id())->get();
         Notification::send($users, new EventCreatedNotification($event));
         return redirect()->route('events.index')->with('success', 'Event created successfully!');
-}
+    }
+
     public function edit(string $id)
     {
         $event = Event::findOrFail($id);
         return view('admin.events.edit', compact('event'));
     }
-public function update(EventRequest $request, string $id)
-{
-    $event = Event::findOrFail($id);
-    $validated = $request->validated();
-    unset($validated['created_by']);
-    $event->update($validated);
-    Cache::flush();
-    return redirect()->route('events.index')->with('success', 'Event updated successfully!');
-}
+
+    public function update(EventRequest $request, string $id)
+    {
+        $event = Event::findOrFail($id);
+        $validated = $request->validated();
+        unset($validated['created_by']);
+        $event->update($validated);
+        Cache::flush();
+        return redirect()->route('events.index')->with('success', 'Event updated successfully!');
+    }
+
     public function destroy(string $id)
     {
         $event = Event::findOrFail($id);

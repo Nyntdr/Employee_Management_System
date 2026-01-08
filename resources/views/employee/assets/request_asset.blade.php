@@ -68,6 +68,10 @@
                                         <label for="reason" class="form-label form-label-required">Reason</label>
                                         <textarea name="reason" id="reason" class="form-control" rows="3"
                                                   placeholder="Why is this asset being requested?" required>{{ old('purpose') }}</textarea>
+                                        <div class="form-hint">Try to summarize in 50 words</div>
+                                        @error('reason')
+                                        <span class="form-error">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                             </fieldset>
