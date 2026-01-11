@@ -20,10 +20,10 @@ class AttendanceController extends Controller
         $search = $request->get('search', '');
         $page = $request->get('page', 1);
 
-        $cacheKey = 'contracts_index_' . md5($search . '_page_' . $page);
+        $cacheKey = 'attendances_index_' . md5($search . '_page_' . $page);
         $attendances = Cache::remember(
             $cacheKey,
-            now()->addMinutes(5),
+            now()->addMinutes(1),
             function () use ($search) {
                 return Attendance::query()->with('employee')
                     ->when($search, function ($query) use ($search) {
@@ -76,7 +76,6 @@ class AttendanceController extends Controller
     public function store(AttendanceRequest $request)
     {
         $data = $request->validated();
-
         if (!empty($data['clock_in']) && !empty($data['clock_out'])) {
             $clockIn = Carbon::parse($data['clock_in']);
             $clockOut = Carbon::parse($data['clock_out']);
