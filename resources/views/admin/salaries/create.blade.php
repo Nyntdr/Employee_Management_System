@@ -44,7 +44,7 @@
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="overtime_pay" class="form-label">Overtime Pay</label>
-                                    <input type="number" step="10" name="overtime_pay" id="overtime_pay" class="form-control"
+                                    <input type="number" step="1" name="overtime_pay" id="overtime_pay" class="form-control"
                                            value="{{ old('overtime_pay', 0) }}" min="0">
                                     @error('overtime_pay')
                                     <span class="form-error">{{ $message }}</span>
@@ -55,7 +55,7 @@
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="bonus" class="form-label">Bonus</label>
-                                    <input type="number" step="10" name="bonus" id="bonus" class="form-control"
+                                    <input type="number" step="1" name="bonus" id="bonus" class="form-control"
                                            value="{{ old('bonus', 0) }}" min="0">
                                     @error('bonus')
                                     <span class="form-error">{{ $message }}</span>
@@ -66,7 +66,7 @@
                             <div class="form-row">
                                 <div class="form-col-12">
                                     <label for="deductions" class="form-label">Deductions</label>
-                                    <input type="number" step="10" name="deductions" id="deductions" class="form-control"
+                                    <input type="number" step="1" name="deductions" id="deductions" class="form-control"
                                            value="{{ old('deductions', 0) }}" min="0">
                                     @error('deductions')
                                     <span class="form-error">{{ $message }}</span>
