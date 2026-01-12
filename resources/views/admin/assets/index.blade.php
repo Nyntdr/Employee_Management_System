@@ -1,9 +1,10 @@
 @extends('layouts.navbars')
 @section('title', 'All Assets')
 @section('content')
-<h1>Assets List</h1>
+<h2>Assets List</h2>
 <a href="{{ route('assets.create') }}">Add Asset</a> <br><br>
-<table border="1">
+<a href="{{ route('asset-assignments.index') }}">Assign Asset</a> <br><br>
+<table border="1" style="text-align: center;">
     <thead>
         <tr>
             <th>ID</th>
@@ -27,7 +28,6 @@
                 <td>{{ $asset->asset_id }}</td>
                 <td>{{ $asset->asset_code }}</td>
                 <td>{{ $asset->name }}</td>
-                {{-- FIX: Use ->value to get the string value --}}
                 <td>{{ ucfirst($asset->type->value) }}</td>
                 <td>{{ $asset->category ?? 'N/A' }}</td>
                 <td>{{ $asset->brand ?? 'N/A' }}</td>
@@ -35,8 +35,7 @@
                 <td>{{ $asset->serial_number }}</td>
                 <td>{{ $asset->purchase_date ? $asset->purchase_date->format('F j, Y') : 'N/A' }}</td>
                 <td>{{ $asset->warranty_until ? $asset->warranty_until->format('F j, Y') : 'N/A' }}</td>
-                {{-- FIX: Use ->value and format it --}}
-                <td>{{ ucwords(str_replace('_', ' ', $asset->status->value)) }}</td>
+                <td>{{ ucwords(str_replace('_', ' ', $asset->status->value)) }}</td> 
                 <td>{{ ucfirst($asset->current_condition->value) }}</td>
                 <td>
                     <a href="{{ route('assets.edit', $asset->asset_id) }}">Edit</a>

@@ -43,7 +43,6 @@
                                         <label for="type" class="form-label">Asset Type <span class="text-danger">*</span></label>
                                         <select name="type" id="type" class="form-select" required>
                                             <option value="">-- Select Type --</option>
-                                            {{-- FIX: Loop through enum cases --}}
                                             @foreach(App\Enums\AssetTypes::cases() as $type)
                                                 <option value="{{ $type->value }}" {{ old('type') == $type->value ? 'selected' : '' }}>
                                                     {{ ucfirst($type->value) }}
@@ -145,13 +144,14 @@
                                         <label for="status" class="form-label">Asset Status <span class="text-danger">*</span></label>
                                         <select name="status" id="status" class="form-select" required>
                                             <option value="">-- Select Status --</option>
-                                            {{-- FIX: Loop through enum cases --}}
                                             @foreach(App\Enums\AssetStatuses::cases() as $status)
-                                                <option value="{{ $status->value }}" {{ old('status') == $status->value ? 'selected' : '' }}>
+                                                <option value="{{ $status->value }}" 
+                                                    {{ old('status', App\Enums\AssetStatuses::AVAILABLE->value) == $status->value ? 'selected' : '' }}>
                                                     {{ ucwords(str_replace('_', ' ', $status->value)) }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        <small class="text-muted">New assets are typically set to 'available'</small>
                                         @error('status')
                                             <span class="text-danger small">{{ $message }}</span>
                                         @enderror
@@ -161,7 +161,6 @@
                                         <label for="current_condition" class="form-label">Current Condition <span class="text-danger">*</span></label>
                                         <select name="current_condition" id="current_condition" class="form-select" required>
                                             <option value="">-- Select Condition --</option>
-                                            {{-- FIX: Loop through enum cases --}}
                                             @foreach(App\Enums\AssetConditions::cases() as $condition)
                                                 <option value="{{ $condition->value }}" {{ old('current_condition') == $condition->value ? 'selected' : '' }}>
                                                     {{ ucfirst($condition->value) }}

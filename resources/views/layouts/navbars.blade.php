@@ -52,6 +52,7 @@
         <nav class="sidebar bg-white">
             <a href="{{ route('dashboard') }}" class="d-block mb-2">Dashboard ✅</a>
             <a href="{{ route('employees.index') }}" class="d-block mb-2">Employees ✅</a>
+                        <a href="#" class="d-block mb-2">Contracts</a>
             <a href="{{ route('departments.index') }}" class="d-block mb-2">Departments ✅</a>
             <a href="{{ route('notices.index') }}" class="d-block mb-2">Notices ✅</a>
             <a href="{{ route('assets.index') }}" class="d-block mb-2">Assets ✅</a>

@@ -11,6 +11,16 @@
                         <h1 class="mb-0">Update Asset</h1>
                     </div>
                     <div class="card-body">
+                        @if($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        
                         <form method="POST" action="{{ route('assets.update', $asset->asset_id) }}">
                             @csrf
                             @method('PUT')
@@ -44,7 +54,6 @@
                                         <label for="type" class="form-label">Asset Type <span class="text-danger">*</span></label>
                                         <select name="type" id="type" class="form-select" required>
                                             <option value="">-- Select Type --</option>
-                                            {{-- FIX: Loop through enum cases with old() and current value --}}
                                             @foreach(App\Enums\AssetTypes::cases() as $type)
                                                 <option value="{{ $type->value }}" 
                                                     {{ old('type', $asset->type->value) == $type->value ? 'selected' : '' }}>
@@ -131,9 +140,9 @@
                                     <label for="warranty_until" class="form-label">Warranty Until</label>
                                     <input type="date" name="warranty_until" id="warranty_until" class="form-control" 
                                            value="{{ old('warranty_until', $asset->warranty_until ? $asset->warranty_until->format('Y-m-d') : '') }}">
-                                        @error('warranty_until')
-                                            <span class="text-danger small">{{ $message }}</span>
-                                        @enderror
+                                    @error('warranty_until')
+                                        <span class="text-danger small">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </fieldset>
 
@@ -147,7 +156,6 @@
                                         <label for="status" class="form-label">Asset Status <span class="text-danger">*</span></label>
                                         <select name="status" id="status" class="form-select" required>
                                             <option value="">-- Select Status --</option>
-                                            {{-- FIX: Loop through enum cases with old() and current value --}}
                                             @foreach(App\Enums\AssetStatuses::cases() as $status)
                                                 <option value="{{ $status->value }}" 
                                                     {{ old('status', $asset->status->value) == $status->value ? 'selected' : '' }}>
@@ -155,6 +163,11 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @if($asset->assignments()->where('status', 'active')->exists())
+                                            <small class="text-warning">
+                                                <i class="fas fa-exclamation-triangle"></i> This asset has active assignments. Status cannot be changed.
+                                            </small>
+                                        @endif
                                         @error('status')
                                             <span class="text-danger small">{{ $message }}</span>
                                         @enderror
@@ -164,7 +177,6 @@
                                         <label for="current_condition" class="form-label">Current Condition <span class="text-danger">*</span></label>
                                         <select name="current_condition" id="current_condition" class="form-select" required>
                                             <option value="">-- Select Condition --</option>
-                                            {{-- FIX: Loop through enum cases with old() and current value --}}
                                             @foreach(App\Enums\AssetConditions::cases() as $condition)
                                                 <option value="{{ $condition->value }}" 
                                                     {{ old('current_condition', $asset->current_condition->value) == $condition->value ? 'selected' : '' }}>
