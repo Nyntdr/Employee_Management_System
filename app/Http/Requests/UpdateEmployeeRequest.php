@@ -33,12 +33,13 @@ class UpdateEmployeeRequest extends FormRequest
                     Rule::unique('users', 'email')->ignore($userId),
                 ],
             'password' => [
-                'sometimes',
+                'nullable',
                 'string',
                 'min:6',
                 'max:12',
                 'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,12}$/'
+                Rule::unique('users', 'password')->ignore($userId),
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,12}$/',
             ],
 
                 'first_name' => ['required', 'string', 'max:20', new AlphaSpaces],

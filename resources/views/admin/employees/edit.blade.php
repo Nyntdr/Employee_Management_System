@@ -65,8 +65,7 @@
                                     <div class="form-col-6">
                                         <label for="password" class="form-label">New Password</label>
                                         <input type="password" name="password" id="password"
-                                               class="form-control"
-                                               placeholder="Leave blank to keep current password">
+                                               class="form-control">
                                         @error('password')
                                         <span class="form-error">{{ $message }}</span>
                                         @enderror

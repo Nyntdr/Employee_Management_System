@@ -35,8 +35,8 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.store');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 //profile of admin and employees both
-Route::get('/admin-profile', [AuthController::class, 'show'])->name('admin.profile');
-Route::get('/employee-profile', [AuthController::class, 'showEmployee'])->name('employee.profile');
+Route::get('/admin-profile', [AuthController::class, 'show'])->name('admin.profile')->middleware(['role_verify','auth','prevent-back']);
+Route::get('/employee-profile', [AuthController::class, 'showEmployee'])->name('employee.profile')->middleware('auth','prevent-back');
 
 //email verification
 Route::get('/email/verify', [EmailVerificationController::class,'emailVerify'])->middleware('auth')->name('verification.notice');
@@ -44,8 +44,8 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class,'ver
 Route::post('/email/verification-notification', [EmailVerificationController::class,'resendEmail'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 //dashboard
-Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard')->middleware(['auth','verified']);
-Route::get('/employee-dashboard', [DashboardController::class, 'employeeDashboard'])->name('employee.dashboard')->middleware(['auth','verified']);
+Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard')->middleware(['auth','verified','role_verify','prevent-back']);
+Route::get('/employee-dashboard', [DashboardController::class, 'employeeDashboard'])->name('employee.dashboard')->middleware(['auth','verified','prevent-back']);
 
 // Route::resource('roles', RoleController::class)
 //role
@@ -57,16 +57,16 @@ Route::put('/roles/{id}', [RoleController::class, 'update'])->name('roles.update
 Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
 //department
 Route::get('/departments/export', [DepartmentController::class, 'export'])->name('departments.export');
-Route::resource('departments', DepartmentController::class)->middleware('auth');
+Route::resource('departments', DepartmentController::class)->middleware(['auth','role_verify']);
 //employee
 Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
-Route::resource('employees', EmployeeController::class)->middleware('auth');
+Route::resource('employees', EmployeeController::class)->middleware(['auth','role_verify']);
 //notice
 Route::get('/notices/export', [NoticeController::class, 'export'])->name('notices.export');
-Route::resource('notices', NoticeController::class)->middleware('auth');
+Route::resource('notices', NoticeController::class)->middleware(['auth','role_verify']);
 //event
 Route::get('/events/export', [EventController::class, 'export'])->name('events.export');
-Route::resource('events', EventController::class)->middleware('auth');
+Route::resource('events', EventController::class)->middleware(['auth','role_verify']);
 //assets
 Route::get('/assets/export', [AssetController::class, 'export'])->name('assets.export');
 Route::get('/asset-assignments/export', [AssetAssignmentController::class, 'export'])->name('asset-assignments.export');

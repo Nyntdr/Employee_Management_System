@@ -5,7 +5,6 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                     <tr>
-                        <th scope="col" width="60">S/N</th>
                         <th scope="col">Title</th>
                         <th scope="col">Content</th>
                         <th scope="col">Posted By</th>
@@ -15,7 +14,6 @@
                     <tbody>
                     @forelse($notices as $notice)
                         <tr>
-                            <td class="text-muted fw-semibold">{{ $loop->iteration }}</td>
                             <td>
                                 <div class="fw-medium">{{ $notice->title }}</div>
                             </td>

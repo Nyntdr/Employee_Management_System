@@ -4,7 +4,6 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                 <tr>
-                    <th scope="col" width="60">S/N</th>
                     <th scope="col">Asset Details</th>
                     <th scope="col">Reason</th>
                     <th scope="col">Current Status</th>
@@ -37,7 +36,6 @@
                         };
                     @endphp
                     <tr>
-                        <td class="text-muted fw-semibold">{{ $loop->iteration }}</td>
                         <td>
                             <div class="fw-medium">{{ $asset_assign->asset->asset_code }} - {{ $asset_assign->asset->name }}</div>
                             <div class="text-muted small">{{ $asset_assign->asset->category ?? 'N/A' }}</div>

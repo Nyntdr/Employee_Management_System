@@ -8,7 +8,8 @@
                     <div>
                         <h1 class="text-midnight mb-2">Admin Dashboard</h1>
                         <p class="text-muted mb-1">Welcome back, <strong>{{ Auth::user()->name }}</strong>!</p>
-                        <p class="text-muted mb-3" style="font-size: 0.95rem;">Here's a quick overview of your organization</p>
+                        <p class="text-muted mb-1" style="font-size: 0.95rem;">Here's a quick overview of the organization</p>
+                        <p class="text-muted mb-2">Manage all things of the company from here or use the sidebar menus for changes.</p>
                     </div>
                     <div class="clock-section p-3">
                         <h6 class="mb-2 text-midnight">Clock Status</h6>

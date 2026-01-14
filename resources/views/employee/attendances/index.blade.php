@@ -5,8 +5,8 @@
     <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
             <div>
-                <h1 class="text-midnight mb-2">My Attendance Record</h1>
-                <p class="text-muted mb-0">View your attendance records</p>
+                <h1 class="text-midnight mb-2">My Attendance</h1>
+                <p class="text-muted mb-0">Your attendance record with total hours worked everyday and status</p>
             </div>
         </div>
         @include('layouts.components.alert')

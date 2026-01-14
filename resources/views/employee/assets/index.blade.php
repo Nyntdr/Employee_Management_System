@@ -6,7 +6,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
             <div>
                 <h1 class="text-midnight mb-2">My Assigned Assets</h1>
-                <p class="text-muted mb-0">View assets assigned to you</p>
+                <p class="text-muted mb-0">List of assets that have been assigned to you</p>
             </div>
             <a href="{{route('asset-requests.index')}}" class="btn btn-midnight">Request Asset</a>
         </div>

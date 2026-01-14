@@ -4,7 +4,6 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
             <tr>
-                <th scope="col" width="60">S/N</th>
                 <th scope="col">Event Details</th>
                 <th scope="col">Date</th>
                 <th scope="col">Time</th>
@@ -15,7 +14,6 @@
             <tbody>
             @forelse($events as $e)
                 <tr>
-                    <td class="text-muted fw-semibold">{{ $loop->iteration }}</td>
                     <td>
                         <div class="fw-medium mb-1">{{ $e->title }}</div>
                         <div class="text-muted small" style="max-width: 300px; line-height: 1.4;">

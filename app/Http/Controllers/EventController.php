@@ -24,7 +24,7 @@ class EventController extends Controller
         $cacheKey = 'events_index_' . md5($search . '_page_' . $page);
         $events = Cache::remember(
             $cacheKey,
-            now()->addMinutes(5),
+            now()->addMinutes(2),
             function () use ($search) {
                 return Event::query()->with('creator')
                     ->when($search, function ($query) use ($search) {
