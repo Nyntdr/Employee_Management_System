@@ -123,6 +123,6 @@ Route::get('/forgot-password', [PasswordController::class, 'request'])->middlewa
 // Send reset link
 Route::post('/forgot-password', [PasswordController::class, 'forgotPassword'])->middleware('guest')->name('password.email');
 // Reset password form (with token)
-Route::get('/reset-password/{token}', [PasswordController::class, 'resetPassword'])->middleware(['guest','signed'])->name('password.reset');
+Route::get('/reset-password/{token}', [PasswordController::class, 'resetPassword'])->middleware('guest')->name('password.reset');
 // Update password
 Route::post('/reset-password', [PasswordController::class, 'updatePassword'])->middleware('guest')->name('password.update');
