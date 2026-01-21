@@ -21,7 +21,7 @@ class NoticeController extends Controller
         $search = $request->get('search', '');
         $page = $request->get('page', 1);
 
-        $cacheKey = 'contracts_index_' . md5($search . '_page_' . $page);
+        $cacheKey = 'notices_index_' . md5($search . '_page_' . $page);
 
         $notices = Cache::remember(
             $cacheKey,
