@@ -103,6 +103,14 @@ Route::middleware(['auth', 'prevent-back'])->group(function () {
     Route::resource('leave-requests', LeaveRequestController::class);
     Route::resource('asset-requests', AssetRequestController::class);
 
+    //employee dashboard
+    Route::get('/employee-asset', [EmployeeDashboardController::class, 'assetIndex'])->name('employee.assets.index');
+    Route::get('/employee-event', [EmployeeDashboardController::class, 'eventIndex'])->name('employee.events.index');
+    Route::get('/employee-notice', [EmployeeDashboardController::class, 'noticeIndex'])->name('employee.notices.index');
+    Route::get('/employee-leaves', [EmployeeDashboardController::class, 'leaveIndex'])->name('employee.leaves.index');
+    Route::get('/employee-attendances', [EmployeeDashboardController::class, 'attendanceIndex'])->name('employee.attendances.index');
+    Route::get('/employee-salaries', [EmployeeDashboardController::class, 'salaryIndex'])->name('employee.salaries.index');
+
     //importing data from excel routes
     Route::post('/users/import', [AuthController::class, 'import'])->name('users.import');
     Route::post('contracts/import', [ContractController::class, 'import'])->name('contracts.import');
