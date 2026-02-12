@@ -16,7 +16,7 @@ class RoleVerify
     public function handle(Request $request, Closure $next): Response
     {
         if (!auth()->check() || !in_array(auth()->user()->role_id, [1, 2])) {
-            abort(403, 'Unauthorized. Only Admin or HR can assign assets.');
+            abort(403, 'Unauthorized. Only Admin or HR can manage employees.');
         }
 
         return $next($request);

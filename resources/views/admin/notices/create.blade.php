@@ -1,24 +1,58 @@
-
 @extends('layouts.navbars')
-@section('title','Add Notice')
-@section('content')
-<h1>Publish Notice</h1>
-    <form action="{{ route('notices.store') }}" method="POST">
-        @csrf
-        <label>Title:</label><br>
-        <input type="text" name="title" value="{{ old('title') }}" required>
-        @error('title')
-            <span style="color:red;">{{ $message }}</span>
-        @enderror
-        <br><br>
-        <label>Content:</label><br>
-        <textarea name="content" value="{{ old('content') }}" rows="5" cols="25" required ></textarea>
-        @error('content')
-            <span style="color:red;">{{ $message }}</span>
-        @enderror
-        <br><br>
 
-        <button type="submit">Publish</button>
-    </form>
-    <br>
+@section('title', 'Add Notice')
+
+@section('content')
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <h1>Publish Notice</h1>
+                    </div>
+                    <div class="form-card-body">
+                        <form action="{{ route('notices.store') }}" method="POST">
+                            @csrf
+                            <div class="form-row">
+                                <div class="form-col-12">
+                                    <label for="title" class="form-label form-label-required">Title</label>
+                                    <input type="text" name="title" id="title"
+                                           class="form-control"
+                                           value="{{ old('title') }}"
+                                           required
+                                           placeholder="Enter notice title">
+                                    @error('title')
+                                    <span class="form-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-col-12">
+                                    <label for="content" class="form-label form-label-required">Content</label>
+                                    <textarea name="content" id="content"
+                                              class="form-control"
+                                              rows="5"
+                                              required
+                                              placeholder="Enter notice content">{{ old('content') }}</textarea>
+                                    @error('content')
+                                    <span class="form-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="form-btn-group">
+                                <a href="{{ route('notices.index') }}" class="form-btn-outline">
+                                    Cancel
+                                </a>
+                                <button type="submit" class="form-btn-primary">
+                                    Publish Notice
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

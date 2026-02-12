@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\AlphaSpaces;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,37 +15,49 @@ class UpdateEmployeeRequest extends FormRequest
 
     public function rules(): array
     {
-        $employee = $this->route('employee'); 
+        $employee = $this->route('employee');
         $userId = $employee?->user?->id;
 
         return [
             'role_id' => 'required|exists:roles,role_id',
-            'name'    => 'required|string|max:255',
-            'email'   => [
+            'name' => [
                 'required',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($userId),
+                'string',
+                'max:20',
+                'regex:/^(?=.*[a-zA-Z])[a-zA-Z0-9_]+$/',
+                Rule::unique('users', 'name')->ignore($userId)],
+                'email' => [
+                    'required',
+                    'email',
+                    'max:255',
+                    Rule::unique('users', 'email')->ignore($userId),
+                ],
+            'password' => [
+                'nullable',
+                'string',
+                'min:6',
+                'max:12',
+                'confirmed',
+                Rule::unique('users', 'password')->ignore($userId),
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,12}$/',
             ],
-            'password' => 'nullable|min:6|confirmed', 
 
-            'first_name'      => 'required|string|max:100',
-            'last_name'       => 'required|string|max:100',
-            'gender'          => 'required|in:male,female', 
-            'phone'           => 'required|string|max:20', 
-            'secondary_phone' => 'nullable|string|max:20',
-            'emergency_contact' => 'nullable|string|max:150', 
-            'department_id'   => 'required|exists:departments,department_id', 
-            'position'        => 'nullable|string|max:100',
-            'dob'             => 'nullable|date|before:today',
-            'doj'             => 'required|date',
-            'status'          => 'required|in:active,terminated,on_leave',
-        ];
+                'first_name' => ['required', 'string', 'max:20', new AlphaSpaces],
+                'last_name' => ['required', 'string', 'max:20', new AlphaSpaces],
+                'gender' => 'required|in:male,female',
+                'phone' => 'required|string|max:10|min:10',
+                'secondary_phone' => 'nullable|string|max:10|min:10',
+                'emergency_contact' => 'nullable|string|max:150',
+                'department_id' => 'required|exists:departments,department_id',
+                'dob' => 'required|date|before:today',
+                'doj' => 'required|date',
+            ];
     }
 
     public function messages(): array
     {
         return [
+            'name.regex' => 'The username can only have alphabets,numbers and underscores.',
             'email.unique' => 'This email is already taken by another user.',
             'department_id.exists' => 'The selected department is invalid.',
             'dob.before' => 'Date of birth must be in the past.',

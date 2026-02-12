@@ -1,0 +1,203 @@
+.login-page {
+    background: linear-gradient(135deg, #0c0c2e 0%, #191970 50%, #0c0c2e 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(77, 121, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(25, 25, 112, 0.1) 0%, transparent 50%);
+    z-index: 0;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    z-index: 1;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.login-header h1 {
+    font-weight: 700;
+    color: #191970;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+}
+
+.login-header p {
+    color: #666;
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+.login-card .form-label {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.login-card .form-control {
+    padding: 0.85rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+}
+
+.login-card .btn-midnight {
+    background: linear-gradient(135deg, #191970 0%, #0c0c2e 100%);
+    color: white;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s;
+    margin-top: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.login-card .btn-midnight:hover {
+    background: linear-gradient(135deg, #0c0c2e 0%, #191970 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(25, 25, 112, 0.3);
+}
+
+.login-card .btn-midnight:active {
+    transform: translateY(0);
+}
+
+.error-message {
+    color: #ff4757;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+    padding-left: 0.25rem;
+}
+
+.company-brand {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.2rem;
+    font-weight: 600;
+    z-index: 1;
+    text-align: center;
+}
+
+.company-brand span {
+    color: #4d79ff;
+}
+.forgot-password {
+    color: #4a5568;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #2d3748;
+    text-decoration: underline;
+}
+.verify-page .instructions {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.verify-page .user-greeting {
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.verify-page .user-greeting strong {
+    color: #191970;
+}
+
+.verify-page .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.verify-page .btn-outline-midnight {
+    background: transparent;
+    color: #191970;
+    border: 2px solid #191970;
+    padding: 0.85rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.verify-page .btn-outline-midnight:hover {
+    background: rgba(25, 25, 112, 0.1);
+    border-color: #0c0c2e;
+    color: #0c0c2e;
+    transform: translateY(-2px);
+}
+
+.verify-page .note {
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+@media (max-width: 576px) {
+    .login-card {
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    .login-page {
+        padding: 15px;
+    }
+
+    .company-brand {
+        top: 20px;
+        font-size: 1rem;
+    }
+    .verify-page .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .verify-page .btn-midnight,
+    .verify-page .btn-outline-midnight {
+        width: 100%;
+        margin: 0;
+    }
+}
+
+

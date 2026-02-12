@@ -8,5 +8,6 @@ enum AssetTypes: string
     case FURNITURE = 'furniture';
     case VEHICLE = 'vehicle';
     case STATIONERY = 'stationery';
+    case MACHINERY = 'machinery';
     case OTHER = 'other';
 }

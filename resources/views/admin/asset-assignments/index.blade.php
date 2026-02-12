@@ -1,50 +1,27 @@
 @extends('layouts.navbars')
 @section('title', 'All Assigned Assets')
 @section('content')
-<h2>Assigned Assets</h2>
-<asset_assign href="{{ route('asset-assignments.create') }}">Assign Assets</asset_assign> <br><br>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Assign ID</th>
-            <th>Asset Name</th>
-            <th>Assigned To</th>
-            <th>Assigner</th> 
-            <th>Reason</th>  
-            <th>Current Status</th> 
-            <th>Assigned Condition</th>  
-            <th>Returned Condition</th>  
-            <th>Returned Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @forelse($asset_assigns as $asset_assign)
-            <tr>
-                <td>{{ $asset_assign->assignment_id }}</td>
-                <td>{{ $asset_assign->asset->asset_code. ' ' .$asset_assign->asset->name }}</td>
-                <td>{{ $asset_assign->employee->first_name. ' '. $asset_assign->employee->last_name}}</td>
-                <td>{{ $asset_assign->assigner->name}}</td>
-                <td>{{ $asset_assign->purpose}}</td>
-                <td>{{ $asset_assign->status }}</td>
-                <td>{{ $asset_assign->condition_at_assignment}}</td>
-                <td>{{ $asset_assign->condition_at_return ?? 'N/A'}}</td>
-                <td>{{ $asset_assign->returned_date ?? 'N/A'}}</td>
-                <td>
-                    <a href="{{ route('asset-assignments.edit', $asset_assign->assignment_id) }}">Edit</a>
-                    <br>
-                    <form action="{{ route('asset-assignments.destroy', $asset_assign->assignment_id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" onclick="return confirm('Delete this assignment?')">Delete</button>
-                    </form>
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="13" style="text-align: center;">No assets assigned to anyone.</td>
-            </tr>
-        @endforelse
-    </tbody>
-</table>
-@endsection 
+
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
+            <div>
+                <h1 class="text-midnight mb-2">Assigned Assets</h1>
+                <p class="text-muted mb-0">Manage asset assignments to employees</p>
+            </div>
+            <div>
+                <a href="{{ route('assets.index') }}" class="btn btn-success">Assets</a>
+                <a href="{{ route('asset-assignments.create') }}" class="btn btn-midnight">Assign Asset</a>
+            </div>
+        </div>
+        @include('layouts.components.alert')
+        @include('layouts.components.import_export', ['import' => route('asset-assignments.import'),'export' => route('asset-assignments.export')])
+        {{--        @include('layouts.components.search', ['route' => route('asset-assignments.index'),'placeholder' => 'Search assets assigned by name, code, status, condition or assigner...'])--}}
+        <input type="text" id="asset-assignment-search" class="form-control"
+               placeholder="Search assets assigned by name, code, status, condition or assigner..."
+               autocomplete="off"><br>
+        <div id="asset-assignment-results">
+            @include('admin.asset-assignments.table')
+        </div>
+    </div>
+    @include('layouts.components.search_script',['search'=>'asset-assignment-search','result' => 'asset-assignment-results','route' => route('asset-assignments.index')])
+@endsection

@@ -22,7 +22,7 @@ class AssetAssignmentRequest extends FormRequest
             'assigned_date' => ['required', 'date'],
             'returned_date' => ['nullable', 'date', 'after_or_equal:assigned_date'],
             'status' => ['required', Rule::enum(AssignmentStatus::class)],
-            'purpose' => ['required', 'string', 'max:500'],
+            'purpose' => ['required', 'string', 'max:50'],
             'condition_at_assignment' => ['required', Rule::enum(AssetConditions::class)],
             'condition_at_return' => ['nullable', Rule::enum(AssetConditions::class)],
         ];

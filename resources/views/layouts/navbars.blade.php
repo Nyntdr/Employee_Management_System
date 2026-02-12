@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,64 +9,98 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    {{-- @vite('resources/css/app.css') --}}
-    <style>
-        body {
-            font-family: "Poppins", sans-serif;
-        }
-        * {
-            font-family: inherit;
-        }
-        .sidebar {
-            width: 220px;
-            min-height: 100vh;
-            border-right: 1px solid #ddd;
-            padding: 15px;
-        }
-        .sidebar a{
-            text-decoration: none;
-            color: inherit;
-            font-weight: 600;
-        }
-    </style>
+          rel="stylesheet">
+    <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/table.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/employee.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/form.css') }}" rel="stylesheet">
 </head>
 
 <body>
-    <header class="navbar navbar-light bg-light px-3 border-bottom">
-        <h1 class="h4 m-0">N:Company EMS</h1>
+<nav class="navbar navbar-expand-lg navbar-light admin-navbar">
+    <div class="container-fluid">
+        <h1 class="navbar-brand h4 m-0">N:Company Admin</h1>
+        <div id="current-date-time" class="small fw-semibold">
+            {{ \Carbon\Carbon::now()->format('j F, Y H:i') }}
+        </div>
 
-        <nav class="d-flex align-items-center gap-3">
-            <a href="{{ route('admin.profile') }}" class="text-decoration-none">Profile</a>
-            <a href="#" class="text-decoration-none">Notification</a>
+        <div class="d-flex align-items-center gap-3">
+            <a href="{{ route('admin.profile') }}" class="nav-link" title="Profile">
+                @if (!Auth::user()->profile_picture)
+                    <img src="{{ asset('images/icon.jpg') }}" class="navbar-icon"
+                         style="width: 32px; height: 32px; border-radius: 50%;">
+                @else
+                    <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" class="navbar-icon"
+                         style="width: 32px; height: 32px; border-radius: 50%;">
+                @endif
+            </a>
+            <a href="#" class="nav-link position-relative" title="Notifications" data-bs-toggle="dropdown">
+                <img src="{{ asset('images/notification.png') }}" class="navbar-icon" style="width: 32px; height: 32px;">
+                @if(auth()->user()->unreadNotifications->count() > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ auth()->user()->unreadNotifications->count() }}
+        </span>
+                @endif
+            </a>
 
-            <form action="{{ route('logout') }}" method="post" class="m-0">
+            <ul class="dropdown-menu dropdown-menu-end">
+                @forelse(auth()->user()->notifications as $notification)
+                    <li>
+                        <a class="dropdown-item {{ $notification->read_at ? '' : 'fw-bold text-success' }}"
+                           href="{{ route('notifications.handle', $notification->id) }}">
+                            @if ($notification->type === 'App\Notifications\LeaveRequestNotification')
+                                <strong>{{ $notification->data['message'] }}</strong><small
+                                    class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                            @elseif($notification->type === 'App\Notifications\NoticeCreatedNotification')
+                                <strong>{{ $notification->data['message'] }}</strong> <small
+                                    class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                            @elseif($notification->type === 'App\Notifications\EventCreatedNotification')
+                                <strong>{{ $notification->data['message'] }}</strong> <small
+                                    class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                            @elseif($notification->type === 'App\Notifications\AssetRequestNotification')
+                                <strong>{{ $notification->data['message'] }}</strong> <small
+                                    class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                            @else
+                                {{ $notification->data['message'] ?? 'New notification' }}
+                            @endif
+                        </a>
+                    </li>
+                @empty
+                    <li><a class="dropdown-item text-muted">No new notifications</a></li>
+                @endforelse
+            </ul>
+
+            <form action="{{ route('logout') }}" method="post" class="m-0 d-inline">
                 @csrf
-                <button type="submit" class="btn btn-sm btn-outline-danger">Logout</button>
+                <button type="submit" class="btn btn-link p-0 border-0" title="Logout" style="background: none;">
+                    <img src="{{ asset('images/logout.png') }}" class="navbar-icon"
+                         style="width: 32px; height: 32px;">
+                </button>
             </form>
-        </nav>
-    </header>
-
-    <div class="d-flex">
-        <nav class="sidebar bg-white">
-            <a href="{{ route('dashboard') }}" class="d-block mb-2">Dashboard ✅</a>
-            <a href="{{ route('employees.index') }}" class="d-block mb-2">Employees ✅</a>
-                        <a href="#" class="d-block mb-2">Contracts</a>
-            <a href="{{ route('departments.index') }}" class="d-block mb-2">Departments ✅</a>
-            <a href="{{ route('notices.index') }}" class="d-block mb-2">Notices ✅</a>
-            <a href="{{ route('assets.index') }}" class="d-block mb-2">Assets ✅</a>
-            <a href="#" class="d-block mb-2">Salaries</a>
-            <a href="#" class="d-block mb-2">Attendances</a>
-            <a href="{{ route('events.index') }}" class="d-block mb-2">Events ✅</a>
-        </nav>
-        <main class="grow p-4">
-            @yield('content')
-        </main>
+        </div>
     </div>
+</nav>
+
+<div class="d-flex">
+    <nav class="admin-sidebar">
+        <a href="{{ route('dashboard') }}" class="d-block">Dashboard</a>
+        <a href="{{ route('employees.index') }}" class="d-block">Employees</a>
+        <a href="{{ route('contracts.index') }}" class="d-block">Contracts</a>
+        <a href="{{ route('departments.index') }}" class="d-block">Departments</a>
+        <a href="{{ route('notices.index') }}" class="d-block">Notices</a>
+        <a href="{{ route('assets.index') }}" class="d-block">Assets</a>
+        <a href="{{ route('payrolls.index') }}" class="d-block">Salaries</a>
+        <a href="{{ route('leaves.index') }}" class="d-block">Leaves</a>
+        <a href="{{ route('attendances.index') }}" class="d-block">Attendances</a>
+        <a href="{{ route('events.index') }}" class="d-block">Events</a>
+    </nav>
+
+    <main class="admin-main">
+        @yield('content')
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
+
 </html>
-
-
-
-
-

@@ -1,41 +1,91 @@
-
 @extends('layouts.navbars')
-@section('title','Create Event')
+
+@section('title', 'Create Event')
+
 @section('content')
-<h1>Create Event</h1>
-    <form action="{{ route('events.store') }}" method="POST">
-        @csrf
-        <label>Title:</label><br>
-        <input type="text" name="title" value="{{ old('title') }}" required>
-        @error('title')
-            <span style="color:red;">{{ $message }}</span>
-        @enderror
-        <br><br>
-        <label>Description:</label><br>
-        <textarea name="description" value="{{ old('description') }}" rows="5" cols="25"></textarea>
-        @error('description')
-            <span style="color:red;">{{ $message }}</span>
-        @enderror
-        <br><br>
-        <label>Event Date:</label><br>
-        <input type="date" name="event_date" value="{{ old('event_date') }}" required>
-        @error('event_date')
-            <span style="color:red;">{{ $message }}</span>
-        @enderror
-        <br><br>
-        <label>Start Time:</label><br>
-        <input type="time" name="start_time" value="{{ old('start_time') }}">
-        @error('start_time')
-            <span style="color:red;">{{ $message }}</span>
-        @enderror
-        <br><br>
-        <label>End Time:</label><br>
-        <input type="time" name="end_time" value="{{ old('end_time') }}">
-        @error('end_time')
-            <span style="color:red;">{{ $message }}</span>
-        @enderror
-        <br><br>
-        <button type="submit">Create</button>
-    </form>
-    <br>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <h1>Create Event</h1>
+                    </div>
+                    <div class="form-card-body">
+                        <form action="{{ route('events.store') }}" method="POST">
+                            @csrf
+
+                            @if($errors->any())
+                                <div class="form-alert form-alert-danger">
+                                    <ul class="mb-0">
+                                        @foreach($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <div class="form-row">
+                                <div class="form-col-12">
+                                    <label for="title" class="form-label form-label-required">Title</label>
+                                    <input type="text" name="title" id="title" class="form-control"
+                                           value="{{ old('title') }}" required>
+                                    @error('title')
+                                    <span class="form-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-col-12">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea name="description" id="description" rows="5" class="form-control">{{ old('description') }}</textarea>
+                                    @error('description')
+                                    <span class="form-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-col-6">
+                                    <label for="event_date" class="form-label form-label-required">Event Date</label>
+                                    <input type="date" name="event_date" id="event_date" class="form-control"
+                                           value="{{ old('event_date') }}" required>
+                                    @error('event_date')
+                                    <span class="form-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-col-3">
+                                    <label for="start_time" class="form-label">Start Time</label>
+                                    <input type="time" name="start_time" id="start_time" class="form-control"
+                                           value="{{ old('start_time') }}">
+                                    @error('start_time')
+                                    <span class="form-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-col-3">
+                                    <label for="end_time" class="form-label">End Time</label>
+                                    <input type="time" name="end_time" id="end_time" class="form-control"
+                                           value="{{ old('end_time') }}">
+                                    @error('end_time')
+                                    <span class="form-error">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="form-btn-group">
+                                <a href="{{ route('events.index') }}" class="form-btn-outline">
+                                    Cancel
+                                </a>
+                                <button type="submit" class="form-btn-primary">
+                                    Create Event
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

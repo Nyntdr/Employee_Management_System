@@ -1,0 +1,22 @@
+@extends('layouts.employee_navbar')
+@section('title', 'Assigned Assets')
+@section('content')
+
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 header-flex">
+            <div>
+                <h1 class="text-midnight mb-2">My Assigned Assets</h1>
+                <p class="text-muted mb-0">List of assets that have been assigned to you</p>
+            </div>
+            <a href="{{route('asset-requests.index')}}" class="btn btn-midnight">Request Asset</a>
+        </div>
+        @include('layouts.components.alert')
+{{--        @include('layouts.components.search', ['route' => route('employee.assets.index'),'placeholder' => 'Search assets assigned by name, code, status, condition or assigner...'])--}}
+        <input type="text" id="employee-asset-search" class="form-control" placeholder="Search assets assigned by name, code, status, condition or assigner..." autocomplete="off"><br>
+        <div id="employee-asset-results">
+            @include('employee.assets.table')
+        </div>
+    </div>
+    @include('layouts.components.search_script',['search'=>'employee-asset-search','result' => 'employee-asset-results','route' => route('employee.assets.index')])
+
+@endsection

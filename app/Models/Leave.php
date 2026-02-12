@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\LeaveStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Leave extends Model
 {
-    use HasFactory;
-
     protected $primaryKey = 'leave_id';
     public $timestamps = true;
 
@@ -26,7 +24,7 @@ class Leave extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        'status' => 'string',
+        'status' => LeaveStatus::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
