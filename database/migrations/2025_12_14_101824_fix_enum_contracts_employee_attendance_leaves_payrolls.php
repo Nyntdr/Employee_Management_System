@@ -46,7 +46,7 @@ public function down(): void
         $types = array_column(ContractType::cases(), 'value');
         $status = array_column(ContractStatus::cases(), 'value');
 
-        $table->enum('job_title', $jobs)->default(JobTitle::INTERN->value)->change();
+//        $table->enum('job_title', $jobs)->default(JobTitle::INTERN->value)->change();
         $table->enum('contract_type', $types)->default(ContractType::INTERN->value)->change();
         $table->enum('contract_status', $status)->default(ContractStatus::ACTIVE->value)->change();
     });
