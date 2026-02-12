@@ -20,8 +20,7 @@ return new class extends Migration
             $table->time('end_time')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
-    
-            $table->index(['event_date', 'visibility']);
+
         });
     }
 
