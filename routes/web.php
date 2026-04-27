@@ -64,11 +64,11 @@ Route::middleware(['auth', 'prevent-back'])->group(function () {
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verifyEmail'])->middleware(['signed'])->name('verification.verify');
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'resendEmail'])->middleware(['throttle:6,1'])->name('verification.send');
 
-//dashboard
+    //dashboard
     Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard')->middleware(['verified', 'role_verify']);
     Route::get('/employee-dashboard', [DashboardController::class, 'employeeDashboard'])->name('employee.dashboard')->middleware(['verified']);
 
-// Route::resource('roles', RoleController::class)
+    // Route::resource('roles', RoleController::class)
 //role
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
     Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
@@ -77,29 +77,29 @@ Route::middleware(['auth', 'prevent-back'])->group(function () {
     Route::put('/roles/{id}', [RoleController::class, 'update'])->name('roles.update');
     Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
-//department
+    //department
     Route::resource('departments', DepartmentController::class)->middleware(['role_verify']);
-//employee
+    //employee
     Route::resource('employees', EmployeeController::class)->middleware(['role_verify']);
-//notice
+    //notice
     Route::resource('notices', NoticeController::class)->middleware(['role_verify']);
-//event
+    //event
     Route::resource('events', EventController::class)->middleware(['role_verify']);
-//assets
+    //assets
     Route::resource('assets', AssetController::class);
     Route::resource('asset-assignments', AssetAssignmentController::class)->middleware(['role_verify']);
-//contracts
+    //contracts
     Route::resource('contracts', ContractController::class)->middleware(['role_verify']);
-//attendance
+    //attendance
     Route::resource('attendances', AttendanceController::class)->middleware(['role_verify']);
     //salary
     Route::resource('payrolls', PayrollController::class)->middleware(['role_verify']);
     Route::post('/payrolls/{payroll}/send-email', [PayrollController::class, 'sendPayslipEmail'])->name('payrolls.email');
-//leave types
+    //leave types
     Route::resource('leave-types', LeaveTypeController::class)->middleware(['role_verify']);
-//leave
+    //leave
     Route::resource('leaves', LeaveController::class)->middleware(['role_verify']);
-//leave request and asset request for employee
+    //leave request and asset request for employee
     Route::resource('leave-requests', LeaveRequestController::class);
     Route::resource('asset-requests', AssetRequestController::class);
 

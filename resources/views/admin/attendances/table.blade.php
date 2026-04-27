@@ -4,7 +4,7 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                 <tr>
-                    <th scope="col" width="60">S/N</th>
+                    {{-- <th scope="col" width="60">S/N</th> --}}
                     <th scope="col">Employee Name</th>
                     <th scope="col">Date</th>
                     <th scope="col">Clock In</th>
@@ -30,7 +30,7 @@
                         }
                     @endphp
                     <tr>
-                        <td class="text-muted fw-semibold">{{ $loop->iteration }}</td>
+                        {{-- <td class="text-muted fw-semibold">{{ $loop->iteration }}</td> --}}
                         <td>
                             <div class="fw-medium">{{ $attendance->employee->first_name }} {{ $attendance->employee->last_name }}</div>
                             <div class="text-muted small">{{ $attendance->employee->department->name ?? 'N/A' }}</div>

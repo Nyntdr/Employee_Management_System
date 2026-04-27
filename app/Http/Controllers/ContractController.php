@@ -34,7 +34,7 @@ class ContractController extends Controller
                                 $q->whereAny(['first_name', 'last_name'], 'like', "%{$search}%");
                             });
                     })
-                    ->latest()->paginate(6)->withQueryString();
+                    ->latest()->paginate(15)->withQueryString();
             }
         );
         if ($request->ajax()) {

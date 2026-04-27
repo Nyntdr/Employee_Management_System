@@ -72,7 +72,7 @@ class UsersEmployeesImport implements ToCollection, WithHeadingRow, SkipsEmptyRo
     public function rules(): array
     {
         return [
-            'username' => 'required|string|max:20|unique:users,name|regex:/^(?=.*[a-zA-Z])[a-zA-Z0-9_]+$',
+            'username' => 'required|string|max:20|unique:users,name|regex:/^(?=.*[a-zA-Z])[a-zA-Z0-9_]+$/',
             'email' => 'required|email|unique:users,email',
             'password' => [
                 'required',

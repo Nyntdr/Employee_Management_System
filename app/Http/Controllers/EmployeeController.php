@@ -41,7 +41,7 @@ class EmployeeController extends Controller
                                 $q->where('name', 'like', "%{$search}%");
                             });
                     })
-                    ->paginate(8);
+                    ->paginate(10);
             }
         );
 

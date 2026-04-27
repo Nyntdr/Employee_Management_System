@@ -46,7 +46,7 @@ class ContractsImport implements ToCollection, WithHeadingRow, WithValidation, S
                     'start_date' => $this->parseDate($row['start_date']),
                     'end_date' => $this->parseDate($row['end_date'] ?? null),
                     'probation_period' => $row['probation_days'] ?? null,
-                    'working_hours' => $row['working_hours'] ?? null,
+                    // 'working_hours' => $row['working_hours'] ?? null,
                     'salary' => $row['salary'],
                     'contract_status' => $row['contract_status'],
                 ]);

@@ -35,7 +35,7 @@ class AttendanceController extends Controller
                             ->orWhere('clock_in', 'like', "%{$search}%")
                             ->orWhere('clock_out', 'like', "%{$search}%");
                     })
-                    ->orderBy('date', 'desc')->paginate(8);
+                    ->orderBy('date', 'desc')->paginate(15);
             }
         );
         if ($request->ajax()) {

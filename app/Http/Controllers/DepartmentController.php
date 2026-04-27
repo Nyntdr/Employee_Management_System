@@ -33,7 +33,7 @@ class DepartmentController extends Controller
                                 $q->whereAny(['first_name', 'last_name'], 'like', "%{$search}%");
                             });
                     })
-                    ->withCount('employees')->paginate(5);
+                    ->withCount('employees')->paginate(10);
             }
         );
         if ($request->ajax()) {
