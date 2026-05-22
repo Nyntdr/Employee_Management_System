@@ -11,7 +11,7 @@ class ClockInClockOutController extends Controller
 {
     private function verifyOfficeIp(Request $request)
     {
-        if ($request->ip() !== '127.0.0.1') {
+        if (!in_array($request->ip(), config('app.office_ips'))) {
             return back()->with('error', 'You are not connected to the office network.');
         }
         return null;

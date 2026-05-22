@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\RegisterRequest;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AuthController extends Controller
@@ -33,11 +31,6 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Import failed: ' . $e->getMessage());
         }
-    }
-
-    public function showRegister()
-    {
-        return view('admin.auth.register');
     }
 
     public function show()
@@ -73,20 +66,6 @@ class AuthController extends Controller
             'email' => 'The provided credentials do not match our records.',
         ])->withInput($request->except('password'));
     }
-    public function register(RegisterRequest $request)
-    {
-        $validated = $request->validated();
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role_id' => 1,
-            'is_active' => true,
-        ]);
-        return redirect()->route('login')
-            ->with('success', 'Registration successful! You can now log in.');
-    }
-
     public function logout(Request $request)
     {
         Auth::logout();

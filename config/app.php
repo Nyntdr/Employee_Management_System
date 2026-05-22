@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'office_ips' => ['127.0.0.1', '::1'],
+
 ];

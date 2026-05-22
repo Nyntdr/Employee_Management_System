@@ -5,29 +5,67 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-         DB::table('users')->insert([
+        $users = [
             [
-                'email' => 'admin@example.com',
                 'name' => 'Admin',
+                'email' => 'admin@example.com',
                 'password' => Hash::make('admin123'),
-                'email_verified_at' => now(),
                 'role_id' => 1,
                 'is_active' => true,
-                'last_login' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'email_verified_at' => now(),
             ],
-        ]);
+            [
+                'name' => 'Sarah Johnson',
+                'email' => 'hr@example.com',
+                'password' => Hash::make('password'),
+                'role_id' => 2,
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ],
+            [
+                'name' => 'Mike Wilson',
+                'email' => 'assistant@example.com',
+                'password' => Hash::make('password'),
+                'role_id' => 2,
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ],
+            [
+                'name' => 'John Doe',
+                'email' => 'john@example.com',
+                'password' => Hash::make('password'),
+                'role_id' => 3,
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ],
+            [
+                'name' => 'Jane Smith',
+                'email' => 'jane@example.com',
+                'password' => Hash::make('password'),
+                'role_id' => 3,
+                'is_active' => true,
+                'email_verified_at' => now(),
+            ],
+        ];
+
+        foreach ($users as $user) {
+            DB::table('users')->updateOrInsert(
+                ['email' => $user['email']],
+                [
+                    'name' => $user['name'],
+                    'password' => $user['password'],
+                    'role_id' => $user['role_id'],
+                    'is_active' => $user['is_active'],
+                    'email_verified_at' => $user['email_verified_at'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
     }
 }
-
-

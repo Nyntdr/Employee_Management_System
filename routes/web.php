@@ -30,7 +30,7 @@ Route::get('/', function () {
 // Guest middleware on routes for login and forgot password
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.store');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.store')->middleware('throttle:5,1');
 
     // Forgot password routes
     Route::get('/forgot-password', [PasswordController::class, 'request'])->name('password.request');
